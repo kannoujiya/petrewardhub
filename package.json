@@ -2,9 +2,24 @@
   "name": "pet-reward-hub",
   "version": "1.0.0",
   "dependencies": {
-    "firebase": "^12.5.0"
+    "firebase": "^12.5.0",
+    "firebase-admin": "^13.5.0"
   },
   "scripts": {
     "start": "live-server"
-  }
+  },
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kannoujiya/petrewardhub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kannoujiya/petrewardhub/issues"
+  },
+  "homepage": "https://github.com/kannoujiya/petrewardhub#readme"
 }
