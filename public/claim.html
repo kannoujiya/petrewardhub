@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Claim — PetRewardHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gradient-to-b from-[#e0f2fe] to-[#fff7cc] min-h-screen">
+
+  <nav class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-8 h-8"><div class="font-bold text-slate-800">PetRewardHub</div></div>
+    <div><a href="offers.html" class="text-slate-700">Back to offers</a></div>
+  </nav>
+
+  <main class="max-w-3xl mx-auto p-6">
+    <div class="bg-white rounded-3xl shadow-lg p-6">
+      <h2 class="text-2xl font-bold mb-3">Claim your free item</h2>
+      <p class="text-slate-500 mb-4">Fill shipping details and we will save your request to the fulfilment list.</p>
+      <input id="claimNamePage" class="w-full rounded-xl border p-3 mt-2" placeholder="Full name">
+      <textarea id="claimAddressPage" class="w-full rounded-xl border p-3 mt-2" placeholder="Shipping address"></textarea>
+      <input id="claimEmailPage" class="w-full rounded-xl border p-3 mt-2" placeholder="Email">
+      <div class="flex gap-3 mt-4">
+        <button id="claimSubmitPage" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3">Submit claim</button>
+      </div>
+      <div id="claimResult" class="text-sm text-slate-600 mt-3"></div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

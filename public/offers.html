@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Offers — PetRewardHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gradient-to-b from-[#fff7cc] to-[#e0f2fe] min-h-screen">
+
+  <nav class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-8 h-8"><div class="font-bold text-slate-800">PetRewardHub</div></div>
+    <div><a href="index.html" class="text-slate-700">Home</a></div>
+  </nav>
+
+  <main class="max-w-4xl mx-auto p-6">
+    <div class="bg-white rounded-3xl shadow-xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div><div class="text-sm text-slate-500">Signed in as</div><div id="userEmail" class="font-semibold">—</div></div>
+        <div><div class="text-sm text-slate-500">Coins</div><div id="coinCount" class="font-semibold">0</div></div>
+      </div>
+
+      <hr class="my-4">
+
+      <div id="offerContainer" class="grid gap-4"></div>
+
+      <div id="claimArea" class="mt-6 hidden bg-yellow-50 p-4 rounded-xl">
+        <div id="claimText" class="font-medium"></div>
+        <button id="openClaim" class="mt-3 rounded-full px-4 py-2 bg-gradient-to-r from-sky-500 to-yellow-400 text-white">Claim Now</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Claim Modal -->
+  <div id="claimModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
+        <h3 class="text-xl font-bold">Claim your reward</h3>
+        <p class="text-slate-500 text-sm">Enter shipping details — item will be delivered in ~1–2 weeks.</p>
+        <input id="claimName" class="w-full rounded-xl border p-3 mt-3" placeholder="Full name">
+        <textarea id="claimAddress" class="w-full rounded-xl border p-3 mt-3" placeholder="Shipping address"></textarea>
+        <input id="claimEmail" class="w-full rounded-xl border p-3 mt-3" placeholder="Email">
+        <div class="flex gap-3 mt-4">
+          <button id="claimCancel" class="flex-1 rounded-full border py-3">Cancel</button>
+          <button id="claimSubmit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3">Submit Claim</button>
+        </div>
+        <div id="claimStatus" class="text-sm text-slate-600 mt-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AdBlue feed (will be used to render offers) -->
+  <!-- WARNING - OLD jQuery VERSION USED BY ADBLUE FEED -->
+  <script type="text/javascript">
+    (function(){
+      // This call fetches offers JSON; app.js will later append sub1=UID to links before user clicks.
+      var feedUrl = "https://d2xohqmdyl2cj3.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=&s2=&callback=?";
+      $.getJSON(feedUrl, function(offers){
+        var html = '';
+        var numOffers = 8; // max show
+        offers = (offers || []).slice(0, numOffers);
+        if (!offers || offers.length === 0) {
+          html = '<div class="text-slate-500">No offers right now.</div>';
+          document.getElementById('offerContainer').innerHTML = html;
+          return;
+        }
+        offers.forEach(function(offer){
+          // Each offer will be rendered as a card; app.js will add data attributes for coin mapping if available
+          var conv = offer.conversion || '';
+          var anchor = offer.anchor || 'Offer';
+          var url = offer.url || '#';
+          html += '<div class="offer-card flex items-center justify-between">';
+          html += '<div><div class="font-semibold text-slate-800">'+anchor+'</div>';
+          html += '<div class="text-sm text-slate-500">'+conv+'</div></div>';
+          html += '<div><a class="offer-link rounded-full px-4 py-2 bg-gradient-to-r from-sky-500 to-yellow-400 text-white" target="_blank" href="'+url+'">Open</a></div>';
+          html += '</div>';
+        });
+        document.getElementById('offerContainer').innerHTML = html;
+      });
+    })();
+  </script>
+
+  <script src="app.js"></script>
+</body>
+</html>

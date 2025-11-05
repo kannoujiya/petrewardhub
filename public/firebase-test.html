@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Firebase Connection Test | PetRewardHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: sans-serif; background:#f7fafc; padding:20px; }
+    input,button { margin:4px; padding:8px; border-radius:8px; }
+    pre { background:#f1f5f9; padding:10px; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <h2>🔥 Firebase Live Connection Test</h2>
+  <p id="status">Connecting...</p>
+
+  <input id="email" placeholder="Email" />
+  <input id="password" type="password" placeholder="Password" />
+  <button id="signup">Sign Up</button>
+  <button id="login">Log In</button>
+  <button id="logout">Logout</button>
+
+  <hr>
+
+  <button id="write">Write Test Data</button>
+  <button id="read">Read Test Data</button>
+
+  <pre id="log"></pre>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDQFmVlYyJGc0GaY5F6p2fWKqrrYkrQzAo",
+      authDomain: "petrewardhub.firebaseapp.com",
+      projectId: "petrewardhub",
+      storageBucket: "petrewardhub.firebasestorage.app",
+      messagingSenderId: "1087250543825",
+      appId: "1:1087250543825:web:4d92bc084978fab9a0c1f0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const $ = s => document.querySelector(s);
+    const log = msg => { $('#log').textContent += msg + "\n"; console.log(msg); };
+    const status = $('#status');
+
+    status.textContent = "✅ Firebase SDK Loaded. Waiting for Auth...";
+
+    // auth state listener
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        status.textContent = "🔥 Logged in as " + user.email;
+        log("Auth state: logged in uid=" + user.uid);
+      } else {
+        status.textContent = "👋 Not logged in";
+        log("Auth state: logged out");
+      }
+    });
+
+    $('#signup').onclick = async () => {
+      try {
+        const e = $('#email').value.trim();
+        const p = $('#password').value.trim();
+        await auth.createUserWithEmailAndPassword(e,p);
+        log("✅ Signup successful");
+      } catch(err){ log("❌ Signup error: " + err.message); }
+    };
+
+    $('#login').onclick = async () => {
+      try {
+        const e = $('#email').value.trim();
+        const p = $('#password').value.trim();
+        await auth.signInWithEmailAndPassword(e,p);
+        log("✅ Login successful");
+      } catch(err){ log("❌ Login error: " + err.message); }
+    };
+
+    $('#logout').onclick = () => auth.signOut();
+
+    $('#write').onclick = async () => {
+      try {
+        const u = auth.currentUser;
+        if(!u) return alert("Login first");
+        await db.collection('users').doc(u.uid).set({
+          testField: "Working fine!",
+          updatedAt: new Date()
+        }, { merge:true });
+        log("✅ Data written to Firestore for UID: " + u.uid);
+      } catch(err){ log("❌ Write error: " + err.message); }
+    };
+
+    $('#read').onclick = async () => {
+      try {
+        const u = auth.currentUser;
+        if(!u) return alert("Login first");
+        const snap = await db.collection('users').doc(u.uid).get();
+        if(snap.exists) log("📖 Read data:\n" + JSON.stringify(snap.data(), null, 2));
+        else log("❌ No document found for this user.");
+      } catch(err){ log("❌ Read error: " + err.message); }
+    };
+
+    // network test
+    firebase.firestore().enableNetwork()
+      .then(()=>log("🌐 Firestore network enabled"))
+      .catch(err=>log("❌ Firestore connection error: " + err.message));
+  </script>
+</body>
+</html>

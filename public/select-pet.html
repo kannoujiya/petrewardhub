@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Select Pet — PetRewardHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gradient-to-b from-[#fff7cc] to-[#e0f2fe]">
+  <nav class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-8 h-8"><div class="font-bold">PetRewardHub</div></div>
+    <div>
+      <a href="index.html" class="text-slate-700">Home</a>
+    </div>
+  </nav>
+
+  <main class="max-w-4xl mx-auto p-6">
+    <div class="bg-white rounded-3xl shadow-xl p-6">
+      <h2 class="text-2xl font-bold mb-4">Which pet do you want to earn rewards for?</h2>
+      <p class="text-slate-500 mb-4">Choose one to start a 5-question quiz tailored for that pet.</p>
+
+      <div id="petGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <!-- pet cards inserted by app.js -->
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // populate pet cards
+    const PETS = ["Dog","Cat","Bird","Rabbit","Small Mammal","Reptile","Fish","Ferret","Horse"];
+    const grid = document.getElementById('petGrid');
+    PETS.forEach(p => {
+      const d = document.createElement('div');
+      d.className = 'rounded-2xl p-4 bg-gradient-to-br from-white to-sky-50 shadow cursor-pointer text-center';
+      d.innerHTML = `<div class="text-4xl"> ${p === 'Dog' ? '🐶' : p==='Cat' ? '🐱' : p==='Bird' ? '🐦' : p==='Rabbit' ? '🐰' : p==='Fish' ? '🐟' : p==='Horse' ? '🐴' : '🐾'}</div><div class="font-semibold mt-2">${p}</div>`;
+      d.onclick = async () => {
+        try {
+          await selectPet(p);
+          window.location.href = 'quiz.html';
+        } catch(e) { alert('Please login first'); window.location.href='index.html'; }
+      };
+      grid.appendChild(d);
+    });
+  </script>
+</body>
+</html>

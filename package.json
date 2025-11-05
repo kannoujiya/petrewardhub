@@ -1,0 +1,10 @@
+{
+  "name": "pet-reward-hub",
+  "version": "1.0.0",
+  "dependencies": {
+    "firebase": "^12.5.0"
+  },
+  "scripts": {
+    "start": "live-server"
+  }
+}

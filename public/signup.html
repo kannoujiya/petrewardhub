@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Sign Up — PetRewardHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gradient-to-b from-[#fff7cc] to-[#e0f2fe] min-h-screen">
+
+  <nav class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-10 h-10">
+      <div class="font-bold text-slate-800">PetRewardHub</div>
+    </div>
+    <a href="index.html" class="text-slate-700">Home</a>
+  </nav>
+
+  <main class="max-w-2xl mx-auto p-6">
+    <div class="bg-white rounded-3xl shadow-lg p-8">
+      <h2 class="text-2xl font-bold mb-3 text-slate-800">Create your account</h2>
+      <p class="text-slate-500 mb-6">Join now and start earning coins for your pet.</p>
+
+      <form id="signupForm" class="space-y-4">
+        <input id="signupName" type="text" class="w-full rounded-full border px-4 py-3" placeholder="Full name" required />
+        <input id="signupEmail" type="email" class="w-full rounded-full border px-4 py-3" placeholder="Email" required />
+        <input id="signupPassword" type="password" class="w-full rounded-full border px-4 py-3" placeholder="Password (min 6 chars)" required />
+        <div class="flex gap-3">
+          <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3">Sign up</button>
+          <a href="index.html" class="flex-1 rounded-full border py-3 text-center">Login</a>
+        </div>
+        <div id="signupError" class="hidden text-sm text-red-600"></div>
+      </form>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // signup form logic implemented in app.js
+  </script>
+</body>
+</html>
