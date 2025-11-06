@@ -34,6 +34,17 @@
       transform: translateY(-5px);
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
+	  .loading {
+    display: none;
+  }
+  .loading.active {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
   </style>
 </head>
 <body class="font-sans bg-gradient-to-b from-[#e6f6ff] to-[#fff6e6] min-h-screen">
@@ -176,7 +187,11 @@
           <input id="loginEmail" type="email" required placeholder="Email" class="w-full rounded-full border px-4 py-3" />
           <input id="loginPassword" type="password" required placeholder="Password" class="w-full rounded-full border px-4 py-3" />
           <div class="flex gap-3">
-            <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3">Log in</button>
+          <!-- <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3">Log in</button> -->
+		  <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3 flex items-center justify-center gap-2">
+  <span>Log in</span>
+  <div id="loginLoading" class="loading">⟳</div>
+</button>
             <a href="signup.html" class="flex-1 rounded-full border py-3 text-center">Sign up</a>
           </div>
           <div id="loginError" class="hidden text-sm text-red-600"></div>

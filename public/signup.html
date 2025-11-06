@@ -1,14 +1,30 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Sign Up — PetRewardHub</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
+  
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+  
+  <style>
+    .loading {
+      display: none;
+    }
+    .loading.active {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-b from-[#fff7cc] to-[#e0f2fe] min-h-screen">
 
@@ -17,7 +33,7 @@
       <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-10 h-10">
       <div class="font-bold text-slate-800">PetRewardHub</div>
     </div>
-    <a href="index.html" class="text-slate-700">Home</a>
+    <a href="index.html" class="text-slate-700 hover:text-sky-600">Home</a>
   </nav>
 
   <main class="max-w-2xl mx-auto p-6">
@@ -28,19 +44,40 @@
       <form id="signupForm" class="space-y-4">
         <input id="signupName" type="text" class="w-full rounded-full border px-4 py-3" placeholder="Full name" required />
         <input id="signupEmail" type="email" class="w-full rounded-full border px-4 py-3" placeholder="Email" required />
-        <input id="signupPassword" type="password" class="w-full rounded-full border px-4 py-3" placeholder="Password (min 6 chars)" required />
+        <input id="signupPassword" type="password" class="w-full rounded-full border px-4 py-3" placeholder="Password (min 6 chars)" required minlength="6" />
         <div class="flex gap-3">
-          <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3">Sign up</button>
+          <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3 flex items-center justify-center gap-2">
+            <span>Sign up</span>
+            <div id="signupLoading" class="loading">⟳</div>
+          </button>
           <a href="index.html" class="flex-1 rounded-full border py-3 text-center">Login</a>
         </div>
-        <div id="signupError" class="hidden text-sm text-red-600"></div>
+        <div id="signupError" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg"></div>
       </form>
     </div>
   </main>
 
   <script src="app.js"></script>
   <script>
-    // signup form logic implemented in app.js
+    // Additional Firebase initialization for signup page
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("Signup page loaded");
+      
+      const firebaseConfig = {
+        apiKey: "AIzaSyDQFmVlYyJGc0GaY5F6p2fWKqrrYkrQzAo",
+        authDomain: "petrewardhub.firebaseapp.com",
+        projectId: "petrewardhub",
+        storageBucket: "petrewardhub.firebasestorage.app",
+        messagingSenderId: "1087250543825",
+        appId: "1:1087250543825:web:4d92bc084978fab9a0c1f0"
+      };
+
+      // Initialize Firebase
+      if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log("Firebase initialized on signup page");
+      }
+    });
   </script>
 </body>
 </html>
