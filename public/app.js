@@ -1,61 +1,8 @@
-/* =========================================================
-   PetRewardHub — Fixed Authentication & Firebase Issues
-========================================================= */
-
-// Firebase configuration
-const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyDQFmVlYyJGc0GaY5F6p2fWKqrrYkrQzAo",
-    authDomain: "petrewardhub.firebaseapp.com",
-    projectId: "petrewardhub",
-    storageBucket: "petrewardhub.firebasestorage.app",
-    messagingSenderId: "1087250543825",
-    appId: "1:1087250543825:web:4d92bc084978fab9a0c1f0"
-};
+// app.js - Simplified version that works with firebase-init.js
 
 const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbzmGjBk_WcIDS9CADLRODmn6tFmyTYICki-uBfvM7sgTBTiksSdOwVnLjrSXxOI_CQUSg/exec";
 
-// Global variables
-let auth = null;
-let db = null;
-
-/* ---------- FIREBASE INITIALIZATION ---------- */
-function initializeFirebase() {
-    console.log("🔄 Initializing Firebase...");
-    
-    try {
-        // Check if Firebase is loaded
-        if (typeof firebase === 'undefined') {
-            console.error("❌ Firebase SDK not loaded");
-            return false;
-        }
-
-        // Initialize Firebase app
-        let app;
-        if (!firebase.apps.length) {
-            app = firebase.initializeApp(FIREBASE_CONFIG);
-            console.log("✅ Firebase App initialized");
-        } else {
-            app = firebase.app();
-            console.log("✅ Firebase App already initialized");
-        }
-
-        // Initialize services
-        auth = firebase.auth();
-        db = firebase.firestore();
-        
-        console.log("✅ Firebase Auth & Firestore initialized");
-        return true;
-        
-    } catch (error) {
-        console.error("❌ Firebase initialization failed:", error);
-        return false;
-    }
-}
-
-// Initialize Firebase immediately when script loads
-initializeFirebase();
-
-/* ---------- HELPER FUNCTIONS ---------- */
+// Helper functions
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
@@ -90,50 +37,33 @@ function hideLoading(button) {
     button.disabled = false;
 }
 
-/* ---------- AUTHENTICATION FUNCTIONS ---------- */
-async function waitForAuth() {
-    return new Promise((resolve) => {
-        if (!auth) {
-            console.error("Auth not available");
-            resolve(null);
-            return;
-        }
-
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            unsubscribe();
-            resolve(user);
-        });
-    });
-}
-
+// Authentication functions
 async function signUpUser(email, password, name) {
-    console.log("🔄 Starting signup process...");
+    console.log("🔄 Starting signup...");
     
-    if (!auth) {
-        throw new Error("Authentication service not initialized. Please refresh the page.");
+    if (!firebase.auth) {
+        throw new Error("Authentication service not ready. Please wait...");
     }
 
     try {
-        // Create user with email and password
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
         console.log("✅ User created:", user.uid);
 
-        // Save user data to Firestore
-        if (db) {
-            await db.collection('users').doc(user.uid).set({
+        // Save to Firestore
+        if (firebase.firestore) {
+            await firebase.firestore().collection('users').doc(user.uid).set({
                 email: user.email,
                 name: name || '',
                 coins: 0,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            console.log("✅ User data saved to Firestore");
+            console.log("✅ User data saved");
         }
 
         return user;
-        
     } catch (error) {
         console.error("❌ Signup error:", error);
         throw error;
@@ -141,15 +71,15 @@ async function signUpUser(email, password, name) {
 }
 
 async function loginUser(email, password) {
-    console.log("🔄 Starting login process...");
+    console.log("🔄 Starting login...");
     
-    if (!auth) {
-        throw new Error("Authentication service not initialized. Please refresh the page.");
+    if (!firebase.auth) {
+        throw new Error("Authentication service not ready. Please wait...");
     }
 
     try {
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-        console.log("✅ Login successful:", userCredential.user.email);
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        console.log("✅ Login successful");
         return userCredential.user;
     } catch (error) {
         console.error("❌ Login error:", error);
@@ -157,20 +87,61 @@ async function loginUser(email, password) {
     }
 }
 
-/* ---------- PAGE INITIALIZERS ---------- */
+// Page initializers
+async function initSignupPage() {
+    console.log("📝 Initializing signup page...");
+    
+    const signupForm = $('#signupForm');
+    if (signupForm) {
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = $('#signupEmail').value.trim();
+            const password = $('#signupPassword').value.trim();
+            const name = $('#signupName').value.trim();
+            const errorEl = $('#signupError');
+            const submitBtn = signupForm.querySelector('button[type="submit"]');
+
+            if (!email || !password) {
+                showError(errorEl, 'Please fill in all fields');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError(errorEl, 'Password must be at least 6 characters');
+                return;
+            }
+
+            showLoading(submitBtn);
+            hideError(errorEl);
+
+            try {
+                await signUpUser(email, password, name);
+                hideError(errorEl);
+                
+                alert('🎉 Signup successful! Redirecting...');
+                setTimeout(() => {
+                    window.location.href = 'select-pet.html';
+                }, 2000);
+                
+            } catch (error) {
+                let errorMessage = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Email already registered. Please login instead.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Please enter a valid email address.';
+                }
+                showError(errorEl, errorMessage);
+            } finally {
+                hideLoading(submitBtn);
+            }
+        });
+    }
+}
+
 async function initIndexPage() {
     console.log("🏠 Initializing index page...");
     
-    const user = await waitForAuth();
-    if (user) {
-        console.log("👤 User already logged in, redirecting...");
-        setTimeout(() => {
-            window.location.href = 'select-pet.html';
-        }, 1000);
-        return;
-    }
-
-    // Setup login form
     const loginForm = $('#loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -181,7 +152,6 @@ async function initIndexPage() {
             const errorEl = $('#loginError');
             const submitBtn = loginForm.querySelector('button[type="submit"]');
 
-            // Validation
             if (!email || !password) {
                 showError(errorEl, 'Please fill in all fields');
                 return;
@@ -195,9 +165,7 @@ async function initIndexPage() {
                 hideError(errorEl);
                 closeLoginModal();
                 
-                // Show success message
                 alert('✅ Login successful! Redirecting...');
-                
                 setTimeout(() => {
                     window.location.href = 'select-pet.html';
                 }, 1500);
@@ -209,184 +177,33 @@ async function initIndexPage() {
             }
         });
     }
-
-    console.log("✅ Index page initialized");
 }
 
-async function initSignupPage() {
-    console.log("📝 Initializing signup page...");
+// Wait for Firebase to be ready, then initialize page
+window.addEventListener('firebaseReady', function() {
+    console.log("🎉 Firebase is ready! Initializing page...");
     
-    const user = await waitForAuth();
-    if (user) {
-        console.log("👤 User already logged in, redirecting...");
-        window.location.href = 'select-pet.html';
-        return;
-    }
-
-    const signupForm = $('#signupForm');
-    if (signupForm) {
-        signupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = $('#signupEmail').value.trim();
-            const password = $('#signupPassword').value.trim();
-            const name = $('#signupName').value.trim();
-            const errorEl = $('#signupError');
-            const submitBtn = signupForm.querySelector('button[type="submit"]');
-
-            // Validation
-            if (!email || !password) {
-                showError(errorEl, 'Please fill in all fields');
-                return;
-            }
-
-            if (password.length < 6) {
-                showError(errorEl, 'Password must be at least 6 characters long');
-                return;
-            }
-
-            showLoading(submitBtn);
-            hideError(errorEl);
-
-            try {
-                await signUpUser(email, password, name);
-                hideError(errorEl);
-                
-                // Show success message
-                alert('🎉 Signup successful! Redirecting to pet selection...');
-                
-                setTimeout(() => {
-                    window.location.href = 'select-pet.html';
-                }, 2000);
-                
-            } catch (error) {
-                let errorMessage = error.message;
-                
-                // User-friendly error messages
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'This email is already registered. Please login instead.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Please enter a valid email address.';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = 'Password is too weak. Please use a stronger password.';
-                }
-                
-                showError(errorEl, errorMessage);
-            } finally {
-                hideLoading(submitBtn);
-            }
-        });
-    }
-
-    console.log("✅ Signup page initialized");
-}
-
-async function initSelectPetPage() {
-    console.log("🐾 Initializing select pet page...");
+    const page = getCurrentPage();
+    console.log("📄 Current page:", page);
     
-    const user = await waitForAuth();
-    if (!user) {
-        alert('Please login first');
-        window.location.href = 'index.html';
-        return;
+    switch (page) {
+        case 'index.html':
+        case '':
+            initIndexPage();
+            break;
+        case 'signup.html':
+            initSignupPage();
+            break;
+        case 'select-pet.html':
+            // Will be handled by inline script
+            break;
+        default:
+            console.log("📄 Page handler not implemented:", page);
     }
-
-    console.log("✅ Select pet page ready for user:", user.email);
-}
-
-async function initQuizPage() {
-    console.log("❓ Initializing quiz page...");
-    
-    const user = await waitForAuth();
-    if (!user) {
-        alert('Please login first');
-        window.location.href = 'index.html';
-        return;
-    }
-
-    // Quiz logic here...
-    console.log("✅ Quiz page ready for user:", user.email);
-}
-
-async function initOffersPage() {
-    console.log("💰 Initializing offers page...");
-    
-    const user = await waitForAuth();
-    if (!user) {
-        alert('Please login first');
-        window.location.href = 'index.html';
-        return;
-    }
-
-    // Offers logic here...
-    console.log("✅ Offers page ready for user:", user.email);
-}
-
-/* ---------- MODAL FUNCTIONS ---------- */
-function openLoginModal() {
-    const modal = $('#loginModal');
-    if (modal) {
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function closeLoginModal() {
-    const modal = $('#loginModal');
-    if (modal) {
-        modal.classList.add('hidden');
-        document.body.style.overflow = 'auto';
-        
-        // Clear form
-        const form = $('#loginForm');
-        const errorEl = $('#loginError');
-        if (form) form.reset();
-        if (errorEl) hideError(errorEl);
-    }
-}
-
-/* ---------- ROUTER ---------- */
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("🚀 DOM loaded, current page:", getCurrentPage());
-    
-    // Re-initialize Firebase to ensure it's ready
-    if (!auth || !db) {
-        console.log("🔄 Re-initializing Firebase...");
-        initializeFirebase();
-    }
-
-    // Wait a moment for Firebase to fully initialize
-    setTimeout(() => {
-        const page = getCurrentPage();
-        
-        switch (page) {
-            case 'index.html':
-            case '':
-                initIndexPage();
-                break;
-            case 'signup.html':
-                initSignupPage();
-                break;
-            case 'select-pet.html':
-                initSelectPetPage();
-                break;
-            case 'quiz.html':
-                initQuizPage();
-                break;
-            case 'offers.html':
-                initOffersPage();
-                break;
-            default:
-                console.log("📄 Unknown page:", page);
-        }
-    }, 500);
 });
 
-// Global functions
-window.openLoginModal = openLoginModal;
-window.closeLoginModal = closeLoginModal;
-
-// Error boundary
-window.addEventListener('error', function(e) {
-    console.error('Global error:', e.error);
-});
+// If Firebase is already ready when we load
+if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+    console.log("🔥 Firebase already ready!");
+    window.dispatchEvent(new Event('firebaseReady'));
+}

@@ -7,11 +7,17 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
   
-  <!-- Firebase SDKs - LOAD THESE FIRST -->
+  <!-- Firebase SDKs - LOAD FIRST -->
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
-  
+
+  <!-- Firebase Initialization - LOAD SECOND -->
+  <script src="firebase-init.js"></script>
+
+  <!-- Your main JS - LOAD LAST -->
+  <script src="app.js" defer></script>
+
   <style>
     .loading {
       display: none;
@@ -88,22 +94,5 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
-  <script>
-    // Additional initialization for signup page
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log("🔧 Signup page additional initialization");
-      
-      // Force Firebase initialization
-      setTimeout(() => {
-        if (typeof firebase !== 'undefined') {
-          console.log("🔥 Firebase is available");
-        } else {
-          console.error("❌ Firebase not loaded");
-          alert('Error: Firebase not loaded. Please refresh the page.');
-        }
-      }, 1000);
-    });
-  </script>
 </body>
 </html>

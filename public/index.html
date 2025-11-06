@@ -9,15 +9,29 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Firebase SDKs (compat) -->
+  <!-- Firebase SDKs - LOAD FIRST -->
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
 
-  <!-- Your main JS -->
+  <!-- Firebase Initialization - LOAD SECOND -->
+  <script src="firebase-init.js"></script>
+
+  <!-- Your main JS - LOAD LAST -->
   <script src="app.js" defer></script>
 
   <style>
+    .loading {
+      display: none;
+    }
+    .loading.active {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
     .product-image {
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: zoom-in;
@@ -34,17 +48,6 @@
       transform: translateY(-5px);
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
-	  .loading {
-    display: none;
-  }
-  .loading.active {
-    display: inline-block;
-    animation: spin 1s linear infinite;
-  }
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
   </style>
 </head>
 <body class="font-sans bg-gradient-to-b from-[#e6f6ff] to-[#fff6e6] min-h-screen">
@@ -184,254 +187,31 @@
         </div>
 
         <form id="loginForm" class="space-y-4">
-  <input id="loginEmail" type="email" required placeholder="Email" class="w-full rounded-full border px-4 py-3" />
-  <input id="loginPassword" type="password" required placeholder="Password" class="w-full rounded-full border px-4 py-3" />
-  <div class="flex gap-3">
-    <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3 flex items-center justify-center gap-2">
-      <span>Log in</span>
-      <div id="loginLoading" class="loading">⟳</div>
-    </button>
-    <a href="signup.html" class="flex-1 rounded-full border py-3 text-center">Sign up</a>
-  </div>
-  <div id="loginError" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg"></div>
-</form>
+          <input id="loginEmail" type="email" required placeholder="Email" class="w-full rounded-full border px-4 py-3" />
+          <input id="loginPassword" type="password" required placeholder="Password" class="w-full rounded-full border px-4 py-3" />
+          <div class="flex gap-3">
+            <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3 flex items-center justify-center gap-2">
+              <span>Log in</span>
+              <div id="loginLoading" class="loading">⟳</div>
+            </button>
+            <a href="signup.html" class="flex-1 rounded-full border py-3 text-center">Sign up</a>
+          </div>
+          <div id="loginError" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg"></div>
+        </form>
 
       </div>
     </div>
   </div>
 
-  <!-- PRODUCT MODAL -->
-  <div id="productModal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/60"></div>
-    <div class="flex items-center justify-center min-h-screen p-4">
-      <div class="bg-white rounded-3xl p-6 w-full max-w-4xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        <button onclick="closeProductModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10 bg-white rounded-full p-2">
-          ✕
-        </button>
-        
-        <div id="productContent" class="grid md:grid-cols-2 gap-8">
-          <!-- Product images will be inserted here -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- IMAGE PREVIEW OVERLAY -->
-  <div id="imagePreview" class="fixed inset-0 z-50 hidden bg-black/80 items-center justify-center">
-    <div class="relative max-w-4xl max-h-full p-4">
-      <button onclick="closeImagePreview()" class="absolute -top-4 -right-4 text-white bg-red-500 rounded-full w-8 h-8 flex items-center justify-center">✕</button>
-      <img id="previewImage" src="" class="max-w-full max-h-[80vh] object-contain rounded-lg" alt="Preview">
+  <!-- Loading Overlay -->
+  <div id="globalLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-2xl p-6 text-center">
+      <div class="loading text-2xl mb-2">⟳</div>
+      <p class="text-slate-700">Loading...</p>
     </div>
   </div>
 
   <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDQFmVlYyJGc0GaY5F6p2fWKqrrYkrQzAo",
-      authDomain: "petrewardhub.firebaseapp.com",
-      projectId: "petrewardhub",
-      storageBucket: "petrewardhub.firebasestorage.app",
-      messagingSenderId: "1087250543825",
-      appId: "1:1087250543825:web:4d92bc084978fab9a0c1f0"
-    };
-
-    // Initialize Firebase if not already initialized
-    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-
-    // Product data
-    const products = {
-      'dog-toy': {
-        title: 'Premium Dog Chew Toy',
-        price: '100 coins',
-        images: [
-          'https://cdn-icons-png.flaticon.com/512/616/616554.png',
-          'https://cdn-icons-png.flaticon.com/512/3082/3082385.png',
-          'https://cdn-icons-png.flaticon.com/512/2937/2937857.png'
-        ],
-        description: 'Durable and interactive chew toy designed for dogs of all sizes. Made from safe, non-toxic materials that promote dental health and satisfy natural chewing instincts.',
-        features: [
-          'Made from 100% natural rubber',
-          'Promotes dental health',
-          'Suitable for all dog sizes',
-          'Non-toxic and safe',
-          'Long-lasting durability'
-        ],
-        specifications: {
-          'Material': 'Natural Rubber',
-          'Size': 'Medium (15cm)',
-          'Color': 'Assorted Colors',
-          'Age Range': 'All ages',
-          'Care': 'Hand wash with mild soap'
-        }
-      },
-      'cat-bed': {
-        title: 'Luxury Cat Cozy Bed',
-        price: '100 coins',
-        images: [
-          'https://cdn-icons-png.flaticon.com/512/616/616408.png',
-          'https://cdn-icons-png.flaticon.com/512/2202/2202112.png',
-          'https://cdn-icons-png.flaticon.com/512/1074/1074072.png'
-        ],
-        description: 'Ultra-soft and warm cat bed with raised edges for security and comfort. Perfect for napping and provides a sense of security for your feline friend.',
-        features: [
-          'Super soft plush material',
-          'Raised edges for security',
-          'Machine washable',
-          'Non-slip bottom',
-          'Perfect for cats of all sizes'
-        ],
-        specifications: {
-          'Material': 'Premium Plush',
-          'Size': '45cm diameter',
-          'Color': 'Gray & White',
-          'Filling': 'High-loft polyester',
-          'Care': 'Machine washable'
-        }
-      },
-      'feeder': {
-        title: 'Smart Automatic Feeder',
-        price: '100 coins',
-        images: [
-          'https://cdn-icons-png.flaticon.com/512/616/616430.png',
-          'https://cdn-icons-png.flaticon.com/512/3142/3142733.png',
-          'https://cdn-icons-png.flaticon.com/512/3022/3022555.png'
-        ],
-        description: 'Programmable automatic pet feeder with portion control and scheduling. Never worry about feeding your pet on time again with this smart solution.',
-        features: [
-          'Programmable feeding schedule',
-          'Portion control settings',
-          'Battery backup included',
-          'Easy to clean design',
-          'LCD display for easy programming'
-        ],
-        specifications: {
-          'Capacity': '4L food storage',
-          'Power': 'AC adapter + battery backup',
-          'Meals': 'Up to 4 meals per day',
-          'Material': 'Food-grade plastic',
-          'Display': 'LCD screen'
-        }
-      }
-    };
-
-    // Modal functions
-    function openProductModal(productId) {
-      const product = products[productId];
-      if (!product) return;
-
-      const modal = document.getElementById('productModal');
-      const content = document.getElementById('productContent');
-      
-      content.innerHTML = `
-        <!-- Image Gallery -->
-        <div class="space-y-4">
-          <div class="bg-gray-50 rounded-2xl p-4 flex items-center justify-center">
-            <img src="${product.images[0]}" 
-                 class="w-64 h-64 object-contain product-image cursor-zoom-in" 
-                 alt="${product.title}"
-                 onclick="showImagePreview(this, '${product.images[0]}')">
-          </div>
-          <div class="flex gap-2 justify-center">
-            ${product.images.map((img, index) => `
-              <img src="${img}" 
-                   class="w-16 h-16 object-contain border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 product-image" 
-                   alt="Thumbnail ${index + 1}"
-                   onclick="changeMainImage('${img}')"
-                   onmouseenter="showImagePreview(this, '${img}')">
-            `).join('')}
-          </div>
-        </div>
-
-        <!-- Product Details -->
-        <div class="space-y-6">
-          <div>
-            <h2 class="text-3xl font-bold text-slate-800">${product.title}</h2>
-            <div class="text-2xl font-bold text-yellow-500 mt-2">${product.price}</div>
-          </div>
-
-          <div>
-            <h3 class="text-lg font-semibold text-slate-700 mb-2">Description</h3>
-            <p class="text-slate-600 leading-relaxed">${product.description}</p>
-          </div>
-
-          <div>
-            <h3 class="text-lg font-semibold text-slate-700 mb-2">Key Features</h3>
-            <ul class="space-y-2">
-              ${product.features.map(feature => `
-                <li class="flex items-center text-slate-600">
-                  <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
-                  ${feature}
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-
-          <div>
-            <h3 class="text-lg font-semibold text-slate-700 mb-2">Specifications</h3>
-            <div class="grid gap-2">
-              ${Object.entries(product.specifications).map(([key, value]) => `
-                <div class="flex justify-between border-b border-gray-100 pb-2">
-                  <span class="text-slate-600 font-medium">${key}:</span>
-                  <span class="text-slate-800">${value}</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-
-          <div class="bg-blue-50 rounded-xl p-4">
-            <h4 class="font-semibold text-blue-800 mb-2">🎁 How to Get This Reward</h4>
-            <p class="text-blue-700 text-sm">
-              1. Complete the pet quiz<br>
-              2. Earn 100 coins from offers<br>
-              3. Redeem for this free item!
-            </p>
-          </div>
-
-          <button onclick="startEarning()" class="w-full rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-4 font-semibold text-lg hover:shadow-lg transition-all">
-            Start Earning Coins
-          </button>
-        </div>
-      `;
-
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeProductModal() {
-      const modal = document.getElementById('productModal');
-      modal.classList.add('hidden');
-      document.body.style.overflow = 'auto';
-    }
-
-    function changeMainImage(src) {
-      const mainImage = document.querySelector('#productContent .bg-gray-50 img');
-      if (mainImage) {
-        mainImage.src = src;
-      }
-    }
-
-    function showImagePreview(element, imageSrc) {
-      const preview = document.getElementById('imagePreview');
-      const previewImage = document.getElementById('previewImage');
-      
-      previewImage.src = imageSrc;
-      preview.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeImagePreview() {
-      const preview = document.getElementById('imagePreview');
-      preview.classList.add('hidden');
-      document.body.style.overflow = 'auto';
-    }
-
-    function startEarning() {
-      closeProductModal();
-      window.location.href = 'select-pet.html';
-    }
-
     // Global modal functions
     function openLoginModal() { 
       const modal = document.getElementById('loginModal');
@@ -447,7 +227,6 @@
         modal.classList.add('hidden'); 
         document.body.style.overflow = 'auto'; 
         
-        // Clear form
         const form = document.getElementById('loginForm');
         const errorEl = document.getElementById('loginError');
         if (form) form.reset();
@@ -458,31 +237,26 @@
       }
     }
 
-    // Close modals on outside click
-    document.addEventListener('click', (e) => {
-      const productModal = document.getElementById('productModal');
-      const loginModal = document.getElementById('loginModal');
-      const imagePreview = document.getElementById('imagePreview');
-      
-      if (productModal && e.target === productModal) {
-        closeProductModal();
-      }
-      if (loginModal && e.target === loginModal) {
-        closeLoginModal();
-      }
-      if (imagePreview && e.target === imagePreview) {
-        closeImagePreview();
-      }
-    });
+    // Product modal functions (will be used by app.js)
+    function openProductModal(productId) {
+      console.log('Opening product modal:', productId);
+    }
 
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeProductModal();
-        closeLoginModal();
-        closeImagePreview();
-      }
-    });
+    function closeProductModal() {
+      console.log('Closing product modal');
+    }
+
+    function showImagePreview(element, imageSrc) {
+      console.log('Showing image preview:', imageSrc);
+    }
+
+    function closeImagePreview() {
+      console.log('Closing image preview');
+    }
+
+    function startEarning() {
+      window.location.href = 'select-pet.html';
+    }
   </script>
 </body>
 </html>
