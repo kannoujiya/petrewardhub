@@ -184,18 +184,17 @@
         </div>
 
         <form id="loginForm" class="space-y-4">
-          <input id="loginEmail" type="email" required placeholder="Email" class="w-full rounded-full border px-4 py-3" />
-          <input id="loginPassword" type="password" required placeholder="Password" class="w-full rounded-full border px-4 py-3" />
-          <div class="flex gap-3">
-          <!-- <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3">Log in</button> -->
-		  <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3 flex items-center justify-center gap-2">
-  <span>Log in</span>
-  <div id="loginLoading" class="loading">⟳</div>
-</button>
-            <a href="signup.html" class="flex-1 rounded-full border py-3 text-center">Sign up</a>
-          </div>
-          <div id="loginError" class="hidden text-sm text-red-600"></div>
-        </form>
+  <input id="loginEmail" type="email" required placeholder="Email" class="w-full rounded-full border px-4 py-3" />
+  <input id="loginPassword" type="password" required placeholder="Password" class="w-full rounded-full border px-4 py-3" />
+  <div class="flex gap-3">
+    <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3 flex items-center justify-center gap-2">
+      <span>Log in</span>
+      <div id="loginLoading" class="loading">⟳</div>
+    </button>
+    <a href="signup.html" class="flex-1 rounded-full border py-3 text-center">Sign up</a>
+  </div>
+  <div id="loginError" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg"></div>
+</form>
 
       </div>
     </div>

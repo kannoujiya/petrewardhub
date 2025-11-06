@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
   
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDKs - LOAD THESE FIRST -->
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
@@ -24,6 +24,9 @@
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+    .error-box {
+      transition: all 0.3s ease;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-b from-[#fff7cc] to-[#e0f2fe] min-h-screen">
@@ -33,50 +36,73 @@
       <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-10 h-10">
       <div class="font-bold text-slate-800">PetRewardHub</div>
     </div>
-    <a href="index.html" class="text-slate-700 hover:text-sky-600">Home</a>
+    <a href="index.html" class="text-slate-700 hover:text-sky-600 font-medium">← Back to Home</a>
   </nav>
 
   <main class="max-w-2xl mx-auto p-6">
     <div class="bg-white rounded-3xl shadow-lg p-8">
-      <h2 class="text-2xl font-bold mb-3 text-slate-800">Create your account</h2>
-      <p class="text-slate-500 mb-6">Join now and start earning coins for your pet.</p>
+      <div class="text-center mb-6">
+        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-16 h-16 mx-auto mb-4" alt="PetRewardHub">
+        <h2 class="text-3xl font-bold text-slate-800">Join PetRewardHub</h2>
+        <p class="text-slate-500 mt-2">Create your account and start earning rewards for your pet!</p>
+      </div>
 
       <form id="signupForm" class="space-y-4">
-        <input id="signupName" type="text" class="w-full rounded-full border px-4 py-3" placeholder="Full name" required />
-        <input id="signupEmail" type="email" class="w-full rounded-full border px-4 py-3" placeholder="Email" required />
-        <input id="signupPassword" type="password" class="w-full rounded-full border px-4 py-3" placeholder="Password (min 6 chars)" required minlength="6" />
-        <div class="flex gap-3">
-          <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3 flex items-center justify-center gap-2">
-            <span>Sign up</span>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+          <input id="signupName" type="text" class="w-full rounded-full border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" placeholder="Enter your full name" required />
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+          <input id="signupEmail" type="email" class="w-full rounded-full border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" placeholder="Enter your email" required />
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+          <input id="signupPassword" type="password" class="w-full rounded-full border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent" placeholder="Create a password (min 6 characters)" required minlength="6" />
+        </div>
+        
+        <div class="flex gap-3 pt-4">
+          <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3 font-semibold flex items-center justify-center gap-2 hover:shadow-lg transition-all">
+            <span>Create Account</span>
             <div id="signupLoading" class="loading">⟳</div>
           </button>
-          <a href="index.html" class="flex-1 rounded-full border py-3 text-center">Login</a>
+          <a href="index.html" class="flex-1 rounded-full border border-gray-300 py-3 text-center font-medium hover:bg-gray-50 transition-colors">Login Instead</a>
         </div>
-        <div id="signupError" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg"></div>
+        
+        <div id="signupError" class="hidden error-box text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-200"></div>
       </form>
+
+      <div class="mt-6 text-center text-sm text-slate-500">
+        By signing up, you agree to our <a href="#" class="text-sky-600 hover:underline">Terms of Service</a> and <a href="#" class="text-sky-600 hover:underline">Privacy Policy</a>.
+      </div>
     </div>
   </main>
 
+  <!-- Loading Overlay -->
+  <div id="globalLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-2xl p-6 text-center">
+      <div class="loading text-2xl mb-2">⟳</div>
+      <p class="text-slate-700">Processing...</p>
+    </div>
+  </div>
+
   <script src="app.js"></script>
   <script>
-    // Additional Firebase initialization for signup page
+    // Additional initialization for signup page
     document.addEventListener('DOMContentLoaded', function() {
-      console.log("Signup page loaded");
+      console.log("🔧 Signup page additional initialization");
       
-      const firebaseConfig = {
-        apiKey: "AIzaSyDQFmVlYyJGc0GaY5F6p2fWKqrrYkrQzAo",
-        authDomain: "petrewardhub.firebaseapp.com",
-        projectId: "petrewardhub",
-        storageBucket: "petrewardhub.firebasestorage.app",
-        messagingSenderId: "1087250543825",
-        appId: "1:1087250543825:web:4d92bc084978fab9a0c1f0"
-      };
-
-      // Initialize Firebase
-      if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-        console.log("Firebase initialized on signup page");
-      }
+      // Force Firebase initialization
+      setTimeout(() => {
+        if (typeof firebase !== 'undefined') {
+          console.log("🔥 Firebase is available");
+        } else {
+          console.error("❌ Firebase not loaded");
+          alert('Error: Firebase not loaded. Please refresh the page.');
+        }
+      }, 1000);
     });
   </script>
 </body>

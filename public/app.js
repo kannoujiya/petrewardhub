@@ -1,549 +1,392 @@
 /* =========================================================
-   PetRewardHub — Fixed app.js with working authentication
+   PetRewardHub — Fixed Authentication & Firebase Issues
 ========================================================= */
 
-/* ---------- 1) FIREBASE CONFIG ---------- */
+// Firebase configuration
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDQFmVlYyJGc0GaY5F6p2fWKqrrYkrQzAo",
-  authDomain: "petrewardhub.firebaseapp.com",
-  projectId: "petrewardhub",
-  storageBucket: "petrewardhub.firebasestorage.app",
-  messagingSenderId: "1087250543825",
-  appId: "1:1087250543825:web:4d92bc084978fab9a0c1f0"
+    apiKey: "AIzaSyDQFmVlYyJGc0GaY5F6p2fWKqrrYkrQzAo",
+    authDomain: "petrewardhub.firebaseapp.com",
+    projectId: "petrewardhub",
+    storageBucket: "petrewardhub.firebasestorage.app",
+    messagingSenderId: "1087250543825",
+    appId: "1:1087250543825:web:4d92bc084978fab9a0c1f0"
 };
 
 const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbzmGjBk_WcIDS9CADLRODmn6tFmyTYICki-uBfvM7sgTBTiksSdOwVnLjrSXxOI_CQUSg/exec";
 
-/* ---------- 2) FIREBASE INITIALIZATION ---------- */
-let auth, db;
+// Global variables
+let auth = null;
+let db = null;
 
+/* ---------- FIREBASE INITIALIZATION ---------- */
 function initializeFirebase() {
-  try {
-    if (typeof firebase === 'undefined') {
-      console.error("Firebase SDK not loaded");
-      return false;
+    console.log("🔄 Initializing Firebase...");
+    
+    try {
+        // Check if Firebase is loaded
+        if (typeof firebase === 'undefined') {
+            console.error("❌ Firebase SDK not loaded");
+            return false;
+        }
+
+        // Initialize Firebase app
+        let app;
+        if (!firebase.apps.length) {
+            app = firebase.initializeApp(FIREBASE_CONFIG);
+            console.log("✅ Firebase App initialized");
+        } else {
+            app = firebase.app();
+            console.log("✅ Firebase App already initialized");
+        }
+
+        // Initialize services
+        auth = firebase.auth();
+        db = firebase.firestore();
+        
+        console.log("✅ Firebase Auth & Firestore initialized");
+        return true;
+        
+    } catch (error) {
+        console.error("❌ Firebase initialization failed:", error);
+        return false;
     }
-    
-    if (!firebase.apps.length) {
-      firebase.initializeApp(FIREBASE_CONFIG);
-    }
-    
-    auth = firebase.auth();
-    db = firebase.firestore();
-    
-    console.log("Firebase initialized successfully");
-    return true;
-  } catch (error) {
-    console.error("Firebase initialization failed:", error);
-    return false;
-  }
 }
 
-// Initialize immediately
+// Initialize Firebase immediately when script loads
 initializeFirebase();
 
-/* ---------- 3) HELPER FUNCTIONS ---------- */
-const $ = (s) => document.querySelector(s);
-const $$ = (s) => Array.from(document.querySelectorAll(s));
+/* ---------- HELPER FUNCTIONS ---------- */
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
-const path = () => (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-const isIndex = () => /(^$|index\.html$)/.test(path());
-const isSelectPet = () => path() === 'select-pet.html';
-const isQuiz = () => path() === 'quiz.html';
-const isOffers = () => path() === 'offers.html';
-const isClaim = () => path() === 'claim.html';
-const isSignup = () => path() === 'signup.html';
+function getCurrentPage() {
+    const path = window.location.pathname.split('/').pop() || 'index.html';
+    return path.toLowerCase();
+}
 
-const PETS = ["Dog", "Cat", "Bird", "Rabbit", "Small Mammal", "Reptile", "Fish", "Ferret", "Horse"];
-
-const QUIZ_BANK = {
-  Dog: [
-    { q: "What size is your dog?", a: ["Small (under 20 lbs)", "Medium (20–50 lbs)", "Large (50+ lbs)"] },
-    { q: "Food sensitivities?", a: ["Yes", "No"] },
-    { q: "Activity level?", a: ["Low", "Moderate", "High"] },
-    { q: "Enjoys chew toys?", a: ["Yes", "Sometimes", "No"] },
-    { q: "Use GPS/camera gadget?", a: ["Yes", "Maybe", "No"] }
-  ],
-  Cat: [
-    { q: "Indoor or outdoor?", a: ["Indoor", "Outdoor", "Both"] },
-    { q: "Age group?", a: ["Kitten", "Adult", "Senior"] },
-    { q: "Likes to climb?", a: ["Yes", "No"] },
-    { q: "Food preference?", a: ["Wet", "Dry", "Both"] },
-    { q: "Use cat toys?", a: ["Often", "Sometimes", "Never"] }
-  ]
-};
-
-/* ---------- 4) AUTHENTICATION FUNCTIONS ---------- */
-function checkAuthState() {
-  return new Promise((resolve) => {
-    if (!auth) {
-      console.error("Auth not initialized");
-      resolve(null);
-      return;
+function showError(element, message) {
+    if (element) {
+        element.textContent = message;
+        element.classList.remove('hidden');
     }
+}
 
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      unsubscribe();
-      console.log("Auth state changed:", user ? user.email : "No user");
-      resolve(user);
-    }, (error) => {
-      console.error("Auth state error:", error);
-      resolve(null);
+function hideError(element) {
+    if (element) {
+        element.textContent = '';
+        element.classList.add('hidden');
+    }
+}
+
+function showLoading(button) {
+    const loading = button.querySelector('.loading');
+    if (loading) loading.classList.add('active');
+    button.disabled = true;
+}
+
+function hideLoading(button) {
+    const loading = button.querySelector('.loading');
+    if (loading) loading.classList.remove('active');
+    button.disabled = false;
+}
+
+/* ---------- AUTHENTICATION FUNCTIONS ---------- */
+async function waitForAuth() {
+    return new Promise((resolve) => {
+        if (!auth) {
+            console.error("Auth not available");
+            resolve(null);
+            return;
+        }
+
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            unsubscribe();
+            resolve(user);
+        });
     });
-  });
 }
 
-async function handleSignup(email, password, name) {
-  try {
-    console.log("Starting signup for:", email);
-    
-    if (!auth) {
-      throw new Error("Authentication service not available");
-    }
-
-    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-    const user = userCredential.user;
-    
-    console.log("User created:", user.uid);
-
-    // Save user data to Firestore
-    if (db) {
-      await db.collection('users').doc(user.uid).set({
-        email: user.email,
-        name: name || '',
-        coins: 0,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      console.log("User data saved to Firestore");
-    }
-
-    return { success: true, user };
-  } catch (error) {
-    console.error("Signup error:", error);
-    return { success: false, error: error.message };
-  }
-}
-
-async function handleLogin(email, password) {
-  try {
-    console.log("Attempting login for:", email);
+async function signUpUser(email, password, name) {
+    console.log("🔄 Starting signup process...");
     
     if (!auth) {
-      throw new Error("Authentication service not available");
+        throw new Error("Authentication service not initialized. Please refresh the page.");
     }
 
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    console.log("Login successful:", userCredential.user.email);
-    
-    return { success: true, user: userCredential.user };
-  } catch (error) {
-    console.error("Login error:", error);
-    return { success: false, error: error.message };
-  }
-}
-
-/* ---------- 5) PAGE INITIALIZERS ---------- */
-async function initIndex() {
-  console.log("Initializing index page");
-  
-  const user = await checkAuthState();
-  if (user) {
-    console.log("User already logged in, redirecting to select-pet");
-    setTimeout(() => {
-      window.location.href = 'select-pet.html';
-    }, 500);
-    return;
-  }
-
-  // Login form handler
-  const loginForm = $('#loginForm');
-  if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      console.log("Login form submitted");
-      
-      const email = $('#loginEmail').value.trim();
-      const password = $('#loginPassword').value.trim();
-      const errorEl = $('#loginError');
-
-      if (!email || !password) {
-        if (errorEl) {
-          errorEl.textContent = 'Please fill all fields';
-          errorEl.classList.remove('hidden');
-        }
-        return;
-      }
-
-      const result = await handleLogin(email, password);
-      
-      if (result.success) {
-        if (errorEl) errorEl.classList.add('hidden');
-        closeLoginModal();
-        setTimeout(() => {
-          window.location.href = 'select-pet.html';
-        }, 1000);
-      } else {
-        if (errorEl) {
-          errorEl.textContent = result.error;
-          errorEl.classList.remove('hidden');
-        }
-      }
-    });
-  }
-}
-
-async function initSignup() {
-  console.log("Initializing signup page");
-  
-  const user = await checkAuthState();
-  if (user) {
-    console.log("User already logged in, redirecting to select-pet");
-    window.location.href = 'select-pet.html';
-    return;
-  }
-
-  const signupForm = $('#signupForm');
-  if (signupForm) {
-    signupForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      console.log("Signup form submitted");
-      
-      const email = $('#signupEmail').value.trim();
-      const password = $('#signupPassword').value.trim();
-      const name = $('#signupName').value.trim();
-      const errorEl = $('#signupError');
-
-      if (!email || !password) {
-        if (errorEl) {
-          errorEl.textContent = 'Please fill all fields';
-          errorEl.classList.remove('hidden');
-        }
-        return;
-      }
-
-      if (password.length < 6) {
-        if (errorEl) {
-          errorEl.textContent = 'Password must be at least 6 characters';
-          errorEl.classList.remove('hidden');
-        }
-        return;
-      }
-
-      const result = await handleSignup(email, password, name);
-      
-      if (result.success) {
-        if (errorEl) {
-          errorEl.textContent = '';
-          errorEl.classList.add('hidden');
-        }
-        alert('🎉 Signup successful! Redirecting...');
-        setTimeout(() => {
-          window.location.href = 'select-pet.html';
-        }, 1500);
-      } else {
-        if (errorEl) {
-          errorEl.textContent = result.error;
-          errorEl.classList.remove('hidden');
-        }
-      }
-    });
-  }
-}
-
-async function initSelect() {
-  console.log("Initializing select pet page");
-  
-  const user = await checkAuthState();
-  if (!user) {
-    alert('Please login first');
-    window.location.href = 'index.html';
-    return;
-  }
-
-  console.log("User authenticated, showing pet selection");
-}
-
-async function initQuiz() {
-  console.log("Initializing quiz page");
-  
-  const user = await checkAuthState();
-  if (!user) {
-    alert('Please login first');
-    window.location.href = 'index.html';
-    return;
-  }
-
-  try {
-    const userDoc = await db.collection('users').doc(user.uid).get();
-    const pet = userDoc.data()?.selectedPet || 'Dog';
-    const bank = QUIZ_BANK[pet] || QUIZ_BANK.Dog;
-    const box = $('#questionBox');
-    const title = $('#quizTitle');
-    
-    if (title) title.textContent = `Quiz for ${pet}`;
-    
-    let currentQuestion = 0;
-    let answers = [];
-
-    function renderQuestion() {
-      const question = bank[currentQuestion];
-      box.innerHTML = `
-        <div class="mb-6">
-          <div class="text-xl font-bold text-slate-800 mb-4">${question.q}</div>
-          <div class="space-y-3">
-            ${question.a.map(option => `
-              <div class="petCard cursor-pointer p-4 text-center hover:bg-blue-50 transition-colors border border-gray-200 rounded-xl" 
-                   onclick="selectAnswer('${option}')">
-                ${option}
-              </div>
-            `).join('')}
-          </div>
-          <div class="text-sm text-slate-500 mt-4 text-center">
-            Question ${currentQuestion + 1} of ${bank.length}
-          </div>
-        </div>
-      `;
-    }
-
-    window.selectAnswer = (answer) => {
-      answers[currentQuestion] = answer;
-      
-      if (currentQuestion < bank.length - 1) {
-        currentQuestion++;
-        renderQuestion();
-      } else {
-        finishQuiz();
-      }
-    };
-
-    async function finishQuiz() {
-      try {
-        await db.collection('users').doc(user.uid).set({
-          quizAnswers: answers,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+    try {
+        // Create user with email and password
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
         
-        window.location.href = 'offers.html';
-      } catch (error) {
-        console.error('Error saving quiz:', error);
-        alert('Error saving quiz answers. Please try again.');
-      }
-    }
+        console.log("✅ User created:", user.uid);
 
-    renderQuestion();
-  } catch (error) {
-    console.error('Quiz initialization error:', error);
-    alert('Error loading quiz. Please try again.');
-  }
-}
-
-async function initOffers() {
-  console.log("Initializing offers page");
-  
-  const user = await checkAuthState();
-  if (!user) {
-    alert('Please login first');
-    window.location.href = 'index.html';
-    return;
-  }
-
-  const emailEl = $('#userEmail');
-  if (emailEl) emailEl.textContent = user.email;
-
-  // Coin listener
-  if (db) {
-    db.collection('users').doc(user.uid).onSnapshot((doc) => {
-      const coins = doc.data()?.coins || 0;
-      const coinEl = $('#coinCount');
-      if (coinEl) coinEl.textContent = coins;
-      
-      const claimArea = $('#claimArea');
-      const claimText = $('#claimText');
-      if (claimArea && claimText) {
-        if (coins >= 100) {
-          claimArea.classList.remove('hidden');
-          claimText.textContent = `You have ${coins} coins. Redeem 100 coins for a free gadget.`;
-        } else {
-          claimArea.classList.add('hidden');
+        // Save user data to Firestore
+        if (db) {
+            await db.collection('users').doc(user.uid).set({
+                email: user.email,
+                name: name || '',
+                coins: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log("✅ User data saved to Firestore");
         }
-      }
-    });
-  }
 
-  // Claim modal handlers
-  $('#openClaim')?.addEventListener('click', () => {
-    $('#claimModal')?.classList.remove('hidden');
-  });
-  
-  $('#claimCancel')?.addEventListener('click', () => {
-    $('#claimModal')?.classList.add('hidden');
-    const status = $('#claimStatus');
-    if (status) status.textContent = '';
-  });
-  
-  $('#claimSubmit')?.addEventListener('click', submitClaim);
+        return user;
+        
+    } catch (error) {
+        console.error("❌ Signup error:", error);
+        throw error;
+    }
 }
 
-/* ---------- 6) CLAIM FUNCTION ---------- */
-async function submitClaim() {
-  const name = $('#claimName')?.value?.trim();
-  const address = $('#claimAddress')?.value?.trim();
-  const email = $('#claimEmail')?.value?.trim();
-  const statusEl = $('#claimStatus');
-
-  if (!name || !address || !email) {
-    alert('Please fill all fields');
-    return;
-  }
-
-  const user = await checkAuthState();
-  if (!user) {
-    alert('Login required');
-    window.location.href = 'index.html';
-    return;
-  }
-
-  if (statusEl) statusEl.textContent = 'Submitting...';
-
-  try {
-    // Deduct coins
-    const userRef = db.collection('users').doc(user.uid);
-    await db.runTransaction(async (transaction) => {
-      const doc = await transaction.get(userRef);
-      const coins = doc.data()?.coins || 0;
-      
-      if (coins < 100) {
-        throw new Error('Insufficient coins');
-      }
-      
-      transaction.update(userRef, {
-        coins: coins - 100,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    });
-
-    // Get pet info
-    const userDoc = await userRef.get();
-    const pet = userDoc.data()?.selectedPet || '';
-
-    // Submit to Google Sheets
-    const payload = {
-      userUid: user.uid,
-      userEmail: email,
-      pet: pet,
-      offerTitle: 'Redeem 100 coins',
-      name: name,
-      address: address,
-      claimedAt: new Date().toISOString()
-    };
-
-    const response = await fetch(SHEETS_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (response.ok) {
-      if (statusEl) statusEl.textContent = '✅ Claim submitted! Item will arrive in 1-2 weeks.';
-      setTimeout(() => {
-        $('#claimModal')?.classList.add('hidden');
-      }, 3000);
-    } else {
-      throw new Error('Failed to submit claim');
+async function loginUser(email, password) {
+    console.log("🔄 Starting login process...");
+    
+    if (!auth) {
+        throw new Error("Authentication service not initialized. Please refresh the page.");
     }
-  } catch (error) {
-    console.error('Claim error:', error);
-    if (statusEl) statusEl.textContent = `Error: ${error.message}`;
-  }
+
+    try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        console.log("✅ Login successful:", userCredential.user.email);
+        return userCredential.user;
+    } catch (error) {
+        console.error("❌ Login error:", error);
+        throw error;
+    }
 }
 
-/* ---------- 7) ROUTER ---------- */
-document.addEventListener('DOMContentLoaded', function() {
-  console.log("DOM loaded, initializing page:", path());
-  
-  // Wait a bit for Firebase to initialize
-  setTimeout(() => {
-    if (isIndex()) {
-      initIndex();
-    } else if (isSignup()) {
-      initSignup();
-    } else if (isSelectPet()) {
-      initSelect();
-    } else if (isQuiz()) {
-      initQuiz();
-    } else if (isOffers()) {
-      initOffers();
+/* ---------- PAGE INITIALIZERS ---------- */
+async function initIndexPage() {
+    console.log("🏠 Initializing index page...");
+    
+    const user = await waitForAuth();
+    if (user) {
+        console.log("👤 User already logged in, redirecting...");
+        setTimeout(() => {
+            window.location.href = 'select-pet.html';
+        }, 1000);
+        return;
     }
-  }, 100);
-});
 
-/* ---------- 8) GLOBAL MODAL FUNCTIONS ---------- */
+    // Setup login form
+    const loginForm = $('#loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = $('#loginEmail').value.trim();
+            const password = $('#loginPassword').value.trim();
+            const errorEl = $('#loginError');
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+
+            // Validation
+            if (!email || !password) {
+                showError(errorEl, 'Please fill in all fields');
+                return;
+            }
+
+            showLoading(submitBtn);
+            hideError(errorEl);
+
+            try {
+                await loginUser(email, password);
+                hideError(errorEl);
+                closeLoginModal();
+                
+                // Show success message
+                alert('✅ Login successful! Redirecting...');
+                
+                setTimeout(() => {
+                    window.location.href = 'select-pet.html';
+                }, 1500);
+                
+            } catch (error) {
+                showError(errorEl, error.message);
+            } finally {
+                hideLoading(submitBtn);
+            }
+        });
+    }
+
+    console.log("✅ Index page initialized");
+}
+
+async function initSignupPage() {
+    console.log("📝 Initializing signup page...");
+    
+    const user = await waitForAuth();
+    if (user) {
+        console.log("👤 User already logged in, redirecting...");
+        window.location.href = 'select-pet.html';
+        return;
+    }
+
+    const signupForm = $('#signupForm');
+    if (signupForm) {
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = $('#signupEmail').value.trim();
+            const password = $('#signupPassword').value.trim();
+            const name = $('#signupName').value.trim();
+            const errorEl = $('#signupError');
+            const submitBtn = signupForm.querySelector('button[type="submit"]');
+
+            // Validation
+            if (!email || !password) {
+                showError(errorEl, 'Please fill in all fields');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError(errorEl, 'Password must be at least 6 characters long');
+                return;
+            }
+
+            showLoading(submitBtn);
+            hideError(errorEl);
+
+            try {
+                await signUpUser(email, password, name);
+                hideError(errorEl);
+                
+                // Show success message
+                alert('🎉 Signup successful! Redirecting to pet selection...');
+                
+                setTimeout(() => {
+                    window.location.href = 'select-pet.html';
+                }, 2000);
+                
+            } catch (error) {
+                let errorMessage = error.message;
+                
+                // User-friendly error messages
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'This email is already registered. Please login instead.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Please enter a valid email address.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak. Please use a stronger password.';
+                }
+                
+                showError(errorEl, errorMessage);
+            } finally {
+                hideLoading(submitBtn);
+            }
+        });
+    }
+
+    console.log("✅ Signup page initialized");
+}
+
+async function initSelectPetPage() {
+    console.log("🐾 Initializing select pet page...");
+    
+    const user = await waitForAuth();
+    if (!user) {
+        alert('Please login first');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    console.log("✅ Select pet page ready for user:", user.email);
+}
+
+async function initQuizPage() {
+    console.log("❓ Initializing quiz page...");
+    
+    const user = await waitForAuth();
+    if (!user) {
+        alert('Please login first');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    // Quiz logic here...
+    console.log("✅ Quiz page ready for user:", user.email);
+}
+
+async function initOffersPage() {
+    console.log("💰 Initializing offers page...");
+    
+    const user = await waitForAuth();
+    if (!user) {
+        alert('Please login first');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    // Offers logic here...
+    console.log("✅ Offers page ready for user:", user.email);
+}
+
+/* ---------- MODAL FUNCTIONS ---------- */
 function openLoginModal() {
-  const modal = document.getElementById('loginModal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
+    const modal = $('#loginModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
 }
 
 function closeLoginModal() {
-  const modal = document.getElementById('loginModal');
-  if (modal) {
-    modal.classList.add('hidden');
-    document.body.style.overflow = 'auto';
+    const modal = $('#loginModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        
+        // Clear form
+        const form = $('#loginForm');
+        const errorEl = $('#loginError');
+        if (form) form.reset();
+        if (errorEl) hideError(errorEl);
+    }
+}
+
+/* ---------- ROUTER ---------- */
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("🚀 DOM loaded, current page:", getCurrentPage());
     
-    const form = document.getElementById('loginForm');
-    const errorEl = document.getElementById('loginError');
-    if (form) form.reset();
-    if (errorEl) {
-      errorEl.textContent = '';
-      errorEl.classList.add('hidden');
+    // Re-initialize Firebase to ensure it's ready
+    if (!auth || !db) {
+        console.log("🔄 Re-initializing Firebase...");
+        initializeFirebase();
     }
-  }
-}
 
-// Utility functions for product modals
-function openProductModal(productId) {
-  console.log('Opening product modal:', productId);
-}
-
-function closeProductModal() {
-  console.log('Closing product modal');
-}
-
-function showImagePreview(element, imageSrc) {
-  console.log('Showing image preview:', imageSrc);
-}
-
-function closeImagePreview() {
-  console.log('Closing image preview');
-}
-
-function startEarning() {
-  window.location.href = 'select-pet.html';
-}
-
-// Close modals on outside click
-document.addEventListener('click', function(e) {
-  const modals = ['loginModal', 'productModal', 'imagePreview', 'claimModal'];
-  modals.forEach(modalId => {
-    const modal = document.getElementById(modalId);
-    if (modal && e.target === modal) {
-      if (modalId === 'loginModal') closeLoginModal();
-      if (modalId === 'productModal') closeProductModal();
-      if (modalId === 'imagePreview') closeImagePreview();
-      if (modalId === 'claimModal') $('#claimModal')?.classList.add('hidden');
-    }
-  });
+    // Wait a moment for Firebase to fully initialize
+    setTimeout(() => {
+        const page = getCurrentPage();
+        
+        switch (page) {
+            case 'index.html':
+            case '':
+                initIndexPage();
+                break;
+            case 'signup.html':
+                initSignupPage();
+                break;
+            case 'select-pet.html':
+                initSelectPetPage();
+                break;
+            case 'quiz.html':
+                initQuizPage();
+                break;
+            case 'offers.html':
+                initOffersPage();
+                break;
+            default:
+                console.log("📄 Unknown page:", page);
+        }
+    }, 500);
 });
 
-// Close on Escape key
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    closeLoginModal();
-    closeProductModal();
-    closeImagePreview();
-    $('#claimModal')?.classList.add('hidden');
-  }
+// Global functions
+window.openLoginModal = openLoginModal;
+window.closeLoginModal = closeLoginModal;
+
+// Error boundary
+window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error);
 });
