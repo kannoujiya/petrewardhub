@@ -28,7 +28,52 @@ body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", 
 /* subtle hidden helper */
 .hidden { display:none; }
 
+/* Product image hover effects */
+.product-image {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: zoom-in;
+}
+.product-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Reward card animations */
+.reward-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.reward-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* Modal animations */
+.modal-enter {
+  animation: modalEnter 0.3s ease-out;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Image preview zoom */
+.image-zoom {
+  transition: transform 0.3s ease;
+}
+.image-zoom:hover {
+  transform: scale(1.1);
+}
+
 /* small responsive tweak */
 @media (max-width:640px) {
   .petCard { padding: 14px; border-radius: 14px; }
+  .reward-card { margin-bottom: 1rem; }
 }

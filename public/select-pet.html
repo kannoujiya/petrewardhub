@@ -1,46 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Select Pet — PetRewardHub</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Select Your Pet — PetRewardHub</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg,#3b82f6,#facc15);
+      font-family: "Inter",sans-serif;
+      margin:0;padding:0;min-height:100vh;
+      display:flex;flex-direction:column;
+    }
+    .petCard {
+      background:white;border-radius:20px;padding:20px;
+      text-align:center;cursor:pointer;
+      box-shadow:0 4px 15px rgba(0,0,0,.1);
+      transition:all .25s;
+    }
+    .petCard:hover {
+      transform:translateY(-6px);
+      box-shadow:0 8px 25px rgba(0,0,0,.2);
+    }
+    .petEmoji{font-size:3rem;margin-bottom:10px;}
+  </style>
 </head>
-<body class="bg-gradient-to-b from-[#fff7cc] to-[#e0f2fe]">
-  <nav class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-    <div class="flex items-center gap-3"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-8 h-8"><div class="font-bold">PetRewardHub</div></div>
-    <div>
-      <a href="index.html" class="text-slate-700">Home</a>
-    </div>
-  </nav>
+<body>
+  <header class="text-center text-white py-8">
+    <h1 class="text-4xl font-bold">🐾 Choose Your Pet</h1>
+    <p class="opacity-90 mt-2 text-lg">Select your pet to start your quiz & earn rewards!</p>
+  </header>
 
-  <main class="max-w-4xl mx-auto p-6">
-    <div class="bg-white rounded-3xl shadow-xl p-6">
-      <h2 class="text-2xl font-bold mb-4">Which pet do you want to earn rewards for?</h2>
-      <p class="text-slate-500 mb-4">Choose one to start a 5-question quiz tailored for that pet.</p>
-
-      <div id="petGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <!-- pet cards inserted by app.js -->
-      </div>
+  <main class="container mx-auto px-6 flex-grow">
+    <div class="bg-white rounded-3xl p-8 shadow-xl">
+      <div id="petGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6"></div>
+      <p class="text-center text-slate-500 mt-4 text-sm">Tip: You can change your pet anytime.</p>
     </div>
   </main>
 
-  <script src="app.js"></script>
+  <footer class="text-center text-sm text-white mt-8 mb-6 opacity-90">
+    ©2025 PetRewardHub — Earn coins by completing offers.
+  </footer>
+
   <script>
-    // populate pet cards
-    const PETS = ["Dog","Cat","Bird","Rabbit","Small Mammal","Reptile","Fish","Ferret","Horse"];
-    const grid = document.getElementById('petGrid');
-    PETS.forEach(p => {
-      const d = document.createElement('div');
-      d.className = 'rounded-2xl p-4 bg-gradient-to-br from-white to-sky-50 shadow cursor-pointer text-center';
-      d.innerHTML = `<div class="text-4xl"> ${p === 'Dog' ? '🐶' : p==='Cat' ? '🐱' : p==='Bird' ? '🐦' : p==='Rabbit' ? '🐰' : p==='Fish' ? '🐟' : p==='Horse' ? '🐴' : '🐾'}</div><div class="font-semibold mt-2">${p}</div>`;
-      d.onclick = async () => {
-        try {
-          await selectPet(p);
-          window.location.href = 'quiz.html';
-        } catch(e) { alert('Please login first'); window.location.href='index.html'; }
-      };
-      grid.appendChild(d);
+    // --- Immediately render the cards (so user always sees them) ---
+    const petGrid = document.getElementById("petGrid");
+    const pets = [
+      {name:"Dog",emoji:"🐶"},{name:"Cat",emoji:"🐱"},
+      {name:"Bird",emoji:"🐦"},{name:"Rabbit",emoji:"🐰"},
+      {name:"Fish",emoji:"🐟"},{name:"Horse",emoji:"🐴"},
+      {name:"Reptile",emoji:"🦎"},{name:"Ferret",emoji:"🦦"},
+      {name:"Small Mammal",emoji:"🐹"}
+    ];
+    pets.forEach(p=>{
+      const card=document.createElement("div");
+      card.className="petCard";
+      card.innerHTML=`<div class="petEmoji">${p.emoji}</div>
+                      <h2 class="font-bold text-lg text-slate-700">${p.name}</h2>`;
+      petGrid.appendChild(card);
+    });
+
+    // --- Firebase setup ---
+    const firebaseConfig={
+      apiKey:"AIzaSyDQFmVlYyJGc0GaY5F6p2fWKqrrYkrQzAo",
+      authDomain:"petrewardhub.firebaseapp.com",
+      projectId:"petrewardhub",
+      storageBucket:"petrewardhub.firebasestorage.app",
+      messagingSenderId:"1087250543825",
+      appId:"1:1087250543825:web:4d92bc084978fab9a0c1f0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth=firebase.auth();
+    const db=firebase.firestore();
+
+    // --- Attach click handlers after Firebase ready ---
+    petGrid.addEventListener("click",async e=>{
+      const card=e.target.closest(".petCard");
+      if(!card) return;
+      const name=card.querySelector("h2").textContent;
+      const user=auth.currentUser;
+      if(!user){alert("Please login first!");location.href="index.html";return;}
+      try{
+        await db.collection("users").doc(user.uid)
+          .set({selectedPet:name,updatedAt:new Date()},{merge:true});
+        location.href="quiz.html";
+      }catch(err){
+        console.error(err);alert("Error saving selection.");
+      }
     });
   </script>
 </body>
