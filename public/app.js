@@ -1,209 +1,173 @@
-// app.js - Simplified version that works with firebase-init.js
+/* app.js — Handles login, signup, quiz, offers, and reward claim */
 
 const SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbzmGjBk_WcIDS9CADLRODmn6tFmyTYICki-uBfvM7sgTBTiksSdOwVnLjrSXxOI_CQUSg/exec";
 
-// Helper functions
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+const $ = (sel) => document.querySelector(sel);
+const filename = () => location.pathname.split("/").pop() || "index.html";
 
-function getCurrentPage() {
-    const path = window.location.pathname.split('/').pop() || 'index.html';
-    return path.toLowerCase();
-}
+const isIndex = () => filename() === "index.html" || filename() === "";
+const isSignup = () => filename() === "signup.html";
+const isSelectPet = () => filename() === "select-pet.html";
+const isQuiz = () => filename() === "quiz.html";
+const isOffers = () => filename() === "offers.html";
+const isClaim = () => filename() === "claim.html";
 
-function showError(element, message) {
-    if (element) {
-        element.textContent = message;
-        element.classList.remove('hidden');
-    }
-}
+/* -------- LOGIN PAGE -------- */
+function initLogin() {
+  const email = $("#loginEmail");
+  const pass = $("#loginPassword");
+  const btn = $("#loginBtn");
+  const errorBox = $("#loginError");
 
-function hideError(element) {
-    if (element) {
-        element.textContent = '';
-        element.classList.add('hidden');
-    }
-}
-
-function showLoading(button) {
-    const loading = button.querySelector('.loading');
-    if (loading) loading.classList.add('active');
-    button.disabled = true;
-}
-
-function hideLoading(button) {
-    const loading = button.querySelector('.loading');
-    if (loading) loading.classList.remove('active');
-    button.disabled = false;
-}
-
-// Authentication functions
-async function signUpUser(email, password, name) {
-    console.log("🔄 Starting signup...");
-    
-    if (!firebase.auth) {
-        throw new Error("Authentication service not ready. Please wait...");
-    }
-
+  btn.addEventListener("click", async (e) => {
+    e.preventDefault();
     try {
-        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        
-        console.log("✅ User created:", user.uid);
-
-        // Save to Firestore
-        if (firebase.firestore) {
-            await firebase.firestore().collection('users').doc(user.uid).set({
-                email: user.email,
-                name: name || '',
-                coins: 0,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            console.log("✅ User data saved");
-        }
-
-        return user;
-    } catch (error) {
-        console.error("❌ Signup error:", error);
-        throw error;
+      await auth.signInWithEmailAndPassword(email.value.trim(), pass.value.trim());
+      window.location.href = "select-pet.html";
+    } catch (err) {
+      errorBox.textContent = err.message;
     }
+  });
 }
 
-async function loginUser(email, password) {
-    console.log("🔄 Starting login...");
-    
-    if (!firebase.auth) {
-        throw new Error("Authentication service not ready. Please wait...");
-    }
+/* -------- SIGNUP PAGE -------- */
+function initSignup() {
+  const name = $("#signupName");
+  const email = $("#signupEmail");
+  const pass = $("#signupPassword");
+  const btn = $("#signupBtn");
+  const errorBox = $("#signupError");
 
+  btn.addEventListener("click", async (e) => {
+    e.preventDefault();
     try {
-        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-        console.log("✅ Login successful");
-        return userCredential.user;
-    } catch (error) {
-        console.error("❌ Login error:", error);
-        throw error;
+      const cred = await auth.createUserWithEmailAndPassword(email.value.trim(), pass.value.trim());
+      await db.collection("users").doc(cred.user.uid).set({
+        name: name.value.trim(),
+        email: email.value.trim(),
+        coins: 0,
+        createdAt: new Date()
+      });
+      window.location.href = "select-pet.html";
+    } catch (err) {
+      errorBox.textContent = err.message;
     }
+  });
 }
 
-// Page initializers
-async function initSignupPage() {
-    console.log("📝 Initializing signup page...");
-    
-    const signupForm = $('#signupForm');
-    if (signupForm) {
-        signupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = $('#signupEmail').value.trim();
-            const password = $('#signupPassword').value.trim();
-            const name = $('#signupName').value.trim();
-            const errorEl = $('#signupError');
-            const submitBtn = signupForm.querySelector('button[type="submit"]');
+/* -------- SELECT PET PAGE -------- */
+function initSelectPet() {
+  auth.onAuthStateChanged((user) => {
+    if (!user) return (window.location.href = "index.html");
 
-            if (!email || !password) {
-                showError(errorEl, 'Please fill in all fields');
-                return;
-            }
+    const pets = ["Dog", "Cat", "Bird", "Rabbit", "Fish", "Horse", "Ferret", "Reptile"];
+    const grid = $("#petGrid");
+    grid.innerHTML = "";
 
-            if (password.length < 6) {
-                showError(errorEl, 'Password must be at least 6 characters');
-                return;
-            }
+    pets.forEach((p) => {
+      const card = document.createElement("div");
+      card.className = "petCard";
+      card.innerHTML = `<div class='emoji'>${p === "Dog" ? "🐶" : p === "Cat" ? "🐱" : "🐾"}</div><div>${p}</div>`;
+      card.onclick = async () => {
+        await db.collection("users").doc(user.uid).set({ selectedPet: p }, { merge: true });
+        window.location.href = "quiz.html";
+      };
+      grid.appendChild(card);
+    });
+  });
+}
 
-            showLoading(submitBtn);
-            hideError(errorEl);
+/* -------- QUIZ PAGE -------- */
+function initQuiz() {
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) return (window.location.href = "index.html");
 
-            try {
-                await signUpUser(email, password, name);
-                hideError(errorEl);
-                
-                alert('🎉 Signup successful! Redirecting...');
-                setTimeout(() => {
-                    window.location.href = 'select-pet.html';
-                }, 2000);
-                
-            } catch (error) {
-                let errorMessage = error.message;
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'Email already registered. Please login instead.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Please enter a valid email address.';
-                }
-                showError(errorEl, errorMessage);
-            } finally {
-                hideLoading(submitBtn);
-            }
+    const doc = await db.collection("users").doc(user.uid).get();
+    const pet = (doc.data() && doc.data().selectedPet) || "Dog";
+
+    const questions = {
+      Dog: ["What size is your dog?", "Is your dog active?", "Does your dog love toys?", "Indoor or outdoor?", "Would you try a pet gadget?"],
+      Cat: ["Indoor or outdoor?", "Age group?", "Does your cat climb?", "Food type?", "Use toys?"],
+    }[pet] || ["Do you love pets?", "Have a pet now?", "Would adopt again?", "Buy accessories?", "Recommend pet tech?"];
+
+    const box = $("#questionBox");
+    const progress = $("#quizProgress");
+    let i = 0;
+
+    function render() {
+      box.innerHTML = `<div class='card'><h3>${questions[i]}</h3></div>`;
+      ["Yes", "No", "Maybe"].forEach((opt) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => {
+          i++;
+          if (i < questions.length) render();
+          else finish();
+        };
+        box.appendChild(btn);
+      });
+      progress.textContent = `Question ${i + 1} of ${questions.length}`;
+    }
+
+    async function finish() {
+      await db.collection("users").doc(user.uid).set({ quizDone: true }, { merge: true });
+      window.location.href = "offers.html";
+    }
+
+    render();
+  });
+}
+
+/* -------- OFFERS PAGE -------- */
+function initOffers() {
+  auth.onAuthStateChanged((user) => {
+    if (!user) return (window.location.href = "index.html");
+
+    $("#userEmail").textContent = user.email;
+    db.collection("users").doc(user.uid).onSnapshot((doc) => {
+      $("#coinCount").textContent = (doc.data() && doc.data().coins) || 0;
+    });
+
+    const interval = setInterval(() => {
+      const links = document.querySelectorAll("#offerContainer a");
+      if (links.length > 0) {
+        clearInterval(interval);
+        links.forEach((a) => {
+          a.href += `&sub1=${user.uid}`;
+          a.target = "_blank";
         });
-    }
+      }
+    }, 300);
+  });
 }
 
-async function initIndexPage() {
-    console.log("🏠 Initializing index page...");
-    
-    const loginForm = $('#loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = $('#loginEmail').value.trim();
-            const password = $('#loginPassword').value.trim();
-            const errorEl = $('#loginError');
-            const submitBtn = loginForm.querySelector('button[type="submit"]');
+/* -------- CLAIM PAGE -------- */
+function initClaim() {
+  const btn = $("#claimSubmitPage");
+  btn.addEventListener("click", async () => {
+    const name = $("#claimNamePage").value.trim();
+    const address = $("#claimAddressPage").value.trim();
+    const email = $("#claimEmailPage").value.trim();
 
-            if (!email || !password) {
-                showError(errorEl, 'Please fill in all fields');
-                return;
-            }
+    const user = auth.currentUser;
+    if (!user) return alert("Login required");
 
-            showLoading(submitBtn);
-            hideError(errorEl);
-
-            try {
-                await loginUser(email, password);
-                hideError(errorEl);
-                closeLoginModal();
-                
-                alert('✅ Login successful! Redirecting...');
-                setTimeout(() => {
-                    window.location.href = 'select-pet.html';
-                }, 1500);
-                
-            } catch (error) {
-                showError(errorEl, error.message);
-            } finally {
-                hideLoading(submitBtn);
-            }
-        });
-    }
+    const payload = { userUid: user.uid, userEmail: email, name, address, claimedAt: new Date().toISOString() };
+    await fetch(SHEETS_WEBHOOK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    alert("Reward claim submitted!");
+  });
 }
 
-// Wait for Firebase to be ready, then initialize page
-window.addEventListener('firebaseReady', function() {
-    console.log("🎉 Firebase is ready! Initializing page...");
-    
-    const page = getCurrentPage();
-    console.log("📄 Current page:", page);
-    
-    switch (page) {
-        case 'index.html':
-        case '':
-            initIndexPage();
-            break;
-        case 'signup.html':
-            initSignupPage();
-            break;
-        case 'select-pet.html':
-            // Will be handled by inline script
-            break;
-        default:
-            console.log("📄 Page handler not implemented:", page);
-    }
+/* -------- ROUTER -------- */
+document.addEventListener("DOMContentLoaded", () => {
+  if (isIndex()) initLogin();
+  else if (isSignup()) initSignup();
+  else if (isSelectPet()) initSelectPet();
+  else if (isQuiz()) initQuiz();
+  else if (isOffers()) initOffers();
+  else if (isClaim()) initClaim();
 });
-
-// If Firebase is already ready when we load
-if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
-    console.log("🔥 Firebase already ready!");
-    window.dispatchEvent(new Event('firebaseReady'));
-}

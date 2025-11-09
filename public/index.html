@@ -9,16 +9,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Firebase SDKs - LOAD FIRST -->
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
-
-  <!-- Firebase Initialization - LOAD SECOND -->
-  <script src="firebase-init.js"></script>
-
-  <!-- Your main JS - LOAD LAST -->
-  <script src="app.js" defer></script>
+ 
 
   <style>
     .loading {
@@ -211,52 +202,46 @@
     </div>
   </div>
 
-  <script>
-    // Global modal functions
-    function openLoginModal() { 
-      const modal = document.getElementById('loginModal');
-      if (modal) {
-        modal.classList.remove('hidden'); 
-        document.body.style.overflow = 'hidden'; 
+  <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginBtn = document.getElementById("loginBtn");
+    const emailInput = document.getElementById("loginEmail");
+    const passInput = document.getElementById("loginPassword");
+    const errorBox = document.getElementById("loginError");
+
+    loginBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      const pass = passInput.value.trim();
+      if (!email || !pass) {
+        errorBox.textContent = "Please fill all fields";
+        errorBox.classList.remove("hidden");
+        return;
       }
-    }
 
-    function closeLoginModal(){ 
-      const modal = document.getElementById('loginModal');
-      if (modal) {
-        modal.classList.add('hidden'); 
-        document.body.style.overflow = 'auto'; 
-        
-        const form = document.getElementById('loginForm');
-        const errorEl = document.getElementById('loginError');
-        if (form) form.reset();
-        if (errorEl) {
-          errorEl.textContent = '';
-          errorEl.classList.add('hidden');
-        }
+      try {
+        await auth.signInWithEmailAndPassword(email, pass);
+        console.log("✅ Logged in successfully");
+        window.location.href = "select-pet.html";
+      } catch (err) {
+        console.error("Login error:", err.message);
+        errorBox.textContent = err.message;
+        errorBox.classList.remove("hidden");
       }
-    }
+    });
+  });
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+<script src="firebase-init.js"></script>
+<script src="app.js"></script>
 
-    // Product modal functions (will be used by app.js)
-    function openProductModal(productId) {
-      console.log('Opening product modal:', productId);
-    }
-
-    function closeProductModal() {
-      console.log('Closing product modal');
-    }
-
-    function showImagePreview(element, imageSrc) {
-      console.log('Showing image preview:', imageSrc);
-    }
-
-    function closeImagePreview() {
-      console.log('Closing image preview');
-    }
-
-    function startEarning() {
-      window.location.href = 'select-pet.html';
-    }
-  </script>
 </body>
 </html>
