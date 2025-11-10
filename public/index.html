@@ -3,294 +3,212 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>PetRewardHub — Home</title>
+  <title>PetRewardHub — Earn Free Pet Gifts</title>
 
-  <!-- Tailwind + Fonts -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
   <style>
-    body{font-family:Inter,system-ui,sans-serif}
-    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
-  </style>
-
-  <!-- Tailwind theme (from your code.html) -->
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "primary": "#FEEAA8",
-            "accent": "#FFC8A2",
-            "text-dark": "#2D3748",
-            "background-light": "#FFFFFF",
-            "background-dark": "#1A202C",
-          },
-          fontFamily: { "display": ["Inter", "sans-serif"] },
-          borderRadius: { "DEFAULT":"1rem","lg":"1.5rem","xl":"2rem","full":"9999px" },
-        },
-      },
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
     }
-  </script>
+  </style>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark text-text-dark dark:text-gray-200">
-<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
 
+<body class="font-display bg-white text-[#2D3748]">
   <!-- Header -->
-  <header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap px-6 sm:px-10 lg:px-20 py-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm shadow-sm transition-all duration-300">
-    <div class="flex items-center gap-3 text-text-dark dark:text-white">
+  <header class="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-10 lg:px-20 py-4 bg-white/80 backdrop-blur shadow-sm">
+    <div class="flex items-center gap-3">
       <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">pets</span>
-      <h2 class="text-xl font-bold leading-tight tracking-tight">PetRewardHub</h2>
+      <h2 class="text-xl font-bold">PetRewardHub</h2>
     </div>
     <div class="flex items-center gap-2">
-      <button id="openLoginBtn" class="flex min-w-[84px] items-center justify-center rounded-full h-10 px-4 bg-transparent text-text-dark dark:text-white text-sm font-bold border-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700">
-        <span class="truncate">Login</span>
+      <button id="openLoginBtn" class="rounded-full h-10 px-4 bg-transparent text-sm font-bold border border-gray-300 hover:bg-gray-100">
+        Login
       </button>
-      <a href="signup.html" class="flex min-w-[84px] items-center justify-center rounded-full h-10 px-4 bg-accent text-text-dark text-sm font-bold hover:opacity-90 transition-opacity">
-        <span class="truncate">Sign Up</span>
-      </a>
+      <a href="signup.html" class="rounded-full h-10 px-4 bg-yellow-300 text-black text-sm font-bold hover:opacity-90">Sign Up</a>
     </div>
   </header>
 
-  <main class="flex-grow">
-    <!-- Hero (kept from earlier, matches your palette) -->
-    <section class="relative py-20 px-6 sm:px-10 lg:px-20 text-center bg-gradient-to-br from-[#A0D2EB]/20 via-white to-[#FEEAA8]/20 dark:from-[#A0D2EB]/10 dark:via-background-dark dark:to-[#FEEAA8]/10 overflow-hidden">
-      <div class="absolute inset-0 bg-[url('https://www.toptal.com/designers/subtlepatterns/uploads/paws.png')] opacity-5 dark:opacity-[0.02]"></div>
-      <div class="relative z-10 mx-auto max-w-4xl flex flex-col items-center gap-8">
-        <div class="flex flex-col gap-4 text-center items-center">
-          <h1 class="text-text-dark dark:text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tighter">
-            Earn Free Pet Gifts by Completing Fun Offers!
-          </h1>
-          <h2 class="text-text-dark/80 dark:text-gray-300 text-lg sm:text-xl font-normal leading-normal max-w-2xl">
-            Join thousands of pet lovers getting toys and treats for free. Complete fun offers, earn coins, and spoil your furry friend.
-          </h2>
-        </div>
-        <div class="w-full max-w-xl aspect-video bg-center bg-no-repeat bg-contain rounded-xl"
-             style='background-image:url("https://lh3.googleusercontent.com/aida-public/AB6AXuCOR2rUoJY4i_wKb0TedqJbhzLqvpUftmvhNi1AVTlgbNKL7D22FPMfrwVM5-vwilICu92J0KfXPeFyeJ7BCpm6ZTRfRodguHVExtj70OpHr2I3Xj5Es24vqJXovj-Dah20BeK4JDxi9MSgn6QyG5Q6Y1TseX1_sE5jlFcFzmEtM2CqKwystC2DnrpQznOtoodgt_UeW0rP97ePEYpZSEsH25z4qn7esjrEza0wGyAPEyX8P4irqCD6YxZYztdpv62sLoEOvvYcFnQ");'>
-        </div>
-        <a class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center rounded-full h-12 px-8 bg-accent text-text-dark text-base font-bold hover:opacity-90 transition-opacity shadow-lg" href="#gifts">
-          <span class="truncate">Start Earning Now</span>
-        </a>
-      </div>
-    </section>
+  <!-- Hero Section -->
+  <section class="relative py-20 px-6 sm:px-10 lg:px-20 text-center bg-gradient-to-br from-[#A0D2EB]/20 via-white to-[#FEEAA8]/20">
+    <div class="mx-auto max-w-4xl flex flex-col items-center gap-6">
+      <h1 class="text-5xl font-black">Earn Free Pet Gifts by Completing Fun Offers!</h1>
+      <p class="text-lg text-gray-600 max-w-2xl">
+        Join thousands of pet lovers getting free toys, feeders, and accessories.  
+        Complete fun offers, earn coins, and treat your furry friend with love!
+      </p>
+      <a class="rounded-full h-12 px-8 bg-yellow-300 font-bold hover:opacity-90 transition-opacity shadow-lg" href="#gifts">Start Earning Now</a>
+    </div>
+  </section>
 
-    <!-- Gifts (kept) -->
-    <section id="gifts" class="py-20 px-6 sm:px-10 lg:px-20">
-      <div class="mx-auto max-w-5xl">
-        <h2 class="text-text-dark dark:text-white text-3xl font-bold text-center px-4 pb-12">🎁 Gifts You Can Earn</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="flex flex-col gap-3 pb-3 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-            <div class="w-full aspect-square bg-cover rounded-lg" style='background-image:url("https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800")'></div>
-            <div><p class="font-medium">Interactive Dog Toy</p><p class="text-sm text-gray-500 dark:text-gray-400">Worth 100 Coins</p></div>
-          </div>
-          <div class="flex flex-col gap-3 pb-3 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-            <div class="w-full aspect-square bg-cover rounded-lg" style='background-image:url("https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800")'></div>
-            <div><p class="font-medium">Cozy Cat Bed</p><p class="text-sm text-gray-500 dark:text-gray-400">Worth 150 Coins</p></div>
-          </div>
-          <div class="flex flex-col gap-3 pb-3 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-            <div class="w-full aspect-square bg-cover rounded-lg" style='background-image:url("https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800")'></div>
-            <div><p class="font-medium">Automatic Feeder</p><p class="text-sm text-gray-500 dark:text-gray-400">Worth 250 Coins</p></div>
-          </div>
+  <!-- Gifts Section -->
+  <section id="gifts" class="py-16 px-6 sm:px-10 lg:px-20">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="text-3xl font-bold text-center pb-10">🎁 Free Gifts You Can Earn</h2>
+      <p class="text-gray-600 text-center max-w-2xl mx-auto mb-8">
+        Explore exciting gifts you can claim using your earned coins.  
+        Every item is selected to bring happiness and comfort to your pet.  
+        Whether it’s a cozy bed, an interactive toy, or a feeding gadget —  
+        we make sure every gift is safe, high-quality, and loved by pets.  
+        Collect coins, choose your favorite gift, and enjoy the joy of giving!
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-4 rounded-lg bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+          <div class="aspect-square bg-cover rounded mb-2" style='background-image:url("https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800")'></div>
+          <p class="font-semibold">Interactive Dog Toy</p><p class="text-sm text-gray-500">Worth 100 Coins</p>
+        </div>
+        <div class="p-4 rounded-lg bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+          <div class="aspect-square bg-cover rounded mb-2" style='background-image:url("https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800")'></div>
+          <p class="font-semibold">Cozy Cat Bed</p><p class="text-sm text-gray-500">Worth 150 Coins</p>
+        </div>
+        <div class="p-4 rounded-lg bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
+          <div class="aspect-square bg-cover rounded mb-2" style='background-image:url("https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800")'></div>
+          <p class="font-semibold">Automatic Feeder</p><p class="text-sm text-gray-500">Worth 250 Coins</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ↓↓↓ Injected verbatim from your code.html starting at How It Works ↓↓↓ -->
-
-    <!-- How It Works (from code.html) -->
-    <section class="py-20 px-6 sm:px-10 lg:px-20 bg-gray-50 dark:bg-gray-800/20">
-      <div class="mx-auto max-w-5xl">
-        <h2 class="text-text-dark dark:text-white text-3xl font-bold leading-tight tracking-tight text-center px-4 pb-12">How It Works</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          <div class="flex flex-col items-center gap-4">
-            <div class="flex items-center justify-center h-20 w-20 rounded-xl bg-primary/50 text-accent">
-              <span class="material-symbols-outlined text-4xl">pets</span>
-            </div>
-            <h3 class="text-xl font-bold">1. Sign Up &amp; Choose Your Pet</h3>
-            <p class="text-text-dark/80 dark:text-gray-300">Create your free account in seconds and tell us about your furry friend to get personalized offers.</p>
+  <!-- How It Works -->
+  <section class="py-20 px-6 sm:px-10 lg:px-20 bg-gray-50">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="text-3xl font-bold text-center pb-12">How It Works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div class="flex flex-col items-center gap-4">
+          <div class="flex items-center justify-center h-20 w-20 rounded-xl bg-yellow-200 text-[#FFC8A2]">
+            <span class="material-symbols-outlined text-4xl">pets</span>
           </div>
-          <div class="flex flex-col items-center gap-4">
-            <div class="flex items-center justify-center h-20 w-20 rounded-xl bg-primary/50 text-accent">
-              <span class="material-symbols-outlined text-4xl">paid</span>
-            </div>
-            <h3 class="text-xl font-bold">2. Complete Offers &amp; Earn Coins</h3>
-            <p class="text-text-dark/80 dark:text-gray-300">Discover fun tasks, surveys, and games. Each completed offer adds coins to your balance.</p>
+          <h3 class="text-xl font-bold">1. Sign Up & Choose Your Pet</h3>
+          <p class="text-gray-600">Create your free account and tell us about your furry friend.</p>
+        </div>
+        <div class="flex flex-col items-center gap-4">
+          <div class="flex items-center justify-center h-20 w-20 rounded-xl bg-yellow-200 text-[#FFC8A2]">
+            <span class="material-symbols-outlined text-4xl">paid</span>
           </div>
-          <div class="flex flex-col items-center gap-4">
-            <div class="flex items-center justify-center h-20 w-20 rounded-xl bg-primary/50 text-accent">
-              <span class="material-symbols-outlined text-4xl">redeem</span>
-            </div>
-            <h3 class="text-xl font-bold">3. Redeem Gifts for Free</h3>
-            <p class="text-text-dark/80 dark:text-gray-300">Browse our gift catalog and use your coins to claim amazing toys, treats, and more for your pet.</p>
+          <h3 class="text-xl font-bold">2. Complete Offers & Earn Coins</h3>
+          <p class="text-gray-600">Complete fun offers and surveys to collect coins for rewards.</p>
+        </div>
+        <div class="flex flex-col items-center gap-4">
+          <div class="flex items-center justify-center h-20 w-20 rounded-xl bg-yellow-200 text-[#FFC8A2]">
+            <span class="material-symbols-outlined text-4xl">redeem</span>
           </div>
+          <h3 class="text-xl font-bold">3. Redeem Free Gifts</h3>
+          <p class="text-gray-600">Use your coins to claim amazing pet toys, treats, and more!</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Featured Offers (from code.html) -->
-    <section class="py-20 px-6 sm:px-10 lg:px-20">
-      <div class="mx-auto max-w-5xl text-center">
-        <h2 class="text-text-dark dark:text-white text-3xl font-bold leading-tight tracking-tight px-4 pb-4">🌟 Featured Offers</h2>
-        <p class="text-text-dark/80 dark:text-gray-300 max-w-2xl mx-auto mb-12">Get started with these popular offers to earn coins quickly!</p>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-          <div class="flex flex-col gap-3 pb-3 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-            <div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-lg" style='background-image:url("https://lh3.googleusercontent.com/aida-public/AB6AXuA3MIigV8NV68UUFUA4nenjPewW4ZfHkolBU2TQlUrNsLGd3zprEtLHWv6p1-TxnBQD-mWgsAReeCpgdece8c4j5DwejJmFeH9SDxDjox_qUVtQDWGyroUGr9sPCf4qOhbuJ5W74J0fgOosd0_gUx8LXAs8IvXTldKsVFK7RB5Ry3l7YSZm38cSJuODhWA5OoJ6GU9byfQB1R0wWdJ8H07-khxzvnokZJbkuQI3krgVZlvfsBYlnaUOL2XoxIZ5_ptto04ndelDcts")'></div>
-            <div class="flex flex-col flex-grow">
-              <p class="text-base font-medium">Puzzle Paws Adventure</p>
-              <p class="text-sm text-text-dark/60 dark:text-gray-400">Play &amp; reach level 50</p>
-            </div>
-            <div class="flex items-center justify-center rounded-full bg-primary/50 text-text-dark font-bold text-sm py-1 px-3 mt-2 self-start">
-              <span class="material-symbols-outlined text-lg mr-1 text-accent">paid</span>
-              <span>+300 Coins</span>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-3 pb-3 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-            <div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-lg" style='background-image:url("https://lh3.googleusercontent.com/aida-public/AB6AXuBSDVUun__SZ5c7idtXTlV_errEdWh_GYI4UURQHX5fPzUJrkrs0Q0eyuIJ2lv2gFiMAqu5fasiZWOcTllvkS4Q9gXfrEuL2L_4y-HYRNn57AUspOYjI6toLDYaGT0r18UyUXDkxAxbqaYtxFa0XSKJWGV6lS-REe6-lim79nWuS1ID1U_ZSYx3UAfSdfkTVn6F55bZjUWeDUU6u6GjeKFqBeSrv8rdqgu05RWdX5FKh9Wgcr7iUGlgsVO839ik3SM5fwmkDql8MAI")'></div>
-            <div class="flex flex-col flex-grow">
-              <p class="text-base font-medium">Pet Paradise Shopping</p>
-              <p class="text-sm text-text-dark/60 dark:text-gray-400">Install &amp; make one purchase</p>
-            </div>
-            <div class="flex items-center justify-center rounded-full bg-primary/50 text-text-dark font-bold text-sm py-1 px-3 mt-2 self-start">
-              <span class="material-symbols-outlined text-lg mr-1 text-accent">paid</span>
-              <span>+1,500 Coins</span>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-3 pb-3 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-            <div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-lg" style='background-image:url("https://lh3.googleusercontent.com/aida-public/AB6AXuAwkpvax8gIoOg0QDorZng_CTo_I7GWJD8tSJhHocWx9DVT_dHDpzQIzToB_S_oRJxaLxTsiZeRB8Dh5jp5pNpz-t_jr_xbH-abWR68r-laoEExwdi51m-FLf8oZXJCnbY2HNyD1KQwyHvH47GRhVmPqcCV8golPWjeiyPSrq0Ux9qPhOTtEyjE0TU7Hu8RmNvo96w4aZTBUkup0CZR6JpXPNFnDi_SoE-3RuS4urWahGl_0n4QVRoMy9xt7HHygaxN2nU6lGLjQ-I")'></div>
-            <div class="flex flex-col flex-grow">
-              <p class="text-base font-medium">Pet Owner Survey</p>
-              <p class="text-sm text-text-dark/60 dark:text-gray-400">Share your opinion (5 min)</p>
-            </div>
-            <div class="flex items-center justify-center rounded-full bg-primary/50 text-text-dark font-bold text-sm py-1 px-3 mt-2 self-start">
-              <span class="material-symbols-outlined text-lg mr-1 text-accent">paid</span>
-              <span>+150 Coins</span>
-            </div>
-          </div>
+  <!-- Testimonials -->
+  <section class="py-20 px-6 sm:px-10 lg:px-20 bg-white">
+    <div class="mx-auto max-w-5xl text-center">
+      <h2 class="text-3xl font-bold pb-10">💬 What Pet Parents Say</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-gray-50 rounded-xl p-6 shadow hover:shadow-md">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200" class="h-14 w-14 rounded-full mx-auto mb-3"/>
+          <p class="font-semibold">Sarah J.</p>
+          <p class="text-sm text-gray-500">Owner of Max 🐶</p>
+          <p class="mt-2 text-gray-600 text-sm">“Earned coins for fun tasks & got a free dog bed within a week!”</p>
         </div>
-
-        <div class="mt-12">
-          <a class="inline-flex min-w-[84px] items-center justify-center rounded-full h-12 px-8 bg-accent text-text-dark text-base font-bold hover:opacity-90 transition-opacity"
-             href="offers.html">
-            <span class="truncate">View All Offers</span>
-          </a>
+        <div class="bg-gray-50 rounded-xl p-6 shadow hover:shadow-md">
+          <img src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2b?q=80&w=200" class="h-14 w-14 rounded-full mx-auto mb-3"/>
+          <p class="font-semibold">David L.</p>
+          <p class="text-sm text-gray-500">Owner of Whiskers 🐱</p>
+          <p class="mt-2 text-gray-600 text-sm">“Legit rewards for real pet lovers. My cat loves her new toy!”</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-6 shadow hover:shadow-md">
+          <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200" class="h-14 w-14 rounded-full mx-auto mb-3"/>
+          <p class="font-semibold">Maria P.</p>
+          <p class="text-sm text-gray-500">Owner of Bella 🐾</p>
+          <p class="mt-2 text-gray-600 text-sm">“Finally a trustworthy site that gives real pet goodies!”</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Loved by Pet Parents (from code.html) -->
-    <section class="relative py-20 px-6 sm:px-10 lg:px-20 bg-gray-50 dark:bg-gray-800/20 overflow-hidden">
-      <div class="absolute -top-20 -left-20 text-accent/10 dark:text-accent/5 text-9xl transform -rotate-12">
-        <span class="material-symbols-outlined text-[10rem]">pets</span>
-      </div>
-      <div class="absolute -bottom-20 -right-20 text-accent/10 dark:text-accent/5 text-9xl transform rotate-12">
-        <span class="material-symbols-outlined text-[10rem]">pets</span>
-      </div>
-      <div class="relative mx-auto max-w-5xl">
-        <h2 class="text-text-dark dark:text-white text-3xl font-bold text-center px-4 pb-12">Loved by Pet Parents</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- three testimonial cards copied from your file -->
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col gap-4">
-            <div class="flex items-center gap-4">
-              <img class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI27vfia2YAguhdtQZW29AIelKxzDs4VM57YMZwAqAYwrCN0AzcoursCuiq0XTbgQrBUKo-GP0kMb-74e0Oc3Ls2WKvSPR-VKoN0l6RQixv7C-x9HFy648fU2ytBtB4hQAIY9tG_etwi6iNlKBZl2WZcZKbXY8ZmZMyCTDrjErrwRvuZuXdknlvs2-B1b_RChVnUzTvMHbZ96UeqIGzyOt0L_IGs8_PA0lgKWItJxGpAcRp2XGRjSDuBsE6yW5Ra78JEIKqfit4X4"/>
-              <div><p class="font-bold">Sarah J.</p><p class="text-sm text-text-dark/60 dark:text-gray-400">Owner of Max the Golden Retriever</p></div>
-            </div>
-            <p class="text-text-dark/80 dark:text-gray-300">"I was skeptical at first, but PetRewardHub is legit! I earned enough coins for a new bed for Max in just two weeks. It's so fun and easy!"</p>
-          </div>
-
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col gap-4">
-            <div class="flex items-center gap-4">
-              <img class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0Thp9JKODMrcYOYi0DkUIOwao39SpYVWLN34s7M55KL7N0_QHnwtlQ5vt6w0vZaoU3vz_pSxJN9ArM9zjEdiLN2iIKT6v6DJbJGosYWyStuRlYZfG0sN0eYg7MlEJfIf3iAg1JE5PDCn2eAE0j5oXfX3ORd8EeRWVqYGuK6NkplQeHgL25QpiFxw4ts1oBfk7PNw0hUXYTTLPKwid8N7NRsnCyWK8BwYNVfvw35qwdiWkKITxYjngUEbLnvf9FuslalfrukfFT1A"/>
-              <div><p class="font-bold">David L.</p><p class="text-sm text-text-dark/60 dark:text-gray-400">Owner of Whiskers the Cat</p></div>
-            </div>
-            <p class="text-text-dark/80 dark:text-gray-300">"My cat is obsessed with the wand toy I got from here. It's my go-to site for spoiling her without spending a dime. Highly recommend!"</p>
-          </div>
-
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col gap-4">
-            <div class="flex items-center gap-4">
-              <img class="h-14 w-14 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHP4eeIeqKUoHjkLT7Rd2PaPySWPPb6uPomrjkWwaAs23-3GL6YUu9x5a_kqi9FEugc6PO0Nsscol1dgzeeoaF_-sPsc1L2WgzGoYsOLjSIWhOamOBWyiXCRPW6kMAPbCr0KWuKC0kgnE6yEe7VFGeWmETPKqEjwVl7pPuvgbpdvWkXWPFUreU1UtdX3L5jmlgN8d5aLuQV45D4XnowL4w_zDs_1S_dOXzExGpkJDM9_N_9KTtjfkd9aBzfoZQcPzv0xadPbxT834"/>
-              <div><p class="font-bold">Maria P.</p><p class="text-sm text-text-dark/60 dark:text-gray-400">Owner of Bella and Charlie</p></div>
-            </div>
-            <p class="text-text-dark/80 dark:text-gray-300">"Finally, a rewards site that gets pet lovers. The gift selection is fantastic, and customer support was super helpful. A must-try!"</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA (from code.html) -->
-    <section class="py-20 px-6 sm:px-10 lg:px-20">
-      <div class="mx-auto max-w-4xl text-center bg-gradient-to-r from-[#FEEAA8] to-[#FFC8A2] p-10 rounded-xl shadow-lg">
-        <h2 class="text-text-dark text-3xl sm:text-4xl font-black leading-tight">Start earning free pet rewards today!</h2>
-        <p class="text-text-dark/80 mt-2 mb-6">Takes less than a minute — no credit card required.</p>
-        <a href="signup.html"
-           class="flex mx-auto min-w-[84px] items-center justify-center rounded-full h-12 px-8 bg-text-dark text-white text-base font-bold hover:bg-text-dark/90 transition-colors">
-          <span class="truncate">Sign Up Now</span>
-        </a>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer (from code.html) -->
-  <footer class="bg-gray-100 dark:bg-gray-800/50 py-16 px-6 sm:px-10 lg:px-20">
+  <!-- Footer -->
+  <footer class="bg-gray-100 py-16 px-6 sm:px-10 lg:px-20">
     <div class="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-12">
       <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-3 text-text-dark dark:text-white">
+        <div class="flex items-center gap-3">
           <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">pets</span>
-          <h2 class="text-xl font-bold leading-tight tracking-tight">PetRewardHub</h2>
+          <h2 class="text-xl font-bold">PetRewardHub</h2>
         </div>
-        <p class="text-text-dark/70 dark:text-gray-400">A fun, trustworthy rewards platform for pet lovers. We believe every pet deserves to be spoiled!</p>
+        <p class="text-gray-700">A trusted rewards platform for pet lovers. Earn gifts by completing fun offers.</p>
       </div>
       <div>
-        <h3 class="font-bold text-text-dark dark:text-white mb-4">Quick Links</h3>
-        <ul class="flex flex-col gap-2 text-text-dark/70 dark:text-gray-400">
-          <li><a class="hover:text-accent" href="index.html">Home</a></li>
-          <li><a class="hover:text-accent" href="offers.html">Offers</a></li>
-          <li><a class="hover:text-accent" href="claim.html">Claim Gift</a></li>
-          <li><a class="hover:text-accent" href="about.html">About</a></li>
+        <h3 class="font-bold mb-4">Quick Links</h3>
+        <ul class="flex flex-col gap-2 text-gray-700">
+          <li><a class="hover:text-[#FFC8A2]" href="index.html">Home</a></li>
+          <li><a class="hover:text-[#FFC8A2]" href="offers.html">Offers</a></li>
+          <li><a class="hover:text-[#FFC8A2]" href="claim.html">Claim Gift</a></li>
+          <li><a class="hover:text-[#FFC8A2]" href="about.html">About</a></li>
         </ul>
       </div>
       <div>
-        <h3 class="font-bold text-text-dark dark:text-white mb-4">Follow Us</h3>
-        <div class="flex gap-4">
-          <a class="text-text-dark/70 dark:text-gray-400 hover:text-accent" href="#"><svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 012.153 2.153c.247.636.316 1.363.364 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-2.153 2.153c-.636.247-1.363.316-2.427.364-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-2.153-2.153c-.247-.636-.316-1.363-.364-2.427C2.013 16.318 2 15.978 2 13.255v-.08c0-2.643.012-2.987.06-4.043.049-1.064.218-1.791.465-2.427a4.902 4.902 0 012.153-2.153c.636-.247 1.363.316 2.427-.364C9.53 2.013 9.87 2 12.5 2h.08zM12 4.869c-2.42 0-4.382 1.956-4.382 4.382 0 2.42 1.956 4.382 4.382 4.382 2.42 0 4.382-1.956 4.382-4.382 0-2.42-1.956-4.382-4.382-4.382zM12 16c-1.843 0-3.34-1.497-3.34-3.34s1.497-3.34 3.34-3.34 3.34 1.497 3.34 3.34-1.497 3.34-3.34 3.34zm6.406-11.845a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z" fill-rule="evenodd"></path></svg></a>
-          <a class="text-text-dark/70 dark:text-gray-400 hover:text-accent" href="#"><svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.91 10.334c.38.01 1.15.112 1.15.112s.18-.521.19-.538c.01-.016.02-.35.02-.35s-1.57-.129-1.57-.129l-.02.483.23.422zm4.734-2.52c.21.23.36.46.43.66.11.31.12.7.12 1.14 0 .4-.02.76-.05 1.08-.03.32-.08.63-.14.93s-.14.57-.23.83c-.09.26-.2.5-.33.7-.13.2-.28.37-.46.5-.18.13-.37.22-.58.28-.21.06-.43.09-.67.09-.24 0-.47-.03-.7-.08-.23-.05-.45-.13-.65-.24-.2-.11-.38-.25-.54-.42a2.9 2.9 0 01-.45-.63c-.1-.23-.17-.5-.22-.78s-.09-.59-.11-.9-.03-.6-.03-.89V12c0-.3.01-.59.02-.87s.04-.55.07-.8c.03-.25.08-.49.14-.7s.14-.41.24-.59c.1-.18.22-.34.36-.48.14-.14.3-.26.48-.35.18-.09.38-.16.6-.2.22-.04.45-.06.7-.06.27 0 .54.02.8.06.26.04.5.1.72.19.22.09.42.2.59.33zm-2.86 5.86c.06.06.12.13.19.2.07.07.15.12.23.16.08.04.17.07.26.09.09.02.19.03.29.03.1 0 .2-.01.29-.03.09-.02.18-.05.26-.09.08-.04.16-.09.23-.16.07-.07.13-.14.19-.2.06-.06.11-.13.15-.2.04-.07.07-.15.09-.24.02-.09.03-.18.03-.28s-.01-.19-.03-.28c-.02-.09-.05-.17-.09-.24-.04-.07-.09-.14-.15-.2-.06-.06-.13-.13-.19-.2-.07-.07-.15-.12-.23-.16-.08-.04-.17-.07-.26-.09-.09-.02-.19-.03-.29-.03-.1 0-.2.01-.29.03-.09-.02-.18.05-.26-.09-.08.04-.16.09-.23.16-.07.07-.13.14-.19.2-.06.06-.11.13-.15.2-.04.07-.07.15-.09.24-.02.09-.03.18-.03.28s.01.19.03.28c.02.09.05.17.09.24.04.07.09.14.15.2zM21.68 7.32C21.2 6.13 20.42 5.3 19.3 4.8 17.27 4 12 4 12 4s-5.27 0-7.3.8C3.58 5.3 2.8 6.13 2.32 7.32 1.8 8.7 1.8 12 1.8 12s0 3.3.52 4.68c.48 1.19 1.26 2.02 2.38 2.52C7.86 20 12 20 12 20s4.14 0 6.2-.8c1.12-.5 1.9-1.33 2.38-2.52.52-1.38.52-4.68.52-4.68s0-2.7-.52-4.68z"></path></svg></a>
-          <a class="text-text-dark/70 dark:text-gray-400 hover:text-accent" href="#"><svg aria-hidden="true" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path></svg></a>
-        </div>
+        <h3 class="font-bold mb-4">Follow Us</h3>
+        <p class="text-gray-700">Facebook · Instagram · TikTok</p>
       </div>
     </div>
-    <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-text-dark/60 dark:text-gray-500">
-      <p>© 2025 PetRewardHub. All rights reserved.</p>
-    </div>
+    <div class="mt-10 text-center text-sm text-gray-600">© 2025 PetRewardHub. All rights reserved.</div>
   </footer>
 
-</div>
-
-<!-- Login Modal (unchanged) -->
-<div id="loginOverlay" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50">
-  <div class="relative w-full max-w-md rounded-lg bg-white p-8 shadow-2xl">
-    <button id="loginClose" class="absolute top-4 right-4 h-8 w-8 rounded-full hover:bg-black/5 flex items-center justify-center">
-      <span class="material-symbols-outlined !text-2xl">close</span>
-    </button>
-    <div class="flex flex-col gap-4">
-      <h2 class="text-[28px] font-bold text-center">Welcome Back, Pet Lover!</h2>
-      <label class="flex flex-col"><span class="font-medium pb-1">Email</span><input id="loginEmail" class="h-12 rounded-xl border px-3" type="email" placeholder="you@example.com"/></label>
-      <label class="flex flex-col"><span class="font-medium pb-1">Password</span><input id="loginPass" class="h-12 rounded-xl border px-3" type="password" placeholder="••••••••"/></label>
-      <button id="loginBtn" class="h-12 rounded-full bg-accent font-bold">Login</button>
-      <div id="loginMsg" class="text-sm text-red-600"></div>
-      <p class="text-center text-sm">Don’t have an account? <a href="signup.html" class="font-bold underline">Sign up</a></p>
+  <!-- Login Modal -->
+  <div id="loginOverlay" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50">
+    <div class="relative w-full max-w-md rounded-lg bg-white p-8 shadow-2xl">
+      <button id="loginClose" class="absolute top-4 right-4 h-8 w-8 rounded-full hover:bg-black/5 flex items-center justify-center">
+        <span class="material-symbols-outlined !text-2xl">close</span>
+      </button>
+      <div class="flex flex-col gap-4">
+        <h2 class="text-[28px] font-bold text-center">Welcome Back 🐾</h2>
+        <label class="flex flex-col"><span class="font-medium pb-1">Email</span><input id="loginEmail" class="h-12 rounded-xl border px-3" type="email" placeholder="you@example.com"/></label>
+        <label class="flex flex-col"><span class="font-medium pb-1">Password</span><input id="loginPass" class="h-12 rounded-xl border px-3" type="password" placeholder="••••••••"/></label>
+        <button id="loginBtn" class="h-12 rounded-full bg-yellow-300 font-bold hover:opacity-90">Login</button>
+        <div id="loginMsg" class="text-sm text-red-600"></div>
+        <p class="text-center text-sm">Don’t have an account? <a href="signup.html" class="font-bold underline">Sign up</a></p>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Firebase + App -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="firebase-init.js"></script>
-<script src="app.js"></script>
+  <!-- Firebase + App -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="firebase-init.js"></script>
+  <script src="app.js"></script>
 
+  <!-- ✅ Fixed Login Modal Script -->
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const overlay = document.getElementById("loginOverlay");
+    const openBtn = document.getElementById("openLoginBtn");
+    const closeBtn = document.getElementById("loginClose");
+
+    if (!overlay || !openBtn || !closeBtn) return;
+
+    openBtn.addEventListener("click", () => {
+      overlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    });
+    closeBtn.addEventListener("click", () => {
+      overlay.style.display = "none";
+      document.body.style.overflow = "";
+    });
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        overlay.style.display = "none";
+        document.body.style.overflow = "";
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.style.display === "flex") {
+        overlay.style.display = "none";
+        document.body.style.overflow = "";
+      }
+    });
+  });
+  </script>
 </body>
 </html>
