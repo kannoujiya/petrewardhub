@@ -1,100 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Select Your Pet — PetRewardHub</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      background: linear-gradient(135deg,#3b82f6,#facc15);
-      font-family: "Inter",sans-serif;
-      margin:0;padding:0;min-height:100vh;
-      display:flex;flex-direction:column;
-    }
-    .petCard {
-      background:white;border-radius:20px;padding:20px;
-      text-align:center;cursor:pointer;
-      box-shadow:0 4px 15px rgba(0,0,0,.1);
-      transition:all .25s;
-    }
-    .petCard:hover {
-      transform:translateY(-6px);
-      box-shadow:0 8px 25px rgba(0,0,0,.2);
-    }
-    .petEmoji{font-size:3rem;margin-bottom:10px;}
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Select Pet — PetRewardHub</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="text-center text-white py-8">
-    <h1 class="text-4xl font-bold">🐾 Choose Your Pet</h1>
-    <p class="opacity-90 mt-2 text-lg">Select your pet to start your quiz & earn rewards!</p>
-  </header>
+<header>
+  <div class="header-inner">
+    <div class="brand"><span>🐾</span> PetRewardHub</div>
+  </div>
+</header>
 
-  <main class="container mx-auto px-6 flex-grow">
-    <div class="bg-white rounded-3xl p-8 shadow-xl">
-      <div id="petGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6"></div>
-      <p class="text-center text-slate-500 mt-4 text-sm">Tip: You can change your pet anytime.</p>
-    </div>
-  </main>
+<section class="section">
+  <h2>Select Your Pet Type</h2>
+  <p class="sub">We’ll personalize your quiz and offers for your pet.</p>
+  <div class="grid" id="petGrid"></div>
+</section>
 
-  <footer class="text-center text-sm text-white mt-8 mb-6 opacity-90">
-    ©2025 PetRewardHub — Earn coins by completing offers.
-  </footer>
-
-  <script>
-    // --- Immediately render the cards (so user always sees them) ---
-    const petGrid = document.getElementById("petGrid");
-    const pets = [
-      {name:"Dog",emoji:"🐶"},{name:"Cat",emoji:"🐱"},
-      {name:"Bird",emoji:"🐦"},{name:"Rabbit",emoji:"🐰"},
-      {name:"Fish",emoji:"🐟"},{name:"Horse",emoji:"🐴"},
-      {name:"Reptile",emoji:"🦎"},{name:"Ferret",emoji:"🦦"},
-      {name:"Small Mammal",emoji:"🐹"}
-    ];
-    pets.forEach(p=>{
-      const card=document.createElement("div");
-      card.className="petCard";
-      card.innerHTML=`<div class="petEmoji">${p.emoji}</div>
-                      <h2 class="font-bold text-lg text-slate-700">${p.name}</h2>`;
-      petGrid.appendChild(card);
-    });
-
-    // --- Firebase setup ---
-    const firebaseConfig={
-      apiKey:"AIzaSyDQFmVlYyJGc0GaY5F6p2fWKqrrYkrQzAo",
-      authDomain:"petrewardhub.firebaseapp.com",
-      projectId:"petrewardhub",
-      storageBucket:"petrewardhub.firebasestorage.app",
-      messagingSenderId:"1087250543825",
-      appId:"1:1087250543825:web:4d92bc084978fab9a0c1f0"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth=firebase.auth();
-    const db=firebase.firestore();
-
-    // --- Attach click handlers after Firebase ready ---
-    petGrid.addEventListener("click",async e=>{
-      const card=e.target.closest(".petCard");
-      if(!card) return;
-      const name=card.querySelector("h2").textContent;
-      const user=auth.currentUser;
-      if(!user){alert("Please login first!");location.href="index.html";return;}
-      try{
-        await db.collection("users").doc(user.uid)
-          .set({selectedPet:name,updatedAt:new Date()},{merge:true});
-        location.href="quiz.html";
-      }catch(err){
-        console.error(err);alert("Error saving selection.");
-      }
-    });
-  </script>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="firebase-init.js"></script>
 <script src="app.js"></script>
-
+<script>
+  guardAuthOrRedirect('index.html?loginOpen=true');
+  renderPetGrid(); // 9 pet options automatically render
+</script>
 </body>
 </html>

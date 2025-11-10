@@ -1,247 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PetRewardHub — Love & Rewards for Pets</title>
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css">
-
- 
-
-  <style>
-    .loading {
-      display: none;
-    }
-    .loading.active {
-      display: inline-block;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .product-image {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: zoom-in;
-    }
-    .product-image:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }
-    .reward-card {
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-    .reward-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PetRewardHub — Free Pet Gifts & Rewards</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="font-sans bg-gradient-to-b from-[#e6f6ff] to-[#fff6e6] min-h-screen">
-
-  <!-- NAV -->
-  <nav class="bg-white/90 shadow sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="logo" class="w-10 h-10 rounded-full">
-        <div>
-          <div class="text-xl font-bold text-slate-800">PetRewardHub</div>
-          <div class="text-xs text-slate-500">Love your pet • Earn rewards</div>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <a href="#how-it-works" class="text-slate-700 hover:text-sky-600">How it works</a>
-        <a href="select-pet.html" class="text-slate-700 hover:text-sky-600">Start</a>
-        <button onclick="openLoginModal()" class="rounded-full px-4 py-2 bg-gradient-to-r from-sky-500 to-yellow-400 text-white shadow">Log in</button>
-        <a href="signup.html" class="rounded-full px-4 py-2 border border-yellow-300 bg-white text-slate-800">Sign up</a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <header class="max-w-6xl mx-auto px-4 py-16 text-center">
-    <div class="bg-white/90 backdrop-blur rounded-3xl p-12 shadow-xl">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-slate-800 mb-4">Earn Rewards for Caring for Your Pet</h1>
-      <p class="text-slate-600 max-w-2xl mx-auto mb-6">Complete quick pet quizzes & sponsored offers — collect coins and redeem free toys, treats & gadgets.</p>
-      <div class="flex items-center justify-center gap-4">
-        <a href="select-pet.html" class="rounded-full px-6 py-3 bg-gradient-to-r from-sky-500 to-yellow-400 text-white font-semibold shadow-lg">Start for free</a>
-        <button onclick="openLoginModal()" class="rounded-full px-6 py-3 bg-white border border-slate-200 text-slate-800">Log in</button>
-      </div>
-
-      <div class="mt-8 grid grid-cols-3 gap-6">
-        <div class="rounded-xl bg-sky-50 p-6 text-center">
-          <div class="text-3xl mb-2">🐶</div>
-          <div class="font-semibold">Dog toys</div>
-        </div>
-        <div class="rounded-xl bg-yellow-50 p-6 text-center">
-          <div class="text-3xl mb-2">🐱</div>
-          <div class="font-semibold">Cat beds</div>
-        </div>
-        <div class="rounded-xl bg-sky-50 p-6 text-center">
-          <div class="text-3xl mb-2">🦴</div>
-          <div class="font-semibold">Treats & more</div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- HOW IT WORKS -->
-  <section id="how-it-works" class="max-w-7xl mx-auto px-6 py-12">
-    <h2 class="text-3xl font-bold text-center mb-8 text-slate-800">How it works — simple & safe</h2>
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="bg-white rounded-2xl p-6 shadow text-center">
-        <div class="text-3xl">1️⃣</div>
-        <div class="font-semibold mt-2">Sign up & create profile</div>
-        <p class="text-slate-500 mt-2">Secure login — Email or Google</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow text-center">
-        <div class="text-3xl">2️⃣</div>
-        <div class="font-semibold mt-2">Take a 5-question quiz</div>
-        <p class="text-slate-500 mt-2">One question per page — fast</p>
-      </div>
-      <div class="bg-white rounded-2xl p-6 shadow text-center">
-        <div class="text-3xl">3️⃣</div>
-        <div class="font-semibold mt-2">Complete offers & earn coins</div>
-        <p class="text-slate-500 mt-2">Coins added only after network confirms</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- REWARDS -->
-  <section class="max-w-7xl mx-auto px-6 py-12">
-    <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">Redeem popular rewards (100 coins)</h3>
-    <div class="grid md:grid-cols-3 gap-6">
-      <!-- Dog Chew Toy -->
-      <div class="reward-card bg-white rounded-2xl p-6 shadow text-center" onclick="openProductModal('dog-toy')">
-        <div class="relative group">
-          <img src="https://cdn-icons-png.flaticon.com/512/616/616554.png" 
-               class="mx-auto w-20 h-20 product-image" 
-               alt="Dog Chew Toy"
-               onmouseenter="showImagePreview(this, 'https://cdn-icons-png.flaticon.com/512/616/616554.png')">
-          <div class="absolute inset-0 bg-blue-500 bg-opacity-10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        </div>
-        <div class="font-semibold mt-4">Dog Chew Toy</div>
-        <div class="text-sm text-slate-500 mt-1">Interactive & Durable</div>
-        <div class="text-yellow-500 font-bold mt-2">100 coins</div>
-      </div>
-
-      <!-- Cat Cozy Bed -->
-      <div class="reward-card bg-white rounded-2xl p-6 shadow text-center" onclick="openProductModal('cat-bed')">
-        <div class="relative group">
-          <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" 
-               class="mx-auto w-20 h-20 product-image" 
-               alt="Cat Cozy Bed"
-               onmouseenter="showImagePreview(this, 'https://cdn-icons-png.flaticon.com/512/616/616408.png')">
-          <div class="absolute inset-0 bg-yellow-500 bg-opacity-10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        </div>
-        <div class="font-semibold mt-4">Cat Cozy Bed</div>
-        <div class="text-sm text-slate-500 mt-1">Soft & Warm</div>
-        <div class="text-yellow-500 font-bold mt-2">100 coins</div>
-      </div>
-
-      <!-- Automatic Feeder -->
-      <div class="reward-card bg-white rounded-2xl p-6 shadow text-center" onclick="openProductModal('feeder')">
-        <div class="relative group">
-          <img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" 
-               class="mx-auto w-20 h-20 product-image" 
-               alt="Automatic Feeder"
-               onmouseenter="showImagePreview(this, 'https://cdn-icons-png.flaticon.com/512/616/616430.png')">
-          <div class="absolute inset-0 bg-green-500 bg-opacity-10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        </div>
-        <div class="font-semibold mt-4">Automatic Feeder</div>
-        <div class="text-sm text-slate-500 mt-1">Smart & Convenient</div>
-        <div class="text-yellow-500 font-bold mt-2">100 coins</div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="max-w-7xl mx-auto px-6 py-8 text-center text-slate-600">
-    <div>© PetRewardHub • Built for pet parents</div>
-  </footer>
-
-  <!-- LOGIN MODAL -->
-  <div id="loginModal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/40"></div>
-    <div class="flex items-center justify-center min-h-screen p-4">
-      <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl relative">
-        <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
-          ✕
-        </button>
-        <div class="text-center mb-6">
-          <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-12 h-12 mx-auto mb-2" alt="">
-          <h3 class="text-2xl font-bold text-slate-900">Welcome Back!</h3>
-          <p class="text-slate-500 mt-1">Log in to access offers & redeem rewards</p>
-        </div>
-
-        <form id="loginForm" class="space-y-4">
-          <input id="loginEmail" type="email" required placeholder="Email" class="w-full rounded-full border px-4 py-3" />
-          <input id="loginPassword" type="password" required placeholder="Password" class="w-full rounded-full border px-4 py-3" />
-          <div class="flex gap-3">
-            <button type="submit" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3 flex items-center justify-center gap-2">
-              <span>Log in</span>
-              <div id="loginLoading" class="loading">⟳</div>
-            </button>
-            <a href="signup.html" class="flex-1 rounded-full border py-3 text-center">Sign up</a>
-          </div>
-          <div id="loginError" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg"></div>
-        </form>
-
-      </div>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="brand"><span>🐾</span> <span>PetRewardHub</span></div>
+    <div>
+      <button class="btn btn-ghost" id="openLoginBtn">Login</button>
+      <a href="signup.html" class="btn btn-primary">Sign Up</a>
     </div>
   </div>
+</header>
 
-  <!-- Loading Overlay -->
-  <div id="globalLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="bg-white rounded-2xl p-6 text-center">
-      <div class="loading text-2xl mb-2">⟳</div>
-      <p class="text-slate-700">Loading...</p>
+<section class="hero">
+  <h1>Earn Free Pet Gifts by Completing Fun Offers!</h1>
+  <p>Turn your love for pets into exciting rewards. Complete short brand offers, earn coins, and redeem adorable pet products for free. Whether you have a dog, cat, bird, or bunny, we’ve got something special for every pet lover. It’s safe, simple, and 100% free to join!</p>
+  <button class="btn btn-primary" id="scrollGifts">Start Earning Now</button>
+</section>
+
+<section class="section">
+  <h2>🎁 Free Gifts You Can Earn</h2>
+  <p class="sub">Every completed offer adds coins to your account. Redeem these for real pet gifts delivered straight to your door!</p>
+  <div class="grid" id="giftGrid"></div>
+</section>
+
+<section class="section" style="background:#f1f5f9">
+  <h2>What Pet Parents Are Saying</h2>
+  <div class="testimonials">
+    <div class="testimonial"><div class="row"><img class="avatar" src="https://i.pravatar.cc/90?img=12" /><div><strong>Rhea & Bruno</strong></div></div><p>“I claimed my dog’s automatic feeder in just 2 days. Everything worked smoothly!”</p></div>
+    <div class="testimonial"><div class="row"><img class="avatar" src="https://i.pravatar.cc/90?img=20" /><div><strong>Karan & Misu</strong></div></div><p>“The offers were easy, and I got my cat’s bed completely free. Trusted platform!”</p></div>
+    <div class="testimonial"><div class="row"><img class="avatar" src="https://i.pravatar.cc/90?img=8" /><div><strong>Anita & Coco</strong></div></div><p>“Such a fun way to earn pet stuff online. Loved the clean design and process.”</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>How It Works</h2>
+  <div class="hiw">
+    <div class="step"><div class="big">1️⃣</div><h4>Sign Up & Choose Your Pet</h4></div>
+    <div class="step"><div class="big">2️⃣</div><h4>Complete Fun Offers</h4></div>
+    <div class="step"><div class="big">3️⃣</div><h4>Earn Coins & Claim Free Gifts</h4></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <h4>About PetRewardHub</h4>
+      <p>PetRewardHub is a reward-based platform designed for animal lovers. We partner with advertisers to give you real gifts for your furry (or feathered) friends!</p>
+      <small>© 2025 PetRewardHub. All rights reserved.</small>
+    </div>
+    <div>
+      <h4>Navigation</h4>
+      <p><a href="index.html">Home</a></p>
+      <p><a href="offers.html">Offers</a></p>
+      <p><a href="claim.html">Claim Gift</a></p>
+    </div>
+    <div>
+      <h4>Follow Us</h4>
+      <p>🐾 Facebook</p><p>🐾 Instagram</p><p>🐾 TikTok</p>
     </div>
   </div>
+</footer>
 
-  <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
-<script src="firebase-init.js"></script>
+<!-- Modals -->
+<div class="modal-overlay" id="loginOverlay">
+  <div class="modal">
+    <button class="close" id="loginClose">✕</button>
+    <h3>Welcome back</h3>
+    <label class="label">Email</label>
+    <input id="loginEmail" class="input" type="email" />
+    <label class="label">Password</label>
+    <input id="loginPass" class="input" type="password" />
+    <button class="btn btn-primary" id="loginBtn">Login</button>
+    <div class="helper">Don’t have an account? <a href="signup.html">Sign Up</a></div>
+    <div id="loginMsg" class="helper"></div>
+  </div>
+</div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const loginBtn = document.getElementById("loginBtn");
-    const emailInput = document.getElementById("loginEmail");
-    const passInput = document.getElementById("loginPassword");
-    const errorBox = document.getElementById("loginError");
+<div class="modal-overlay" id="giftOverlay">
+  <div class="modal">
+    <button class="close" id="giftClose">✕</button>
+    <div id="giftZoomContent"></div>
+  </div>
+</div>
 
-    loginBtn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      const email = emailInput.value.trim();
-      const pass = passInput.value.trim();
-      if (!email || !pass) {
-        errorBox.textContent = "Please fill all fields";
-        errorBox.classList.remove("hidden");
-        return;
-      }
-
-      try {
-        await auth.signInWithEmailAndPassword(email, pass);
-        console.log("✅ Logged in successfully");
-        window.location.href = "select-pet.html";
-      } catch (err) {
-        console.error("Login error:", err.message);
-        errorBox.textContent = err.message;
-        errorBox.classList.remove("hidden");
-      }
-    });
-  });
-</script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="firebase-init.js"></script>
 <script src="app.js"></script>
-
 </body>
 </html>
