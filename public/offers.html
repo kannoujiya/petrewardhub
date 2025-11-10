@@ -89,7 +89,9 @@
   <section class="section" style="max-width:1100px;margin:auto;">
     <h2>🎁 Pet Offers For You</h2>
     <p class="sub">Complete these fun offers and earn coins to claim free pet rewards.</p>
-    <div id="offersGrid" class="offers-grid">
+
+    <!-- AdBlue offers container -->
+    <div id="offerContainer" class="offers-grid">
       <p>Loading offers...</p>
     </div>
   </section>
@@ -98,16 +100,18 @@
     © 2025 PetRewardHub · All Rights Reserved · Safe & Trusted Pet Reward Platform
   </footer>
 
-  <!-- Firebase -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-init.js"></script>
 
+  <!-- jQuery (AdBlue JSONP requires old version) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
   <script>
     const userEmail = document.getElementById("userEmail");
     const logoutBtn = document.getElementById("logoutBtn");
-    const offersGrid = document.getElementById("offersGrid");
     const profileIcon = document.getElementById("profileIcon");
 
     // ✅ Wait for Firebase Auth to confirm login
@@ -117,16 +121,16 @@
         userEmail.textContent = "Signed in as " + user.email;
         logoutBtn.style.display = "inline-block";
 
-        // Random cute avatar for each session
+        // Set random cute profile avatar
         const avatars = [
           "https://cdn-icons-png.flaticon.com/512/616/616408.png",
           "https://cdn-icons-png.flaticon.com/512/616/616430.png",
-          "https://cdn-icons-png.flaticon.com/512/616/616408.png",
-          "https://cdn-icons-png.flaticon.com/512/616/616408.png"
+          "https://cdn-icons-png.flaticon.com/512/616/616435.png"
         ];
         profileIcon.src = avatars[Math.floor(Math.random() * avatars.length)];
 
-        renderOffers(user);
+        // After login confirmed, fetch AdBlue offers
+        loadAdBlueOffers(user);
       } else {
         console.log("⚠️ No user found — redirecting...");
         window.location.replace("index.html?loginOpen=true");
@@ -139,45 +143,31 @@
       window.location.replace("index.html");
     });
 
-    // ✅ FINAL JSONP FETCH FOR ADBLUEMEDIA OFFERS
-    function renderOffers(user) {
-      offersGrid.innerHTML = "<p>⏳ Loading offers...</p>";
-
-      const callbackName = "adblue_" + Math.floor(Math.random() * 1000000);
-
-      window[callbackName] = function (data) {
-        if (!data || !data.offers || !Array.isArray(data.offers)) {
-          offersGrid.innerHTML = "<p>⚠️ No offers available right now.</p>";
-          return;
+    // ✅ Use working AdBlue JSONP API (your code integrated)
+    function loadAdBlueOffers(user) {
+      $("#offerContainer").html("<p>⏳ Loading latest offers...</p>");
+      $.getJSON(
+        "https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=" + user.uid + "&callback=?",
+        function (offers) {
+          let html = "";
+          const numOffers = 8; // Max offers shown
+          offers = offers.splice(0, numOffers);
+          $.each(offers, function (key, offer) {
+            html += `
+              <div class="card">
+                <div class="card-body">
+                  <h4>${offer.name || offer.anchor}</h4>
+                  <p class="caption">${offer.description || "Complete this offer and earn rewards!"}</p>
+                  <a href="${offer.url || offer.tracking_url}&sub1=${user.uid}" target="_blank" class="btn btn-primary">Open Offer</a>
+                </div>
+              </div>
+            `;
+          });
+          $("#offerContainer").html(html || "<p>⚠️ No offers available right now.</p>");
         }
-
-        const offers = data.offers.slice(0, 8);
-        offersGrid.innerHTML = offers
-          .map(
-            (o) => `
-          <div class="card">
-            <div class="card-body">
-              <h4>${o.name}</h4>
-              <p class="caption">${o.description || "Complete this offer to earn coins!"}</p>
-              <a href="${o.tracking_url}&sub1=${user.uid}" target="_blank" class="btn btn-primary">Open Offer</a>
-            </div>
-          </div>`
-          )
-          .join("");
-
-        // Cleanup
-        document.body.removeChild(script);
-        delete window[callbackName];
-      };
-
-      const script = document.createElement("script");
-      script.src = `https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=&callback=${callbackName}`;
-      script.onerror = function () {
-        offersGrid.innerHTML =
-          "<p>⚠️ Could not load offers. Please refresh the page.</p>";
-      };
-
-      document.body.appendChild(script);
+      ).fail(() => {
+        $("#offerContainer").html("<p>⚠️ Could not load offers. Please refresh.</p>");
+      });
     }
   </script>
 </body>
