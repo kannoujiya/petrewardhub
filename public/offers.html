@@ -51,6 +51,16 @@
     .card-body {
       padding: 20px;
     }
+    .coin-tag {
+      background: linear-gradient(135deg, #3b82f6, #facc15);
+      color: #111;
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
     .card-body h4 {
       font-size: 17px;
       margin-bottom: 6px;
@@ -90,7 +100,7 @@
     <h2>🎁 Pet Offers For You</h2>
     <p class="sub">Complete these fun offers and earn coins to claim free pet rewards.</p>
 
-    <!-- AdBlue offers container -->
+    <!-- Offer Container -->
     <div id="offerContainer" class="offers-grid">
       <p>Loading offers...</p>
     </div>
@@ -100,13 +110,13 @@
     © 2025 PetRewardHub · All Rights Reserved · Safe & Trusted Pet Reward Platform
   </footer>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-init.js"></script>
 
-  <!-- jQuery (AdBlue JSONP requires old version) -->
+  <!-- jQuery (for AdBlue JSONP) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
   <script>
@@ -114,14 +124,11 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const profileIcon = document.getElementById("profileIcon");
 
-    // ✅ Wait for Firebase Auth to confirm login
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
-        console.log("✅ Logged in as:", user.email);
         userEmail.textContent = "Signed in as " + user.email;
         logoutBtn.style.display = "inline-block";
 
-        // Set random cute profile avatar
         const avatars = [
           "https://cdn-icons-png.flaticon.com/512/616/616408.png",
           "https://cdn-icons-png.flaticon.com/512/616/616430.png",
@@ -129,33 +136,50 @@
         ];
         profileIcon.src = avatars[Math.floor(Math.random() * avatars.length)];
 
-        // After login confirmed, fetch AdBlue offers
         loadAdBlueOffers(user);
       } else {
-        console.log("⚠️ No user found — redirecting...");
         window.location.replace("index.html?loginOpen=true");
       }
     });
 
-    // ✅ Logout Button
     logoutBtn.addEventListener("click", async () => {
       await firebase.auth().signOut();
       window.location.replace("index.html");
     });
 
-    // ✅ Use working AdBlue JSONP API (your code integrated)
+    // ✅ Load AdBlue offers with coin system
     function loadAdBlueOffers(user) {
       $("#offerContainer").html("<p>⏳ Loading latest offers...</p>");
       $.getJSON(
-        "https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=" + user.uid + "&callback=?",
+        "https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=" +
+          user.uid +
+          "&callback=?",
         function (offers) {
           let html = "";
-          const numOffers = 8; // Max offers shown
+          const numOffers = 8;
           offers = offers.splice(0, numOffers);
+
           $.each(offers, function (key, offer) {
+            let coins = 10; // default
+            const text = (offer.name + " " + (offer.description || "")).toLowerCase();
+
+            if (
+              text.includes("email") ||
+              text.includes("submit") ||
+              text.includes("signup") ||
+              text.includes("register")
+            ) {
+              coins = 20;
+            } else if (text.includes("survey") || text.includes("trial") || text.includes("cpe")) {
+              coins = 20;
+            } else if (text.includes("install") || text.includes("app")) {
+              coins = 10;
+            }
+
             html += `
               <div class="card">
                 <div class="card-body">
+                  <span class="coin-tag">💰 Earn ${coins} Coins</span>
                   <h4>${offer.name || offer.anchor}</h4>
                   <p class="caption">${offer.description || "Complete this offer and earn rewards!"}</p>
                   <a href="${offer.url || offer.tracking_url}&sub1=${user.uid}" target="_blank" class="btn btn-primary">Open Offer</a>
