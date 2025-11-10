@@ -1,60 +1,62 @@
-// Netlify Function: postback.js
-// Purpose: handle AdBlue Media postback confirmations and increment Firestore coins
-// Env: FIREBASE_SERVICE_ACCOUNT must contain stringified Firebase service account JSON
-// URL example AdBlue should call:
-// https://YOUR_SITE.netlify.app/.netlify/functions/postback?sub1={sub1}&payout={payout}&offer_id={offer_id}
-
 const admin = require("firebase-admin");
 
-let appInitialized = false;
-function init() {
-  if (appInitialized) return;
-  const svc = process.env.FIREBASE_SERVICE_ACCOUNT;
-  if (!svc) throw new Error("Missing FIREBASE_SERVICE_ACCOUNT env var");
-  const serviceAccount = JSON.parse(svc);
-  admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-  appInitialized = true;
+let app;
+if (!admin.apps.length) {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  app = admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
 }
 
-exports.handler = async (event) => {
+const db = admin.firestore();
+
+exports.handler = async (event, context) => {
   try {
-    init();
-    const qs = event.queryStringParameters || {};
-    const uid = qs.sub1 || qs.s1 || null;
-    const payout = parseFloat(qs.payout || 0);
-    const offerId = qs.offer_id || "unknown";
+    const params = event.queryStringParameters;
+    const uid = params.sub1;
+    const payout = parseFloat(params.payout || 0);
+    const offerId = params.offer_id || "unknown";
 
-    if (!uid) return { statusCode: 400, body: "Missing sub1 (user ID)" };
+    if (!uid) {
+      console.log("❌ Missing UID in postback");
+      return {
+        statusCode: 400,
+        body: "Missing sub1 UID",
+      };
+    }
 
-    // Map payout or offer type to coins; fallback 10
-    const coinsToAdd = payout > 0 ? Math.round(payout * 10) : 10;
+    // 🪙 Decide coin reward
+    const coinsToAdd = payout >= 1.5 ? 20 : 10;
 
-    const db = admin.firestore();
-    const userRef = db.collection("users").doc(uid);
-    const logRef = db.collection("conversion_logs").doc();
-
+    // ✅ Firestore update
     await db.runTransaction(async (t) => {
-      const doc = await t.get(userRef);
-      if (!doc.exists) {
-        t.set(userRef, { coins: coinsToAdd, createdAt: admin.firestore.FieldValue.serverTimestamp() });
-      } else {
-        t.update(userRef, {
-          coins: admin.firestore.FieldValue.increment(coinsToAdd),
-          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-        });
+      const ref = db.collection("users").doc(uid);
+      const userDoc = await t.get(ref);
+      if (!userDoc.exists) {
+        console.log("❌ User not found:", uid);
+        return;
       }
-      t.set(logRef, {
-        userUid: uid,
-        offerId,
-        payout,
-        coinsAdded: coinsToAdd,
-        ts: admin.firestore.FieldValue.serverTimestamp(),
+
+      t.update(ref, {
+        coins: admin.firestore.FieldValue.increment(coinsToAdd),
+        lastOffer: offerId,
+        lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
       });
     });
 
-    return { statusCode: 200, body: "OK" };
-  } catch (err) {
-    console.error("Postback error:", err);
-    return { statusCode: 500, body: "Server error" };
+    console.log(`✅ Postback success for UID: ${uid} | +${coinsToAdd} coins`);
+
+    // ✅ MUST RETURN 200 + SUCCESS BODY
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "text/plain" },
+      body: "SUCCESS",
+    };
+  } catch (error) {
+    console.error("❌ Postback error:", error);
+    return {
+      statusCode: 500,
+      body: "SERVER_ERROR",
+    };
   }
 };
