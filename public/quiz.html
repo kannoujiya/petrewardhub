@@ -1,41 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Quiz — PetRewardHub</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pet Quiz — PetRewardHub</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<header class="header">
-  <div class="header-inner">
-    <div class="brand"><span class="paw">🐾</span> PetRewardHub</div>
-  </div>
-</header>
-
-<section class="section container" style="max-width:680px">
-  <div class="card">
-    <div class="card-body">
-      <div id="quizMeta" class="sub">Question <span id="qNum">1</span>/5</div>
-      <h2 id="qText">Loading...</h2>
-      <div class="row" style="gap:10px;margin-top:14px">
-        <button class="btn btn-primary" data-a="Yes">Yes</button>
-        <button class="btn btn-ghost" data-a="No">No</button>
-        <button class="btn btn-ghost" data-a="Maybe">Maybe</button>
-      </div>
-      <div class="helper" id="quizMsg"></div>
+  <header>
+    <div class="header-inner">
+      <div class="brand"><span>🐾</span> PetRewardHub</div>
     </div>
-  </div>
-</section>
+  </header>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="firebase-init.js"></script>
-<script src="app.js"></script>
-<script>
-  guardAuthOrRedirect('index.html?loginOpen=true');
-  startQuiz();
-</script>
+  <section class="section" id="quizSection">
+    <h2>Pet Personality Quiz</h2>
+    <div id="quizBox">
+      <p>Loading quiz...</p>
+    </div>
+  </section>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="firebase-init.js"></script>
+  <script>
+    const quizBox = document.getElementById('quizBox');
+
+    const quizQuestions = {
+      Dog: [
+        "Does your dog enjoy outdoor walks?",
+        "Is your dog friendly with other pets?",
+        "Does your dog like fetching toys?",
+        "How often do you bathe your dog?",
+        "Would you like to receive free dog treats?"
+      ],
+      Cat: [
+        "Does your cat prefer dry or wet food?",
+        "Does your cat sleep on your bed?",
+        "Does your cat use a scratching post?",
+        "Does your cat enjoy grooming?",
+        "Would you like to earn free cat accessories?"
+      ],
+      Bird: [
+        "Does your bird mimic sounds?",
+        "Does your bird enjoy baths?",
+        "Do you let your bird fly in open space?",
+        "Does your bird eat fruits?",
+        "Would you like to receive free bird toys?"
+      ],
+      Rabbit: [
+        "Does your rabbit like carrots?",
+        "Does your rabbit have a play area?",
+        "Does your rabbit stay indoors?",
+        "Do you brush your rabbit regularly?",
+        "Would you like free rabbit supplies?"
+      ],
+      Fish: [
+        "Do you feed your fish twice daily?",
+        "Do your fish live in freshwater or saltwater?",
+        "Do you clean the aquarium weekly?",
+        "Do you have decorative plants in aquarium?",
+        "Would you like to receive aquarium filters free?"
+      ],
+      Horse: [
+        "Does your horse have a grooming kit?",
+        "Do you take your horse for regular rides?",
+        "Do you feed oats daily?",
+        "Does your horse have its own stable?",
+        "Would you like to get free horse accessories?"
+      ],
+      Ferret: [
+        "Is your ferret active during the day?",
+        "Do you bathe your ferret regularly?",
+        "Does your ferret like toys?",
+        "Do you use a leash for your ferret?",
+        "Would you like to earn free ferret toys?"
+      ],
+      Reptile: [
+        "Does your reptile bask under a heat lamp?",
+        "Do you feed your reptile insects?",
+        "Do you clean the terrarium weekly?",
+        "Does your reptile prefer sunlight?",
+        "Would you like free reptile care products?"
+      ],
+      "Small Mammal": [
+        "Is your small pet a hamster or guinea pig?",
+        "Do you change bedding weekly?",
+        "Do you feed pellets daily?",
+        "Does your pet have a wheel toy?",
+        "Would you like to earn free small pet gifts?"
+      ]
+    };
+
+    async function loadQuiz(){
+      quizBox.innerHTML = "<p>Loading quiz...</p>";
+
+      const user = await new Promise(resolve=>{
+        const current = auth.currentUser;
+        if(current){ resolve(current); return; }
+        const unsub = auth.onAuthStateChanged(u=>{
+          if(u){ unsub(); resolve(u); }
+        });
+        setTimeout(()=>resolve(null),2000);
+      });
+
+      if(!user){
+        window.location.replace("index.html?loginOpen=true");
+        return;
+      }
+
+      const doc = await db.collection('users').doc(user.uid).get();
+      const pet = doc.exists ? doc.data().selectedPet : null;
+
+      if(!pet || !quizQuestions[pet]){
+        quizBox.innerHTML = "<p>⚠️ No pet selected. Please select your pet first.</p><a href='select-pet.html' class='btn btn-primary'>Go Back</a>";
+        return;
+      }
+
+      const questions = quizQuestions[pet];
+      let current = 0;
+
+      const renderQ = ()=>{
+        quizBox.innerHTML = `
+          <h3>${questions[current]}</h3>
+          <div style="margin-top:20px;">
+            <button class="btn btn-primary" id="yes">Yes</button>
+            <button class="btn btn-primary" id="no">No</button>
+            <button class="btn btn-primary" id="maybe">Maybe</button>
+          </div>
+          <p class="caption">${current+1}/${questions.length}</p>
+        `;
+        document.getElementById('yes').onclick = next;
+        document.getElementById('no').onclick = next;
+        document.getElementById('maybe').onclick = next;
+      }
+
+      const next = async ()=>{
+        current++;
+        if(current < questions.length){
+          renderQ();
+        } else {
+          await db.collection('users').doc(user.uid).set({
+            quizDone: true,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, {merge:true});
+          quizBox.innerHTML = `
+            <h3>🎉 Quiz Complete!</h3>
+            <p>You’re now ready to view pet offers.</p>
+            <a href="offers.html" class="btn btn-primary">View Offers</a>
+          `;
+        }
+      }
+
+      renderQ();
+    }
+
+    firebase.auth().onAuthStateChanged(()=>loadQuiz());
+  </script>
 </body>
 </html>
