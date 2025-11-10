@@ -1,198 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pet Offers — PetRewardHub</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    body {
-      background: linear-gradient(135deg, #eff6ff, #fef9c3);
-      min-height: 100vh;
-      font-family: "Inter", sans-serif;
-    }
-    header {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid #e2e8f0;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      color: #334155;
-    }
-    .user-info img {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 2px solid #facc15;
-    }
-    .offers-grid {
-      display: grid;
-      gap: 20px;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      margin-top: 30px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.09);
-    }
-    .card-body {
-      padding: 20px;
-    }
-    .coin-tag {
-      background: linear-gradient(135deg, #3b82f6, #facc15);
-      color: #111;
-      font-weight: 600;
-      font-size: 13px;
-      display: inline-block;
-      padding: 6px 12px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    .card-body h4 {
-      font-size: 17px;
-      margin-bottom: 6px;
-    }
-    .card-body p {
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 14px;
-    }
-    footer {
-      text-align: center;
-      padding: 40px 10px;
-      color: #64748b;
-      font-size: 13px;
-    }
-  </style>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pet Offers — PetRewardHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 </head>
-<body>
-  <header>
-    <div
-      class="header-inner"
-      style="display:flex;justify-content:space-between;align-items:center;padding:15px 24px;max-width:1100px;margin:auto;"
-    >
-      <div class="brand" style="font-weight:800;font-size:20px;">
-        🐾 PetRewardHub
-      </div>
-
-      <div id="userBox" class="user-info">
-        <img id="profileIcon" src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Profile" />
-        <span id="userEmail">Signed in as ...</span>
-        <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Logout</button>
-      </div>
+<body class="bg-gradient-to-br from-[#eff6ff] to-[#fef9c3] font-[Inter] min-h-screen">
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b">
+  <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div class="font-extrabold">🐾 PetRewardHub</div>
+    <div class="flex items-center gap-3 text-sm">
+      <span class="inline-flex items-center gap-1 rounded-full bg-yellow-200 px-3 h-8 font-bold">💰 <span id="coinBadge">0</span> Coins</span>
+      <span id="userEmail" class="text-gray-700">Signed in as ...</span>
+      <button id="logoutBtn" class="ml-1 h-9 px-4 rounded-full border">Logout</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <section class="section" style="max-width:1100px;margin:auto;">
-    <h2>🎁 Pet Offers For You</h2>
-    <p class="sub">Complete these fun offers and earn coins to claim free pet rewards.</p>
+<main class="max-w-5xl mx-auto px-6 py-8">
+  <h2 class="text-2xl font-bold">🎁 Pet Offers For You</h2>
+  <p class="text-gray-600">Complete these offers and earn coins to claim free gifts.</p>
+  <div id="offerContainer" class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-5 mt-6">
+    <p>Loading offers...</p>
+  </div>
+</main>
 
-    <!-- Offer Container -->
-    <div id="offerContainer" class="offers-grid">
-      <p>Loading offers...</p>
-    </div>
-  </section>
+<footer class="text-center text-sm text-gray-500 py-10">© 2025 PetRewardHub · Safe & Trusted</footer>
 
-  <footer>
-    © 2025 PetRewardHub · All Rights Reserved · Safe & Trusted Pet Reward Platform
-  </footer>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase-init.js"></script>
+<script src="app.js"></script>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="firebase-init.js"></script>
+<!-- jQuery for JSONP -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-  <!-- jQuery (for AdBlue JSONP) -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>
+const emailEl = document.getElementById("userEmail");
+const coinEl  = document.getElementById("coinBadge");
+const logoutBtn = document.getElementById("logoutBtn");
 
-  <script>
-    const userEmail = document.getElementById("userEmail");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const profileIcon = document.getElementById("profileIcon");
+// Attach realtime coin listener
+attachCoinListener(emailEl, coinEl, logoutBtn);
 
-    firebase.auth().onAuthStateChanged(async (user) => {
-      if (user) {
-        userEmail.textContent = "Signed in as " + user.email;
-        logoutBtn.style.display = "inline-block";
+// Load AdBlue offers with JSONP (NEW endpoint)
+firebase.auth().onAuthStateChanged(user=>{
+  if(!user) return; // attachCoinListener will redirect
+  $("#offerContainer").html("<p>⏳ Loading latest offers...</p>");
+  $.getJSON(
+    "https://d2xohqmdyl2cj3.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1="+user.uid+"&callback=?",
+    function(offers){
+      let html=""; const num=8; offers=offers.splice(0,num);
+      $.each(offers, function(_, offer){
+        const title = offer.name || offer.anchor || "Offer";
+        const desc  = offer.description || "Complete this offer and earn rewards!";
+        const url   = (offer.url || offer.tracking_url) + "&sub1=" + user.uid;
 
-        const avatars = [
-          "https://cdn-icons-png.flaticon.com/512/616/616408.png",
-          "https://cdn-icons-png.flaticon.com/512/616/616430.png",
-          "https://cdn-icons-png.flaticon.com/512/616/616435.png"
-        ];
-        profileIcon.src = avatars[Math.floor(Math.random() * avatars.length)];
+        // Display-only coin tag (coins are credited ONLY by postback)
+        let coins = 10;
+        const t = (title+" "+desc).toLowerCase();
+        if(t.includes("email")||t.includes("submit")||t.includes("signup")||t.includes("register")||t.includes("survey")||t.includes("trial")||t.includes("cpe")) coins=20;
+        else if(t.includes("install")||t.includes("app")) coins=10;
 
-        loadAdBlueOffers(user);
-      } else {
-        window.location.replace("index.html?loginOpen=true");
-      }
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      await firebase.auth().signOut();
-      window.location.replace("index.html");
-    });
-
-    // ✅ Load AdBlue offers with coin system
-    function loadAdBlueOffers(user) {
-      $("#offerContainer").html("<p>⏳ Loading latest offers...</p>");
-      $.getJSON(
-        "https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=" +
-          user.uid +
-          "&callback=?",
-        function (offers) {
-          let html = "";
-          const numOffers = 8;
-          offers = offers.splice(0, numOffers);
-
-          $.each(offers, function (key, offer) {
-            let coins = 10; // default
-            const text = (offer.name + " " + (offer.description || "")).toLowerCase();
-
-            if (
-              text.includes("email") ||
-              text.includes("submit") ||
-              text.includes("signup") ||
-              text.includes("register")
-            ) {
-              coins = 20;
-            } else if (text.includes("survey") || text.includes("trial") || text.includes("cpe")) {
-              coins = 20;
-            } else if (text.includes("install") || text.includes("app")) {
-              coins = 10;
-            }
-
-            html += `
-              <div class="card">
-                <div class="card-body">
-                  <span class="coin-tag">💰 Earn ${coins} Coins</span>
-                  <h4>${offer.name || offer.anchor}</h4>
-                  <p class="caption">${offer.description || "Complete this offer and earn rewards!"}</p>
-                  <a href="${offer.url || offer.tracking_url}&sub1=${user.uid}" target="_blank" class="btn btn-primary">Open Offer</a>
-                </div>
-              </div>
-            `;
-          });
-          $("#offerContainer").html(html || "<p>⚠️ No offers available right now.</p>");
-        }
-      ).fail(() => {
-        $("#offerContainer").html("<p>⚠️ Could not load offers. Please refresh.</p>");
+        html += `
+          <div class="bg-white rounded-2xl shadow p-5 hover:shadow-xl transition">
+            <span class="inline-block mb-2 text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-blue-500 to-yellow-300">💰 Earn ${coins} Coins</span>
+            <h4 class="font-semibold">${title}</h4>
+            <p class="text-sm text-gray-600 mt-1">${desc}</p>
+            <a href="${url}" target="_blank" class="mt-4 inline-block rounded-full h-10 px-5 bg-blue-600 text-white font-semibold">Open Offer</a>
+          </div>`;
       });
+      $("#offerContainer").html(html || "<p>⚠️ No offers available right now.</p>");
     }
-  </script>
-</body>
-</html>
+  ).fail(()=> $("#offerContainer").html("<p>⚠️ Could not load offers. Please refresh.</p>"));
+});
+</script>
+</body></html>

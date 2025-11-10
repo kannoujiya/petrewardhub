@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Profile — PetRewardHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-[#f8f8f5] font-[Inter]">
+<header class="px-6 py-4 border-b">
+  <div class="max-w-3xl mx-auto flex items-center justify-between">
+    <div class="font-extrabold">🐾 PetRewardHub</div>
+    <div class="flex items-center gap-3 text-sm">
+      <span class="inline-flex items-center gap-1 rounded-full bg-yellow-200 px-3 h-8 font-bold">💰 <span id="coinBadge">0</span> Coins</span>
+      <span id="userEmail">Signed in as ...</span>
+      <button id="logoutBtn" class="h-9 px-4 rounded-full border">Logout</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-3xl mx-auto p-6">
+  <h1 class="text-2xl font-black mb-2">Your Profile</h1>
+  <p class="text-gray-600 mb-6">View your account details and progress.</p>
+  <div class="bg-white rounded-2xl shadow p-6">
+    <div class="grid md:grid-cols-2 gap-4">
+      <div><div class="text-sm text-gray-500">Email</div><div id="pEmail" class="font-semibold">-</div></div>
+      <div><div class="text-sm text-gray-500">Selected Pet</div><div id="pPet" class="font-semibold">-</div></div>
+      <div><div class="text-sm text-gray-500">Quiz Done</div><div id="pQuiz" class="font-semibold">-</div></div>
+      <div><div class="text-sm text-gray-500">Coins</div><div id="pCoins" class="font-semibold">0</div></div>
+    </div>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase-init.js"></script>
+<script src="app.js"></script>
+<script>
+const emailEl=document.getElementById('userEmail');
+const coinEl=document.getElementById('coinBadge');
+const logoutBtn=document.getElementById('logoutBtn');
+attachCoinListener(emailEl, coinEl, logoutBtn);
+
+firebase.auth().onAuthStateChanged(async user=>{
+  if(!user) return;
+  const doc = await db.collection('users').doc(user.uid).get();
+  const data = doc.data()||{};
+  document.getElementById('pEmail').textContent = user.email||'-';
+  document.getElementById('pPet').textContent   = data.selectedPet||'-';
+  document.getElementById('pQuiz').textContent  = data.quizDone ? 'Yes' : 'No';
+  document.getElementById('pCoins').textContent = data.coins||0;
+});
+</script>
+</body></html>

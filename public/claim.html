@@ -1,39 +1,69 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Claim — PetRewardHub</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles.css">
- 
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Claim Gift — PetRewardHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
 </head>
-<body class="bg-gradient-to-b from-[#e0f2fe] to-[#fff7cc] min-h-screen">
-
-  <nav class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-    <div class="flex items-center gap-3"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="w-8 h-8"><div class="font-bold text-slate-800">PetRewardHub</div></div>
-    <div><a href="offers.html" class="text-slate-700">Back to offers</a></div>
-  </nav>
-
-  <main class="max-w-3xl mx-auto p-6">
-    <div class="bg-white rounded-3xl shadow-lg p-6">
-      <h2 class="text-2xl font-bold mb-3">Claim your free item</h2>
-      <p class="text-slate-500 mb-4">Fill shipping details and we will save your request to the fulfilment list.</p>
-      <input id="claimNamePage" class="w-full rounded-xl border p-3 mt-2" placeholder="Full name">
-      <textarea id="claimAddressPage" class="w-full rounded-xl border p-3 mt-2" placeholder="Shipping address"></textarea>
-      <input id="claimEmailPage" class="w-full rounded-xl border p-3 mt-2" placeholder="Email">
-      <div class="flex gap-3 mt-4">
-        <button id="claimSubmitPage" class="flex-1 rounded-full bg-gradient-to-r from-sky-500 to-yellow-400 text-white py-3">Submit claim</button>
-      </div>
-      <div id="claimResult" class="text-sm text-slate-600 mt-3"></div>
+<body class="bg-[#FCFBF8] font-[Inter]">
+<header class="px-6 py-4 border-b">
+  <div class="max-w-3xl mx-auto flex items-center justify-between">
+    <div class="font-extrabold">🐾 PetRewardHub</div>
+    <div class="flex items-center gap-3 text-sm">
+      <span class="inline-flex items-center gap-1 rounded-full bg-yellow-200 px-3 h-8 font-bold">💰 <span id="coinBadge">0</span> Coins</span>
+      <span id="userEmail">Signed in as ...</span>
+      <button id="logoutBtn" class="h-9 px-4 rounded-full border">Logout</button>
     </div>
-  </main>
+  </div>
+</header>
 
-  <script src="app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
+<main class="max-w-3xl mx-auto p-6">
+  <h1 class="text-2xl font-black">Claim your free gift</h1>
+  <p class="text-gray-600">Fill your shipping details. 100 coins will be deducted upon submission.</p>
+
+  <div class="mt-6 bg-white rounded-2xl shadow p-6">
+    <div class="grid md:grid-cols-2 gap-4">
+      <label class="block"><span class="text-sm font-semibold">Full Name</span><input id="cName" class="h-11 w-full rounded-lg border px-3" placeholder="Your name"/></label>
+      <label class="block"><span class="text-sm font-semibold">Email</span><input id="cEmail" class="h-11 w-full rounded-lg border px-3" placeholder="you@example.com" type="email"/></label>
+      <label class="md:col-span-2 block"><span class="text-sm font-semibold">Address</span><textarea id="cAddr" class="w-full rounded-lg border px-3 py-2" rows="3" placeholder="Street, City, State, ZIP"></textarea></label>
+    </div>
+    <button id="cBtn" class="mt-4 rounded-full h-11 px-6 bg-yellow-300 font-bold">Submit Claim</button>
+    <div id="cMsg" class="text-sm mt-2"></div>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="firebase-init.js"></script>
 <script src="app.js"></script>
+<script>
+const WEBHOOK = "https://script.google.com/macros/s/AKfycbzmGjBk_WcIDS9CADLRODmn6tFmyTYICki-uBfvM7sgTBTiksSdOwVnLjrSXxOI_CQUSg/exec";
+const emailEl = document.getElementById('userEmail');
+const coinEl  = document.getElementById('coinBadge');
+const logoutBtn = document.getElementById('logoutBtn');
+attachCoinListener(emailEl, coinEl, logoutBtn);
 
-</body>
-</html>
+firebase.auth().onAuthStateChanged(user=>{
+  if(!user) return; // listener redirects
+  document.getElementById('cEmail').value = user.email || '';
+  document.getElementById('cBtn').addEventListener('click', async ()=>{
+    const name = document.getElementById('cName').value.trim();
+    const email= document.getElementById('cEmail').value.trim();
+    const addr = document.getElementById('cAddr').value.trim();
+    const msg  = document.getElementById('cMsg');
+    if(!name||!email||!addr){ msg.textContent='Fill all fields.'; msg.className='text-sm text-red-600'; return; }
+
+    // Deduct 100 coins (client-side request)
+    await db.collection('users').doc(user.uid).set({ coins: firebase.firestore.FieldValue.increment(-100) }, { merge:true });
+
+    // Send to Google Sheet
+    await fetch(WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userUid:user.uid, userEmail:email, name, address:addr, claimedAt:new Date().toISOString() })
+    });
+
+    location.href='thankyou.html';
+  });
+});
+</script>
+</body></html>

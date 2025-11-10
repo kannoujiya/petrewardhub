@@ -1,251 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pet Personality Quiz — PetRewardHub</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    body {
-      background: linear-gradient(135deg, #dbeafe, #fef9c3);
-      font-family: 'Inter', sans-serif;
-      color: #0f172a;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    header {
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid #e2e8f0;
-    }
-    .quiz-container {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 40px 20px;
-    }
-    .quiz-card {
-      background: #fff;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-      border-radius: 24px;
-      max-width: 520px;
-      width: 100%;
-      text-align: center;
-      padding: 32px 28px;
-      animation: fadeIn 0.4s ease;
-    }
-    .quiz-card h2 {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-    .quiz-card h3 {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 28px;
-      color: #1e293b;
-      line-height: 1.4;
-    }
-    .quiz-card button {
-      display: inline-block;
-      background: linear-gradient(135deg,#3b82f6,#facc15);
-      border: none;
-      border-radius: 12px;
-      color: #111;
-      font-weight: 600;
-      margin: 8px;
-      padding: 12px 22px;
-      cursor: pointer;
-      transition: transform 0.15s ease;
-    }
-    .quiz-card button:hover {
-      transform: translateY(-2px);
-    }
-    .progress-wrap {
-      width: 100%;
-      background: #e2e8f0;
-      height: 8px;
-      border-radius: 10px;
-      margin-bottom: 24px;
-      overflow: hidden;
-    }
-    .progress {
-      background: linear-gradient(90deg,#3b82f6,#facc15);
-      height: 8px;
-      width: 0%;
-      border-radius: 10px;
-      transition: width 0.3s ease;
-    }
-    .footer-note {
-      text-align: center;
-      font-size: 13px;
-      color: #64748b;
-      margin-top: 24px;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-  </style>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pet Quiz — PetRewardHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
 </head>
-<body>
-  <header>
-    <div class="header-inner" style="padding:15px 24px;display:flex;justify-content:space-between;align-items:center;">
-      <div class="brand"><span>🐾</span> PetRewardHub</div>
-      <a href="index.html" class="btn btn-ghost">Home</a>
-    </div>
-  </header>
-
-  <section class="quiz-container">
-    <div class="quiz-card" id="quizCard">
-      <h2>Loading your quiz...</h2>
-      <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
-      <p>Please wait while we fetch your personalized questions.</p>
-    </div>
-  </section>
-
-  <div class="footer-note">
-    © 2025 PetRewardHub · We respect your privacy — answers are not shared with third parties.
+<body class="bg-gradient-to-br from-[#dbeafe] to-[#fef9c3] font-[Inter] min-h-screen">
+<header class="flex items-center justify-between px-6 py-4 bg-white/70 backdrop-blur border-b">
+  <div class="font-extrabold">🐾 PetRewardHub</div><a href="index.html" class="text-sm underline">Home</a>
+</header>
+<main class="min-h-[70vh] flex items-center justify-center p-6">
+  <div id="card" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 text-center">
+    <h2 class="text-xl font-bold">Loading your quiz...</h2>
+    <div class="w-full h-2 bg-gray-200 rounded mt-3"><div id="bar" class="h-2 bg-gradient-to-r from-blue-500 to-yellow-400 w-0 rounded"></div></div>
+    <p class="text-gray-500 mt-2 text-sm">Please wait while we fetch your personalized questions.</p>
   </div>
+</main>
+<footer class="text-center text-xs text-gray-500 pb-6">© 2025 PetRewardHub</footer>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="firebase-init.js"></script>
-  <script>
-    const quizCard = document.getElementById('quizCard');
-    const progressBar = document.getElementById('progressBar');
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+const card = document.getElementById('card'); const bar = document.getElementById('bar');
+const Q={Dog:["Does your dog enjoy outdoor walks?","Is your dog friendly with other pets?","Does your dog like fetching toys?","How often do you bathe your dog?","Would you like to receive free dog treats?"],Cat:["Does your cat prefer dry or wet food?","Does your cat sleep on your bed?","Does your cat use a scratching post?","Does your cat enjoy grooming?","Would you like to earn free cat accessories?"],Bird:["Does your bird mimic sounds?","Does your bird enjoy baths?","Do you let your bird fly in open space?","Does your bird eat fruits?","Would you like to receive free bird toys?"],Rabbit:["Does your rabbit like carrots?","Does your rabbit have a play area?","Does your rabbit stay indoors?","Do you brush your rabbit regularly?","Would you like free rabbit supplies?"],Fish:["Do you feed your fish twice daily?","Freshwater or saltwater?","Do you clean the aquarium weekly?","Do you have decorative plants?","Want free aquarium filters?"],Horse:["Does your horse have a grooming kit?","Regular rides?","Feed oats daily?","Own stable?","Want free horse accessories?"],Ferret:["Is your ferret active daytime?","Regular bath?","Likes toys?","Use leash?","Want free ferret toys?"],Reptile:["Bask under heat lamp?","Feed insects?","Clean terrarium weekly?","Prefers sunlight?","Want free reptile care products?"],"Small Mammal":["Hamster or guinea pig?","Change bedding weekly?","Pellets daily?","Has wheel toy?","Want free small pet gifts?"]};
 
-    const quizQuestions = {
-      Dog: [
-        "Does your dog enjoy outdoor walks?",
-        "Is your dog friendly with other pets?",
-        "Does your dog like fetching toys?",
-        "How often do you bathe your dog?",
-        "Would you like to receive free dog treats?"
-      ],
-      Cat: [
-        "Does your cat prefer dry or wet food?",
-        "Does your cat sleep on your bed?",
-        "Does your cat use a scratching post?",
-        "Does your cat enjoy grooming?",
-        "Would you like to earn free cat accessories?"
-      ],
-      Bird: [
-        "Does your bird mimic sounds?",
-        "Does your bird enjoy baths?",
-        "Do you let your bird fly in open space?",
-        "Does your bird eat fruits?",
-        "Would you like to receive free bird toys?"
-      ],
-      Rabbit: [
-        "Does your rabbit like carrots?",
-        "Does your rabbit have a play area?",
-        "Does your rabbit stay indoors?",
-        "Do you brush your rabbit regularly?",
-        "Would you like free rabbit supplies?"
-      ],
-      Fish: [
-        "Do you feed your fish twice daily?",
-        "Do your fish live in freshwater or saltwater?",
-        "Do you clean the aquarium weekly?",
-        "Do you have decorative plants in aquarium?",
-        "Would you like to receive aquarium filters free?"
-      ],
-      Horse: [
-        "Does your horse have a grooming kit?",
-        "Do you take your horse for regular rides?",
-        "Do you feed oats daily?",
-        "Does your horse have its own stable?",
-        "Would you like to get free horse accessories?"
-      ],
-      Ferret: [
-        "Is your ferret active during the day?",
-        "Do you bathe your ferret regularly?",
-        "Does your ferret like toys?",
-        "Do you use a leash for your ferret?",
-        "Would you like to earn free ferret toys?"
-      ],
-      Reptile: [
-        "Does your reptile bask under a heat lamp?",
-        "Do you feed your reptile insects?",
-        "Do you clean the terrarium weekly?",
-        "Does your reptile prefer sunlight?",
-        "Would you like free reptile care products?"
-      ],
-      "Small Mammal": [
-        "Is your small pet a hamster or guinea pig?",
-        "Do you change bedding weekly?",
-        "Do you feed pellets daily?",
-        "Does your pet have a wheel toy?",
-        "Would you like to earn free small pet gifts?"
-      ]
-    };
-
-    async function loadQuiz(){
-      quizCard.innerHTML = `<h2>Loading your quiz...</h2><p>Please wait while we fetch your personalized questions.</p>`;
-      const user = await new Promise(resolve=>{
-        if(firebase.auth().currentUser) return resolve(firebase.auth().currentUser);
-        const unsub = firebase.auth().onAuthStateChanged(u=>{ if(u){unsub();resolve(u);} });
-        setTimeout(()=>resolve(null),2000);
-      });
-
-      if(!user){ window.location.replace('index.html?loginOpen=true'); return; }
-
-      const doc = await db.collection('users').doc(user.uid).get();
-      const pet = doc.exists ? doc.data().selectedPet : null;
-      if(!pet || !quizQuestions[pet]){
-        quizCard.innerHTML = `<h2>⚠️ Pet not selected</h2><p>Please select your pet type before taking the quiz.</p>
-          <a href="select-pet.html" class="btn btn-primary">Select Pet</a>`;
-        return;
-      }
-
-      const qs = quizQuestions[pet];
-      let current = 0;
-      updateProgress();
-
-      const renderQ = ()=>{
-        quizCard.innerHTML = `
-          <h2>${pet} Quiz</h2>
-          <div class="progress-wrap"><div class="progress" id="progressBar" style="width:${(current/qs.length)*100}%"></div></div>
-          <h3>${qs[current]}</h3>
-          <div>
-            <button onclick="next('Yes')">Yes</button>
-            <button onclick="next('No')">No</button>
-            <button onclick="next('Maybe')">Maybe</button>
-          </div>
-          <p style="margin-top:20px;font-size:14px;color:#64748b;">Question ${current+1} of ${qs.length}</p>
-        `;
-      };
-
-      window.next = async ()=>{
-        current++;
-        updateProgress();
-        if(current < qs.length){
-          renderQ();
-        } else {
-          await db.collection('users').doc(user.uid).set({
-            quizDone:true,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-          }, {merge:true});
-          quizCard.innerHTML = `
-            <h2>🎉 Quiz Complete!</h2>
-            <p>Thanks for sharing about your ${pet.toLowerCase()}! You're now ready to see exciting offers.</p>
-            <a href="offers.html" class="btn btn-primary">View Pet Offers</a>
-          `;
-        }
-      };
-
-      function updateProgress(){
-        progressBar.style.width = ((current/qs.length)*100) + '%';
-      }
-
-      renderQ();
+firebase.auth().onAuthStateChanged(async user=>{
+  if(!user){ location.replace('index.html?loginOpen=true'); return; }
+  const doc = await db.collection('users').doc(user.uid).get();
+  const pet = doc.exists ? doc.data().selectedPet : null;
+  if(!pet || !Q[pet]){
+    card.innerHTML = `<h2 class="text-xl font-bold">No pet selected</h2><p class="text-gray-500">Please select your pet.</p><a href="select-pet.html" class="mt-4 inline-block rounded-full px-5 h-11 leading-[44px] bg-blue-500 text-white font-semibold">Select Pet</a>`;
+    return;
+  }
+  const qs = Q[pet]; let i=0;
+  const render = ()=>{
+    bar.style.width = `${(i/qs.length)*100}%`;
+    card.innerHTML = `
+      <h2 class="text-xl font-extrabold">${pet} Quiz</h2>
+      <div class="w-full h-2 bg-gray-200 rounded my-3"><div class="h-2 bg-gradient-to-r from-blue-500 to-yellow-400" style="width:${(i/qs.length)*100}%"></div></div>
+      <h3 class="text-lg font-semibold my-4">${qs[i]}</h3>
+      <div class="flex justify-center gap-3">
+        <button class="rounded-full h-11 px-6 bg-blue-500 text-white font-bold" onclick="next()">Yes</button>
+        <button class="rounded-full h-11 px-6 bg-gray-100 font-bold" onclick="next()">No</button>
+        <button class="rounded-full h-11 px-6 bg-yellow-300 font-bold" onclick="next()">Maybe</button>
+      </div>
+      <p class="text-xs text-gray-500 mt-3">Question ${i+1} of ${qs.length}</p>`;
+  };
+  window.next = async ()=>{
+    i++;
+    if(i<qs.length){ render(); }
+    else{
+      await db.collection('users').doc(user.uid).set({quizDone:true,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      card.innerHTML = `<h2 class="text-xl font-extrabold">🎉 Quiz Complete!</h2><p class="text-gray-600">You’re now ready to view pet offers.</p><a href="offers.html" class="mt-4 inline-block rounded-full px-6 h-11 leading-[44px] bg-yellow-300 font-bold">View Offers</a>`;
     }
-
-    firebase.auth().onAuthStateChanged(()=>loadQuiz());
-  </script>
-</body>
-</html>
+  };
+  render();
+});
+</script>
+</body></html>

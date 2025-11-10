@@ -1,65 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Sign Up — PetRewardHub</title>
-  <link rel="stylesheet" href="styles.css"/>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sign Up - PetRewardHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>body{font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,#E0F7FA,#FFF9C4)}</style>
 </head>
 <body>
-  <header class="header">
-    <div class="header-inner">
-      <div class="brand"><span class="paw">🐾</span> PetRewardHub</div>
-      <a class="btn btn-ghost" href="index.html">Home</a>
+<div class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-lg rounded-xl bg-white/85 p-8 shadow-lg backdrop-blur-sm">
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-bold">Join the PetRewardHub Family!</h1>
+      <p class="text-gray-600">Sign up to start earning rewards.</p>
     </div>
-  </header>
-
-  <section class="section container">
-    <div class="card" style="max-width:520px;margin:0 auto;">
-      <div class="card-body">
-        <h2>Create your account</h2>
-        <div class="form">
-          <label class="label" for="name">Name</label>
-          <input id="name" class="input" placeholder="Your name"/>
-          <label class="label" for="email">Email</label>
-          <input id="email" class="input" type="email" placeholder="you@example.com"/>
-          <label class="label" for="pass">Password</label>
-          <input id="pass" class="input" type="password" placeholder="••••••••"/>
-          <button id="signupBtn" class="btn btn-primary">Sign Up</button>
-          <div id="signupMsg" class="helper"></div>
-        </div>
-      </div>
+    <div class="flex flex-col gap-4">
+      <label class="flex flex-col"><span class="text-sm font-medium">Full Name</span><input id="suName" class="h-11 rounded-lg border px-3" placeholder="Your name"/></label>
+      <label class="flex flex-col"><span class="text-sm font-medium">Email</span><input id="suEmail" class="h-11 rounded-lg border px-3" placeholder="you@example.com"/></label>
+      <label class="flex flex-col"><span class="text-sm font-medium">Password</span><input id="suPass" type="password" class="h-11 rounded-lg border px-3" placeholder="••••••••"/></label>
+      <div class="flex items-center gap-3"><input id="terms" type="checkbox" class="h-5 w-5 rounded border-gray-300"/><label for="terms" class="text-sm text-gray-600">I agree to the <a class="font-semibold text-blue-500 underline" href="#">Terms</a></label></div>
+      <button id="suBtn" class="mt-1 w-full rounded-lg bg-blue-400 py-3 text-white font-bold">Sign Up</button>
+      <div id="suMsg" class="text-sm text-red-600"></div>
+      <p class="text-center text-sm mt-2">Already a member? <a class="font-bold text-blue-500 underline" href="index.html?loginOpen=true">Log in</a></p>
     </div>
-  </section>
+  </div>
+</div>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="firebase-init.js"></script>
-  <script>
-    const nameEl = document.getElementById('name');
-    const emailEl = document.getElementById('email');
-    const passEl = document.getElementById('pass');
-    const msg = document.getElementById('signupMsg');
-    document.getElementById('signupBtn').addEventListener('click', async ()=>{
-      msg.textContent='';
-      try{
-        const {user} = await auth.createUserWithEmailAndPassword(emailEl.value.trim(), passEl.value);
-        await db.collection('users').doc(user.uid).set({
-          name: nameEl.value.trim() || 'Pet Lover',
-          email: user.email,
-          coins: 0,
-          selectedPet: null,
-          quizDone: false,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-          claimPending: false
-        });
-        window.location.href = 'index.html?loginOpen=true&created=1';
-      }catch(e){
-        msg.textContent = e.message;
-      }
-    });
-  </script>
-</body>
-</html>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase-init.js"></script>
+<script>
+const $ = s=>document.querySelector(s);
+$('#suBtn').addEventListener('click', async ()=>{
+  const name=$('#suName').value.trim(), email=$('#suEmail').value.trim(), pass=$('#suPass').value.trim(), msg=$('#suMsg');
+  if(!name||!email||!pass||!$('#terms').checked){ msg.textContent='Fill all fields & accept terms'; return; }
+  try{
+    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+    await db.collection('users').doc(cred.user.uid).set({ name, email, coins:0, createdAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge:true });
+    location.href = 'index.html?loginOpen=true';
+  }catch(e){ msg.textContent = e.message || 'Signup failed'; }
+});
+</script>
+</body></html>
