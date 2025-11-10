@@ -3,29 +3,120 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pet Quiz — PetRewardHub</title>
+  <title>Pet Personality Quiz — PetRewardHub</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #dbeafe, #fef9c3);
+      font-family: 'Inter', sans-serif;
+      color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .quiz-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    .quiz-card {
+      background: #fff;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+      border-radius: 24px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      padding: 32px 28px;
+      animation: fadeIn 0.4s ease;
+    }
+    .quiz-card h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .quiz-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 28px;
+      color: #1e293b;
+      line-height: 1.4;
+    }
+    .quiz-card button {
+      display: inline-block;
+      background: linear-gradient(135deg,#3b82f6,#facc15);
+      border: none;
+      border-radius: 12px;
+      color: #111;
+      font-weight: 600;
+      margin: 8px;
+      padding: 12px 22px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .quiz-card button:hover {
+      transform: translateY(-2px);
+    }
+    .progress-wrap {
+      width: 100%;
+      background: #e2e8f0;
+      height: 8px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress {
+      background: linear-gradient(90deg,#3b82f6,#facc15);
+      height: 8px;
+      width: 0%;
+      border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+    .footer-note {
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 24px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+  </style>
 </head>
 <body>
   <header>
-    <div class="header-inner">
+    <div class="header-inner" style="padding:15px 24px;display:flex;justify-content:space-between;align-items:center;">
       <div class="brand"><span>🐾</span> PetRewardHub</div>
+      <a href="index.html" class="btn btn-ghost">Home</a>
     </div>
   </header>
 
-  <section class="section" id="quizSection">
-    <h2>Pet Personality Quiz</h2>
-    <div id="quizBox">
-      <p>Loading quiz...</p>
+  <section class="quiz-container">
+    <div class="quiz-card" id="quizCard">
+      <h2>Loading your quiz...</h2>
+      <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
+      <p>Please wait while we fetch your personalized questions.</p>
     </div>
   </section>
+
+  <div class="footer-note">
+    © 2025 PetRewardHub · We respect your privacy — answers are not shared with third parties.
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-init.js"></script>
   <script>
-    const quizBox = document.getElementById('quizBox');
+    const quizCard = document.getElementById('quizCard');
+    const progressBar = document.getElementById('progressBar');
 
     const quizQuestions = {
       Dog: [
@@ -94,63 +185,61 @@
     };
 
     async function loadQuiz(){
-      quizBox.innerHTML = "<p>Loading quiz...</p>";
-
+      quizCard.innerHTML = `<h2>Loading your quiz...</h2><p>Please wait while we fetch your personalized questions.</p>`;
       const user = await new Promise(resolve=>{
-        const current = auth.currentUser;
-        if(current){ resolve(current); return; }
-        const unsub = auth.onAuthStateChanged(u=>{
-          if(u){ unsub(); resolve(u); }
-        });
+        if(firebase.auth().currentUser) return resolve(firebase.auth().currentUser);
+        const unsub = firebase.auth().onAuthStateChanged(u=>{ if(u){unsub();resolve(u);} });
         setTimeout(()=>resolve(null),2000);
       });
 
-      if(!user){
-        window.location.replace("index.html?loginOpen=true");
-        return;
-      }
+      if(!user){ window.location.replace('index.html?loginOpen=true'); return; }
 
       const doc = await db.collection('users').doc(user.uid).get();
       const pet = doc.exists ? doc.data().selectedPet : null;
-
       if(!pet || !quizQuestions[pet]){
-        quizBox.innerHTML = "<p>⚠️ No pet selected. Please select your pet first.</p><a href='select-pet.html' class='btn btn-primary'>Go Back</a>";
+        quizCard.innerHTML = `<h2>⚠️ Pet not selected</h2><p>Please select your pet type before taking the quiz.</p>
+          <a href="select-pet.html" class="btn btn-primary">Select Pet</a>`;
         return;
       }
 
-      const questions = quizQuestions[pet];
+      const qs = quizQuestions[pet];
       let current = 0;
+      updateProgress();
 
       const renderQ = ()=>{
-        quizBox.innerHTML = `
-          <h3>${questions[current]}</h3>
-          <div style="margin-top:20px;">
-            <button class="btn btn-primary" id="yes">Yes</button>
-            <button class="btn btn-primary" id="no">No</button>
-            <button class="btn btn-primary" id="maybe">Maybe</button>
+        quizCard.innerHTML = `
+          <h2>${pet} Quiz</h2>
+          <div class="progress-wrap"><div class="progress" id="progressBar" style="width:${(current/qs.length)*100}%"></div></div>
+          <h3>${qs[current]}</h3>
+          <div>
+            <button onclick="next('Yes')">Yes</button>
+            <button onclick="next('No')">No</button>
+            <button onclick="next('Maybe')">Maybe</button>
           </div>
-          <p class="caption">${current+1}/${questions.length}</p>
+          <p style="margin-top:20px;font-size:14px;color:#64748b;">Question ${current+1} of ${qs.length}</p>
         `;
-        document.getElementById('yes').onclick = next;
-        document.getElementById('no').onclick = next;
-        document.getElementById('maybe').onclick = next;
-      }
+      };
 
-      const next = async ()=>{
+      window.next = async ()=>{
         current++;
-        if(current < questions.length){
+        updateProgress();
+        if(current < qs.length){
           renderQ();
         } else {
           await db.collection('users').doc(user.uid).set({
-            quizDone: true,
+            quizDone:true,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
           }, {merge:true});
-          quizBox.innerHTML = `
-            <h3>🎉 Quiz Complete!</h3>
-            <p>You’re now ready to view pet offers.</p>
-            <a href="offers.html" class="btn btn-primary">View Offers</a>
+          quizCard.innerHTML = `
+            <h2>🎉 Quiz Complete!</h2>
+            <p>Thanks for sharing about your ${pet.toLowerCase()}! You're now ready to see exciting offers.</p>
+            <a href="offers.html" class="btn btn-primary">View Pet Offers</a>
           `;
         }
+      };
+
+      function updateProgress(){
+        progressBar.style.width = ((current/qs.length)*100) + '%';
       }
 
       renderQ();
