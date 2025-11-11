@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PetRewardHub — Premium Offers</title>
+<title>PetRewardHub — Offers</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
@@ -29,10 +29,10 @@
   <div class="flex flex-col sm:flex-row justify-between items-center mb-8">
     <div>
       <h2 class="text-3xl font-bold mb-2">🎯 Exclusive Pet Offers</h2>
-      <p class="text-gray-600">Select your country and discover trending offers to earn free pet gifts.</p>
+      <p class="text-gray-600">Choose your country and earn coins for your next pet gift!</p>
     </div>
     <div class="mt-4 sm:mt-0">
-      <label for="country" class="mr-2 font-semibold text-gray-700">🌍 Filter by Country:</label>
+      <label for="country" class="mr-2 font-semibold text-gray-700">🌍 Country:</label>
       <select id="country" class="border rounded-lg px-3 py-2 bg-white shadow">
         <option value="">All</option>
         <option value="us">🇺🇸 United States</option>
@@ -53,81 +53,73 @@
   © 2025 PetRewardHub · Trusted Rewards for Pet Lovers
 </footer>
 
-<!-- Firebase + App -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="firebase-init.js"></script>
 <script src="app.js"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- ✅ Old jQuery (for JSONP) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <script>
 const emailEl = document.getElementById("userEmail");
 const coinEl  = document.getElementById("coinBadge");
 const logoutBtn = document.getElementById("logoutBtn");
 const countrySelect = document.getElementById("country");
-const offerContainer = $("#offerContainer");
 
-// Real-time Firebase coin listener
+// Firebase coin listener
 attachCoinListener(emailEl, coinEl, logoutBtn);
 
-// Load offers dynamically based on selected country
-firebase.auth().onAuthStateChanged(async (user) => {
+firebase.auth().onAuthStateChanged(function(user) {
   if (!user) return;
   loadOffers(user.uid);
-
-  // reload when user changes country
   countrySelect.addEventListener("change", () => loadOffers(user.uid));
 });
 
-async function loadOffers(uid) {
-  offerContainer.html("<p>⏳ Fetching offers...</p>");
-  const country = countrySelect.value || "";
+function loadOffers(uid) {
+  $("#offerContainer").html("<p>⏳ Fetching offers...</p>");
+  const country = $("#country").val() || "";
 
-  try {
-    // Fetch directly from AdBlue API (bypassing JSONP)
-    const res = await fetch("https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=" + uid + "&s2=" + country);
-    let text = await res.text();
+  // ✅ Direct JSONP call (AdBlue compatible)
+  $.getJSON(
+    "https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=" + uid + "&s2=" + country + "&callback=?",
+    function(offers) {
+      if (!offers || !offers.length) {
+        $("#offerContainer").html("<p>⚠️ No offers available for this region.</p>");
+        return;
+      }
 
-    let offers = [];
-    try { offers = JSON.parse(text); }
-    catch { offers = JSON.parse(text.replace(/^[^(]*\(|\);?$/g, "")); }
+      let html = "";
+      offers.slice(0, 9).forEach(function(offer) {
+        const title = offer.name || "Special Offer";
+        const desc = offer.conversion || "Complete to earn rewards!";
+        const img = offer.network_icon || "https://placekitten.com/300/200";
+        const payout = parseFloat(offer.payout || 0);
+        const url = (offer.url || "#") + "&sub1=" + uid;
+        const coins = payout >= 2 ? 20 : 10;
 
-    if (!offers || !offers.length) {
-      offerContainer.html("<p>⚠️ No offers available right now. Try another country.</p>");
-      return;
+        html += `
+          <div class="bg-white rounded-2xl shadow p-4 hover:shadow-xl transform hover:-translate-y-1 transition flex flex-col">
+            <img src="${img}" alt="${title}" class="rounded-lg mb-3 w-full h-40 object-cover">
+            <h3 class="font-semibold text-lg mb-1">${title}</h3>
+            <p class="text-sm text-gray-600 mb-2">${desc}</p>
+            <span class="inline-block mb-3 text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-blue-500 to-yellow-300">
+              💰 Earn ${coins} Coins
+            </span>
+            <a href="${url}" target="_blank"
+              class="mt-auto inline-block rounded-full h-10 px-5 bg-blue-600 text-white font-semibold hover:bg-blue-700 text-center">
+              Open Offer
+            </a>
+          </div>`;
+      });
+
+      $("#offerContainer").html(html);
     }
-
-    let html = "";
-    offers.slice(0, 9).forEach((offer) => {
-      const title = offer.name || "Special Offer";
-      const desc  = offer.conversion || "Complete this to earn rewards!";
-      const img   = offer.network_icon || "https://placekitten.com/300/200";
-      const payout = parseFloat(offer.payout || 0);
-      const url = (offer.url || "#") + "&sub1=" + uid;
-      const coins = payout >= 2 ? 20 : 10;
-
-      html += `
-      <div class="bg-white rounded-2xl shadow hover:shadow-xl transform hover:-translate-y-1 transition p-4 flex flex-col">
-        <img src="${img}" class="rounded-lg mb-3 w-full h-40 object-cover" alt="${title}">
-        <h3 class="font-semibold text-lg mb-1">${title}</h3>
-        <p class="text-sm text-gray-600 mb-2">${desc}</p>
-        <span class="inline-block mb-3 text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-blue-500 to-yellow-300">
-          💰 Earn ${coins} Coins
-        </span>
-        <a href="${url}" target="_blank"
-           class="mt-auto inline-block rounded-full h-10 px-5 bg-blue-600 text-white font-semibold hover:bg-blue-700 text-center">
-           Open Offer
-        </a>
-      </div>`;
-    });
-
-    offerContainer.html(html);
-  } catch (err) {
-    console.error("Offer load error:", err);
-    offerContainer.html("<p>⚠️ Could not load offers. Please refresh later.</p>");
-  }
+  ).fail(function() {
+    $("#offerContainer").html("<p>⚠️ Could not load offers. Try again later.</p>");
+  });
 }
 </script>
 </body>
