@@ -1,27 +1,31 @@
 /* PetRewardHub custom tweaks */
-:root {
-  --shadow-soft: 0 8px 22px rgba(2, 8, 23, .08);
-}
+:root { --shadow-soft: 0 8px 22px rgba(2, 8, 23, .08); }
 .btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 44px; padding: 0 18px; border-radius: 9999px; font-weight: 700;
+  display:inline-flex; align-items:center; justify-content:center;
+  height:44px; padding:0 18px; border-radius:9999px; font-weight:700; text-align:center;
 }
-.btn-primary { background: #facc15; color: #111827; }
-.btn-primary:hover { opacity: .9; }
-.btn-dark { background: #111827; color: #fff; }
-.btn-dark:hover { opacity: .95; }
+.btn-primary { background:#facc15; color:#111827; }
+.btn-primary:hover { opacity:.9; }
+.btn-dark { background:#111827; color:#fff; }
+.btn-dark:hover { opacity:.95; }
 
 .card {
-  background: #fff; border-radius: 16px; box-shadow: var(--shadow-soft);
-  transition: transform .2s ease, box-shadow .2s ease;
+  background:#fff; border-radius:16px; box-shadow:var(--shadow-soft);
+  transition:transform .2s ease, box-shadow .2s ease;
 }
-.card:hover { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(2,8,23,.12); }
+.card:hover { transform:translateY(-2px); box-shadow:0 14px 34px rgba(2,8,23,.12); }
 
 /* Modal */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:60;
-  align-items:center; justify-content:center; }
-.modal { width:100%; max-width:560px; background:#fff; border-radius:16px; padding:24px; box-shadow:var(--shadow-soft);
-  transform: translateY(8px) scale(.98); opacity:0; transition: .18s ease; position:relative; }
-.modal.open { transform: translateY(0) scale(1); opacity:1; }
-.modal-close { position:absolute; top:12px; right:12px; width:36px; height:36px; border-radius:9999px; display:grid; place-items:center; }
-.modal-close:hover { background: rgba(0,0,0,.06); cursor:pointer; }
+  align-items:center; justify-content:center; padding:16px;
+}
+.modal {
+  width:100%; max-width:560px; background:#fff; border-radius:16px; padding:24px;
+  box-shadow:var(--shadow-soft); transform:translateY(8px) scale(.98); opacity:0; transition:.18s ease; position:relative;
+}
+.modal.open { transform:translateY(0) scale(1); opacity:1; }
+.modal-close {
+  position:absolute; top:12px; right:12px; width:36px; height:36px; border-radius:9999px;
+  display:grid; place-items:center;
+}
+.modal-close:hover { background:rgba(0,0,0,.06); cursor:pointer; }

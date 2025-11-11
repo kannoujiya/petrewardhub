@@ -1,37 +1,75 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+<head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Pet Quiz — PetRewardHub</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
 </head>
+
 <body class="bg-gradient-to-br from-[#dbeafe] to-[#fef9c3] font-[Inter] min-h-screen">
-<header class="flex items-center justify-between px-6 py-4 bg-white/70 backdrop-blur border-b">
-  <div class="font-extrabold">🐾 PetRewardHub</div><a href="index.html" class="text-sm underline">Home</a>
+<!-- ✅ Added professional header with coins + auth -->
+<header class="px-6 py-4 border-b bg-white/70 backdrop-blur">
+  <div class="max-w-3xl mx-auto flex items-center justify-between">
+    <div class="font-extrabold text-lg flex items-center gap-2">
+      🐾 <span>PetRewardHub</span>
+    </div>
+    <div class="flex items-center gap-3 text-sm">
+      <span class="inline-flex items-center gap-1 rounded-full bg-yellow-200 px-3 h-8 font-bold">
+        💰 <span id="coinBadge">0</span> Coins
+      </span>
+      <span id="userEmail" class="text-gray-700">Not signed in</span>
+      <button id="logoutBtn" class="h-9 px-4 rounded-full border font-semibold">Logout</button>
+    </div>
+  </div>
 </header>
+
 <main class="min-h-[70vh] flex items-center justify-center p-6">
   <div id="card" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 text-center">
     <h2 class="text-xl font-bold">Loading your quiz...</h2>
-    <div class="w-full h-2 bg-gray-200 rounded mt-3"><div id="bar" class="h-2 bg-gradient-to-r from-blue-500 to-yellow-400 w-0 rounded"></div></div>
+    <div class="w-full h-2 bg-gray-200 rounded mt-3">
+      <div id="bar" class="h-2 bg-gradient-to-r from-blue-500 to-yellow-400 w-0 rounded"></div>
+    </div>
     <p class="text-gray-500 mt-2 text-sm">Please wait while we fetch your personalized questions.</p>
   </div>
 </main>
+
 <footer class="text-center text-xs text-gray-500 pb-6">© 2025 PetRewardHub</footer>
 
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="firebase-init.js"></script>
+<script src="app.js"></script>
+
 <script>
-const card = document.getElementById('card'); const bar = document.getElementById('bar');
-const Q={Dog:["Does your dog enjoy outdoor walks?","Is your dog friendly with other pets?","Does your dog like fetching toys?","How often do you bathe your dog?","Would you like to receive free dog treats?"],Cat:["Does your cat prefer dry or wet food?","Does your cat sleep on your bed?","Does your cat use a scratching post?","Does your cat enjoy grooming?","Would you like to earn free cat accessories?"],Bird:["Does your bird mimic sounds?","Does your bird enjoy baths?","Do you let your bird fly in open space?","Does your bird eat fruits?","Would you like to receive free bird toys?"],Rabbit:["Does your rabbit like carrots?","Does your rabbit have a play area?","Does your rabbit stay indoors?","Do you brush your rabbit regularly?","Would you like free rabbit supplies?"],Fish:["Do you feed your fish twice daily?","Freshwater or saltwater?","Do you clean the aquarium weekly?","Do you have decorative plants?","Want free aquarium filters?"],Horse:["Does your horse have a grooming kit?","Regular rides?","Feed oats daily?","Own stable?","Want free horse accessories?"],Ferret:["Is your ferret active daytime?","Regular bath?","Likes toys?","Use leash?","Want free ferret toys?"],Reptile:["Bask under heat lamp?","Feed insects?","Clean terrarium weekly?","Prefers sunlight?","Want free reptile care products?"],"Small Mammal":["Hamster or guinea pig?","Change bedding weekly?","Pellets daily?","Has wheel toy?","Want free small pet gifts?"]};
+attachHeaderAuth(); // start live coins & auth here
+
+const card = document.getElementById('card'); 
+const bar = document.getElementById('bar');
+const Q = {
+  Dog:["Does your dog enjoy outdoor walks?","Is your dog friendly with other pets?","Does your dog like fetching toys?","How often do you bathe your dog?","Would you like to receive free dog treats?"],
+  Cat:["Does your cat prefer dry or wet food?","Does your cat sleep on your bed?","Does your cat use a scratching post?","Does your cat enjoy grooming?","Would you like to earn free cat accessories?"],
+  Bird:["Does your bird mimic sounds?","Does your bird enjoy baths?","Do you let your bird fly in open space?","Does your bird eat fruits?","Would you like to receive free bird toys?"],
+  Rabbit:["Does your rabbit like carrots?","Does your rabbit have a play area?","Does your rabbit stay indoors?","Do you brush your rabbit regularly?","Would you like free rabbit supplies?"],
+  Fish:["Do you feed your fish twice daily?","Freshwater or saltwater?","Do you clean the aquarium weekly?","Do you have decorative plants?","Want free aquarium filters?"],
+  Horse:["Does your horse have a grooming kit?","Regular rides?","Feed oats daily?","Own stable?","Want free horse accessories?"],
+  Ferret:["Is your ferret active daytime?","Regular bath?","Likes toys?","Use leash?","Want free ferret toys?"],
+  Reptile:["Bask under heat lamp?","Feed insects?","Clean terrarium weekly?","Prefers sunlight?","Want free reptile care products?"],
+  "Small Mammal":["Hamster or guinea pig?","Change bedding weekly?","Pellets daily?","Has wheel toy?","Want free small pet gifts?"]
+};
 
 firebase.auth().onAuthStateChanged(async user=>{
   if(!user){ location.replace('index.html?loginOpen=true'); return; }
   const doc = await db.collection('users').doc(user.uid).get();
   const pet = doc.exists ? doc.data().selectedPet : null;
   if(!pet || !Q[pet]){
-    card.innerHTML = `<h2 class="text-xl font-bold">No pet selected</h2><p class="text-gray-500">Please select your pet.</p><a href="select-pet.html" class="mt-4 inline-block rounded-full px-5 h-11 leading-[44px] bg-blue-500 text-white font-semibold">Select Pet</a>`;
+    card.innerHTML = `<h2 class="text-xl font-bold">No pet selected</h2>
+    <p class="text-gray-500">Please select your pet.</p>
+    <a href="select-pet.html" class="mt-4 inline-block rounded-full px-5 h-11 leading-[44px] bg-blue-500 text-white font-semibold">Select Pet</a>`;
     return;
   }
   const qs = Q[pet]; let i=0;
@@ -39,7 +77,9 @@ firebase.auth().onAuthStateChanged(async user=>{
     bar.style.width = `${(i/qs.length)*100}%`;
     card.innerHTML = `
       <h2 class="text-xl font-extrabold">${pet} Quiz</h2>
-      <div class="w-full h-2 bg-gray-200 rounded my-3"><div class="h-2 bg-gradient-to-r from-blue-500 to-yellow-400" style="width:${(i/qs.length)*100}%"></div></div>
+      <div class="w-full h-2 bg-gray-200 rounded my-3">
+        <div class="h-2 bg-gradient-to-r from-blue-500 to-yellow-400" style="width:${(i/qs.length)*100}%"></div>
+      </div>
       <h3 class="text-lg font-semibold my-4">${qs[i]}</h3>
       <div class="flex justify-center gap-3">
         <button class="rounded-full h-11 px-6 bg-blue-500 text-white font-bold" onclick="next()">Yes</button>
@@ -53,10 +93,13 @@ firebase.auth().onAuthStateChanged(async user=>{
     if(i<qs.length){ render(); }
     else{
       await db.collection('users').doc(user.uid).set({quizDone:true,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-      card.innerHTML = `<h2 class="text-xl font-extrabold">🎉 Quiz Complete!</h2><p class="text-gray-600">You’re now ready to view pet offers.</p><a href="offers.html" class="mt-4 inline-block rounded-full px-6 h-11 leading-[44px] bg-yellow-300 font-bold">View Offers</a>`;
+      card.innerHTML = `<h2 class="text-xl font-extrabold">🎉 Quiz Complete!</h2>
+      <p class="text-gray-600">You’re now ready to view pet offers.</p>
+      <a href="offers.html" class="mt-4 inline-block rounded-full px-6 h-11 leading-[44px] bg-yellow-300 font-bold">View Offers</a>`;
     }
   };
   render();
 });
 </script>
-</body></html>
+</body>
+</html>

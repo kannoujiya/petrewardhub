@@ -15,9 +15,7 @@
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
     <div class="font-extrabold text-lg flex items-center gap-2">🐾 PetRewardHub</div>
     <div class="flex items-center gap-3 text-sm">
-      <span class="inline-flex items-center gap-1 rounded-full bg-white/30 px-3 h-8 font-bold">
-        💰 <span id="coinBadge">0</span> Coins
-      </span>
+      <span class="inline-flex items-center gap-1 rounded-full bg-white/30 px-3 h-8 font-bold">💰 <span id="coinBadge">0</span> Coins</span>
       <span id="userEmail" class="text-white/90">Not signed in</span>
       <button id="logoutBtn" class="ml-1 h-9 px-4 rounded-full bg-white/20 hover:bg-white/30 font-semibold">Logout</button>
     </div>
@@ -48,9 +46,7 @@
   </div>
 </main>
 
-<footer class="text-center text-sm text-gray-500 py-10">
-  © 2025 PetRewardHub · Safe & Trusted
-</footer>
+<footer class="text-center text-sm text-gray-500 py-10">© 2025 PetRewardHub · Safe & Trusted</footer>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -59,16 +55,16 @@
 <script src="firebase-init.js"></script>
 <script src="app.js"></script>
 
-<!-- Old jQuery for JSONP (required by AdBlue) -->
+<!-- Old jQuery for JSONP -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <script>
-attachHeaderAuth();
+attachHeaderAuth(); // show "signed in + coins" from this page onward
 
 firebase.auth().onAuthStateChanged(function(user){
-  if(!user) return;
+  if (!user) return;
   const select = document.getElementById("country");
-  const load = () => loadAdBlueOffers({ containerSel: "#offerContainer", uid: user.uid, country: select.value, limit: 9 });
+  const load   = ()=> loadAdBlueOffers({ containerSel:"#offerContainer", uid:user.uid, country:select.value, limit:9 });
   load();
   select.addEventListener("change", load);
 });

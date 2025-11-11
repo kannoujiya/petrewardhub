@@ -11,22 +11,20 @@
 </head>
 <body class="bg-[#fafbff] text-[#2D3748]">
 
+<!-- Header (no signed-in UI here) -->
 <header class="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-10 lg:px-20 py-4 bg-white/80 backdrop-blur shadow-sm">
   <div class="flex items-center gap-3">
     <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">redeem</span>
     <h2 class="text-xl font-bold">Gift Gallery</h2>
   </div>
-  <div class="flex items-center gap-3 text-sm">
-    <span class="inline-flex items-center gap-1 rounded-full bg-yellow-200 px-3 h-8 font-bold">
-      💰 <span id="coinBadge">0</span> Coins
-    </span>
-    <span id="userEmail" class="text-gray-700">Not signed in</span>
-    <a href="index.html" class="btn btn-primary">Home</a>
+  <div class="flex items-center gap-2">
+    <button id="openLoginBtn" class="btn btn-primary">Login</button>
+    <a href="signup.html" class="btn btn-dark">Sign Up</a>
   </div>
 </header>
 
 <main class="px-6 sm:px-10 lg:px-20 py-10 max-w-7xl mx-auto">
-  <p class="text-gray-600 mb-6">Click any gift to learn more, see benefits, and claim it using your coins.</p>
+  <p class="text-gray-600 mb-6">Click any gift to learn more and claim it using your coins.</p>
 
   <div id="giftGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     <!-- JS will render cards -->
@@ -44,12 +42,12 @@
         <span id="giftCoins" class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">—</span>
       </div>
       <p id="giftDesc" class="text-gray-700 text-sm"></p>
-      <button class="btn btn-dark" onclick="claimGift()">Claim for Free</button>
+      <button class="btn btn-dark" onclick="claimGift()">Claim Gift</button>
     </div>
   </div>
 </div>
 
-<!-- Minimal login modal (for this page too) -->
+<!-- Login Modal (same as index) -->
 <div id="loginOverlay" class="modal-overlay">
   <div id="loginModal" class="modal">
     <button id="loginClose" class="modal-close"><span class="material-symbols-outlined">close</span></button>
@@ -59,34 +57,33 @@
       <label class="flex flex-col"><span class="font-medium pb-1">Password</span><input id="loginPass" class="h-12 rounded-xl border px-3" type="password"/></label>
       <button id="loginBtn" class="btn btn-primary">Login</button>
       <div id="loginMsg" class="text-sm text-red-600"></div>
+      <p class="text-center text-sm">No account? <a href="signup.html" class="font-bold underline">Sign up</a></p>
     </div>
   </div>
 </div>
 
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="firebase-init.js"></script>
 <script src="app.js"></script>
 <script>
-attachHeaderAuth();
-
 const GIFTS = [
   { title:"Interactive Dog Toy", coins:100, img:"https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800", details:"Keeps dogs active; great for training; durable rubber; easy to clean." },
   { title:"Cozy Cat Bed", coins:150, img:"https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800", details:"Ultra-soft cushion; machine washable; anti-slip base; cat-approved naps." },
   { title:"Automatic Feeder", coins:250, img:"https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800", details:"Scheduled meals; portion control; battery backup; perfect for busy owners." },
   { title:"Feather Wand Toy", coins:80,  img:"https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=800", details:"Interactive play; boosts exercise; sturdy rod; replaceable feathers." },
   { title:"Pet Grooming Kit", coins:180, img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800", details:"De-shedding brush; nail trimmer; comb set — salon care at home." },
-  { title:"Puppy Chew Bone", coins:70, img:"https://images.unsplash.com/photo-1619983081563-430f63602796?q=80&w=800", details:"Gentle on teeth; tasty flavor; reduces anxiety and chewing damage." },
+  { title:"Puppy Chew Bone", coins:70,  img:"https://images.unsplash.com/photo-1619983081563-430f63602796?q=80&w=800", details:"Gentle on teeth; tasty flavor; reduces anxiety and chewing damage." },
   { title:"Cat Scratcher Board", coins:110, img:"https://images.unsplash.com/photo-1574158622682-e40e69881006?q=80&w=800", details:"Protects furniture; natural sisal; catnip included for extra fun." },
   { title:"Pet Travel Water Bottle", coins:120, img:"https://images.unsplash.com/photo-1568644593310-14a03de9a9b4?q=80&w=800", details:"Leak-proof; one-hand use; perfect for walks, hikes, and trips." },
   { title:"Aquarium Filter", coins:200, img:"https://images.unsplash.com/photo-1544551763-7ef4200bc4b2?q=80&w=800", details:"Crystal-clear water; quiet motor; easy cartridge replacement." },
-  { title:"Small Pet Hideout", coins:90, img:"https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?q=80&w=800", details:"Safe cozy nook; stress relief; perfect for hamsters/guinea pigs." }
+  { title:"Small Pet Hideout", coins:90,  img:"https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?q=80&w=800", details:"Safe cozy nook; stress relief; perfect for hamsters/guinea pigs." }
 ];
-
 const grid = document.getElementById("giftGrid");
 grid.innerHTML = GIFTS.map(g => `
-  <div class="card p-4 cursor-pointer" onclick="openGiftModal(${JSON.stringify(g).replace(/"/g,'&quot;')})">
+  <div class="card p-4 cursor-pointer" onclick='openGiftModal(${JSON.stringify(g).replace(/"/g,"&quot;")})'>
     <img src="${g.img}" class="rounded-lg mb-3 w-full h-44 object-cover" alt="${g.title}">
     <div class="flex items-center justify-between">
       <p class="font-semibold">${g.title}</p>
