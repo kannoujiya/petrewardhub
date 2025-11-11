@@ -3,18 +3,15 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Pet Offers — PetRewardHub</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<title>PetRewardHub — Offers</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 </head>
 
 <body class="bg-gradient-to-br from-[#eff6ff] to-[#fef9c3] font-[Inter] min-h-screen">
 <header class="sticky top-0 z-50 bg-white/80 backdrop-blur border-b">
-  <div class="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
-    <div class="font-extrabold text-lg flex items-center gap-2">
-      🐾 <span>PetRewardHub</span>
-    </div>
+  <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div class="font-extrabold text-lg flex items-center gap-2">🐾 PetRewardHub</div>
     <div class="flex items-center gap-3 text-sm">
       <span class="inline-flex items-center gap-1 rounded-full bg-yellow-200 px-3 h-8 font-bold">
         💰 <span id="coinBadge">0</span> Coins
@@ -25,27 +22,26 @@
   </div>
 </header>
 
-<main class="max-w-5xl mx-auto px-6 py-8">
-  <h2 class="text-2xl font-bold">🎁 Pet Offers For You</h2>
-  <p class="text-gray-600 mb-6">Complete these offers and earn coins to claim free pet gifts.</p>
-
-  <div id="offerContainer" class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-5">
+<main class="max-w-6xl mx-auto px-6 py-10">
+  <h2 class="text-3xl font-bold mb-2">🎯 Pet Offers For You</h2>
+  <p class="text-gray-600 mb-8">Complete these verified offers to earn coins and claim your free gifts.</p>
+  <div id="offerContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     <p>⏳ Loading offers...</p>
   </div>
 </main>
 
 <footer class="text-center text-sm text-gray-500 py-10">
-  © 2025 PetRewardHub · Safe & Trusted
+  © 2025 PetRewardHub · Trusted Rewards for Pet Lovers
 </footer>
 
-<!-- Firebase + App -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="firebase-init.js"></script>
 <script src="app.js"></script>
 
-<!-- jQuery (optional for DOM updates) -->
+<!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
@@ -53,12 +49,13 @@ const emailEl = document.getElementById("userEmail");
 const coinEl  = document.getElementById("coinBadge");
 const logoutBtn = document.getElementById("logoutBtn");
 
-// Real-time coin updates
+// Realtime coin listener
 attachCoinListener(emailEl, coinEl, logoutBtn);
 
-// ✅ Fetch offers safely through Netlify Function
+// ✅ Fetch offers from proxy and render cards
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
+
   $("#offerContainer").html("<p>⏳ Fetching latest offers...</p>");
 
   try {
@@ -71,22 +68,26 @@ firebase.auth().onAuthStateChanged(async (user) => {
     }
 
     let html = "";
-    offers.slice(0, 8).forEach((offer) => {
-      const url = (offer.url || offer.tracking_url || "#") + "&sub1=" + user.uid;
-      const title = offer.anchor || offer.name || "Special Offer";
-      const desc = offer.description || "Complete this task and earn coins!";
-      let coins = 10;
-      if (/email|survey|trial|register/i.test(title + desc)) coins = 20;
+    offers.slice(0, 9).forEach((offer) => {
+      const title = offer.name || "Special Offer";
+      const desc  = offer.conversion || "Complete this task and earn rewards!";
+      const img   = offer.network_icon || "https://placekitten.com/300/200";
+      const payout = parseFloat(offer.payout || 0);
+      const url = (offer.url || "#") + "&sub1=" + user.uid;
+
+      // coin logic based on payout
+      let coins = payout >= 2 ? 20 : 10;
 
       html += `
-        <div class="bg-white rounded-2xl shadow p-5 hover:shadow-xl transition">
-          <span class="inline-block mb-2 text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-blue-500 to-yellow-300">
+        <div class="bg-white rounded-2xl shadow p-4 flex flex-col hover:shadow-xl transition">
+          <img src="${img}" class="rounded-lg mb-3 w-full h-40 object-cover" alt="${title}">
+          <h3 class="font-semibold text-lg mb-1">${title}</h3>
+          <p class="text-sm text-gray-600 mb-2">${desc}</p>
+          <span class="inline-block mb-3 text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-blue-500 to-yellow-300">
             💰 Earn ${coins} Coins
           </span>
-          <h4 class="font-semibold mb-1">${title}</h4>
-          <p class="text-sm text-gray-600 mb-3">${desc}</p>
           <a href="${url}" target="_blank"
-             class="inline-block rounded-full h-10 px-5 bg-blue-600 text-white font-semibold hover:bg-blue-700">
+             class="mt-auto inline-block rounded-full h-10 px-5 bg-blue-600 text-white font-semibold hover:bg-blue-700 text-center">
              Open Offer
           </a>
         </div>`;
@@ -94,8 +95,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
     $("#offerContainer").html(html);
   } catch (err) {
-    console.error(err);
-    $("#offerContainer").html("<p>⚠️ Error fetching offers: " + err.message + "</p>");
+    console.error("Offer fetch error:", err);
+    $("#offerContainer").html("<p>⚠️ Error loading offers. Please refresh later.</p>");
   }
 });
 </script>
