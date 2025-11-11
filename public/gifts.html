@@ -9,9 +9,10 @@
 <link rel="stylesheet" href="styles.css"/>
 <style>body{font-family:Inter,system-ui,sans-serif}</style>
 </head>
+
 <body class="bg-[#fafbff] text-[#2D3748]">
 
-<!-- Header (no signed-in UI here) -->
+<!-- Header -->
 <header class="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-10 lg:px-20 py-4 bg-white/80 backdrop-blur shadow-sm">
   <div class="flex items-center gap-3">
     <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">redeem</span>
@@ -23,12 +24,10 @@
   </div>
 </header>
 
+<!-- Main Gift Grid -->
 <main class="px-6 sm:px-10 lg:px-20 py-10 max-w-7xl mx-auto">
-  <p class="text-gray-600 mb-6">Click any gift to learn more and claim it using your coins.</p>
-
-  <div id="giftGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    <!-- JS will render cards -->
-  </div>
+  <p class="text-gray-600 mb-6">Click any gift to learn more. Claim once you’ve earned enough coins from offers!</p>
+  <div id="giftGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 </main>
 
 <!-- Gift Modal -->
@@ -42,17 +41,19 @@
         <span id="giftCoins" class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">—</span>
       </div>
       <p id="giftDesc" class="text-gray-700 text-sm"></p>
-      <button class="btn btn-dark" onclick="claimGift()">Claim Gift</button>
+      <button id="claimGiftBtn" class="btn w-full bg-gray-300 text-gray-500 cursor-not-allowed" disabled>
+        Not enough coins
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Login Modal (same as index) -->
+<!-- Login Modal -->
 <div id="loginOverlay" class="modal-overlay">
   <div id="loginModal" class="modal">
     <button id="loginClose" class="modal-close"><span class="material-symbols-outlined">close</span></button>
     <div class="flex flex-col gap-4">
-      <h2 class="text-[24px] font-bold text-center">Login to Claim</h2>
+      <h2 class="text-[24px] font-bold text-center">Login to Claim Gifts 🐾</h2>
       <label class="flex flex-col"><span class="font-medium pb-1">Email</span><input id="loginEmail" class="h-12 rounded-xl border px-3" type="email"/></label>
       <label class="flex flex-col"><span class="font-medium pb-1">Password</span><input id="loginPass" class="h-12 rounded-xl border px-3" type="password"/></label>
       <button id="loginBtn" class="btn btn-primary">Login</button>
@@ -67,23 +68,20 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="firebase-init.js"></script>
-<script src="app.js"></script>
+
 <script>
+// ========== Gift List ==========
 const GIFTS = [
-  { title:"Interactive Dog Toy", coins:100, img:"https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800", details:"Keeps dogs active; great for training; durable rubber; easy to clean." },
-  { title:"Cozy Cat Bed", coins:150, img:"https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800", details:"Ultra-soft cushion; machine washable; anti-slip base; cat-approved naps." },
-  { title:"Automatic Feeder", coins:250, img:"https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800", details:"Scheduled meals; portion control; battery backup; perfect for busy owners." },
-  { title:"Feather Wand Toy", coins:80,  img:"https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=800", details:"Interactive play; boosts exercise; sturdy rod; replaceable feathers." },
-  { title:"Pet Grooming Kit", coins:180, img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800", details:"De-shedding brush; nail trimmer; comb set — salon care at home." },
-  { title:"Puppy Chew Bone", coins:70,  img:"https://images.unsplash.com/photo-1619983081563-430f63602796?q=80&w=800", details:"Gentle on teeth; tasty flavor; reduces anxiety and chewing damage." },
-  { title:"Cat Scratcher Board", coins:110, img:"https://images.unsplash.com/photo-1574158622682-e40e69881006?q=80&w=800", details:"Protects furniture; natural sisal; catnip included for extra fun." },
-  { title:"Pet Travel Water Bottle", coins:120, img:"https://images.unsplash.com/photo-1568644593310-14a03de9a9b4?q=80&w=800", details:"Leak-proof; one-hand use; perfect for walks, hikes, and trips." },
-  { title:"Aquarium Filter", coins:200, img:"https://images.unsplash.com/photo-1544551763-7ef4200bc4b2?q=80&w=800", details:"Crystal-clear water; quiet motor; easy cartridge replacement." },
-  { title:"Small Pet Hideout", coins:90,  img:"https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?q=80&w=800", details:"Safe cozy nook; stress relief; perfect for hamsters/guinea pigs." }
+  { title:"Interactive Dog Toy", coins:100, img:"https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800", details:"Keeps dogs active and playful — perfect for fetch and training." },
+  { title:"Cozy Cat Bed", coins:150, img:"https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800", details:"Soft, washable bed that keeps your cat cozy all day long." },
+  { title:"Automatic Feeder", coins:250, img:"https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800", details:"Smart feeder with timer — serves meals even when you’re away." },
+  { title:"Feather Wand Toy", coins:80, img:"https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=800", details:"Encourages cats to stay active and mentally stimulated." },
+  { title:"Pet Grooming Kit", coins:180, img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800", details:"Full grooming set for fur, nails, and hygiene — vet approved." },
 ];
+
 const grid = document.getElementById("giftGrid");
-grid.innerHTML = GIFTS.map(g => `
-  <div class="card p-4 cursor-pointer" onclick='openGiftModal(${JSON.stringify(g).replace(/"/g,"&quot;")})'>
+grid.innerHTML = GIFTS.map((g,i)=>`
+  <div class="card p-4 cursor-pointer" onclick="openGiftModal(${i})">
     <img src="${g.img}" class="rounded-lg mb-3 w-full h-44 object-cover" alt="${g.title}">
     <div class="flex items-center justify-between">
       <p class="font-semibold">${g.title}</p>
@@ -91,6 +89,91 @@ grid.innerHTML = GIFTS.map(g => `
     </div>
   </div>
 `).join("");
+
+// ========== Login Modal ==========
+const overlay = document.getElementById('loginOverlay');
+const modal = document.getElementById('loginModal');
+const openLogin = document.getElementById('openLoginBtn');
+const closeLogin = document.getElementById('loginClose');
+const loginBtn = document.getElementById('loginBtn');
+const loginMsg = document.getElementById('loginMsg');
+
+function showLoginPopup(){ overlay.style.display='flex'; setTimeout(()=>modal.classList.add('open'),10); document.body.style.overflow='hidden'; }
+function hideLoginPopup(){ modal.classList.remove('open'); setTimeout(()=>{ overlay.style.display='none'; document.body.style.overflow=''; },150); }
+
+openLogin.onclick = showLoginPopup;
+closeLogin.onclick = hideLoginPopup;
+overlay.addEventListener('click', e=>{ if(e.target===overlay) hideLoginPopup(); });
+
+loginBtn.onclick = async ()=>{
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value.trim();
+  if(!email||!pass){loginMsg.textContent="Please enter email & password.";return;}
+  try{
+    loginBtn.textContent="Logging in...";
+    await firebase.auth().signInWithEmailAndPassword(email,pass);
+    hideLoginPopup();
+    location.href="quiz.html";
+  }catch(e){
+    loginMsg.textContent=e.message;
+  }finally{
+    loginBtn.textContent="Login";
+  }
+};
+
+// ========== Gift Modal ==========
+let selectedGift=null; 
+let userCoins=0;
+
+function openGiftModal(i){
+  selectedGift=GIFTS[i];
+  document.getElementById("giftTitle").textContent=selectedGift.title;
+  document.getElementById("giftImg").src=selectedGift.img;
+  document.getElementById("giftCoins").textContent=selectedGift.coins+" Coins";
+  document.getElementById("giftDesc").textContent=selectedGift.details;
+  document.getElementById("giftOverlay").style.display="flex";
+  setTimeout(()=>document.getElementById("giftModal").classList.add("open"),10);
+  updateClaimButton();
+}
+function closeGiftModal(){
+  document.getElementById("giftModal").classList.remove("open");
+  setTimeout(()=>document.getElementById("giftOverlay").style.display="none",150);
+}
+
+const claimBtn=document.getElementById("claimGiftBtn");
+claimBtn.addEventListener("click",()=>{
+  if(claimBtn.disabled) return; // not enough coins
+  firebase.auth().onAuthStateChanged(user=>{
+    if(!user){ closeGiftModal(); showLoginPopup(); }
+    else{ location.href="claim.html"; }
+  });
+});
+
+// ========== Real-time coins logic ==========
+firebase.auth().onAuthStateChanged(user=>{
+  if(user){
+    db.collection("users").doc(user.uid).onSnapshot(doc=>{
+      userCoins=(doc.exists && doc.data().coins)||0;
+      updateClaimButton();
+    });
+  }else{
+    userCoins=0;
+    updateClaimButton();
+  }
+});
+
+function updateClaimButton(){
+  if(!selectedGift) return;
+  if(userCoins >= selectedGift.coins){
+    claimBtn.disabled=false;
+    claimBtn.className="btn btn-dark w-full";
+    claimBtn.textContent="Claim This Gift";
+  }else{
+    claimBtn.disabled=true;
+    claimBtn.className="btn w-full bg-gray-300 text-gray-500 cursor-not-allowed";
+    claimBtn.textContent=`Need ${selectedGift.coins - userCoins} more coins`;
+  }
+}
 </script>
 </body>
 </html>
