@@ -45,47 +45,38 @@
 <script src="firebase-init.js"></script>
 <script src="app.js"></script>
 
-<!-- jQuery (for AdBlue JSONP) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- jQuery (optional for DOM updates) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
 const emailEl = document.getElementById("userEmail");
 const coinEl  = document.getElementById("coinBadge");
 const logoutBtn = document.getElementById("logoutBtn");
 
-// Realtime coin listener
+// Real-time coin updates
 attachCoinListener(emailEl, coinEl, logoutBtn);
 
-// ✅ Load AdBlue offers automatically after auth
-firebase.auth().onAuthStateChanged(user => {
+// ✅ Fetch offers safely through Netlify Function
+firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
-
   $("#offerContainer").html("<p>⏳ Fetching latest offers...</p>");
 
-  // --- Fetch offers using your working API ---
-  const API_URL = "https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php";
-  const FULL_URL = `${API_URL}?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=${user.uid}&s2=&callback=?`;
+  try {
+    const res = await fetch("/.netlify/functions/offers-proxy");
+    const offers = await res.json();
 
-  $.getJSON(FULL_URL, function(offers) {
     if (!offers || !offers.length) {
-      $("#offerContainer").html("<p>⚠️ No offers available right now. Please check back later.</p>");
+      $("#offerContainer").html("<p>⚠️ No offers available right now.</p>");
       return;
     }
 
     let html = "";
-    const numOffers = 8; // show up to 8
-    offers = offers.splice(0, numOffers);
-
-    $.each(offers, function(key, offer) {
-      const title = offer.name || offer.anchor || "Special Offer";
-      const desc  = offer.description || "Complete this offer to earn rewards!";
-      const url   = (offer.url || offer.tracking_url || "#") + "&sub1=" + user.uid;
-
-      // coin estimate based on type
+    offers.slice(0, 8).forEach((offer) => {
+      const url = (offer.url || offer.tracking_url || "#") + "&sub1=" + user.uid;
+      const title = offer.anchor || offer.name || "Special Offer";
+      const desc = offer.description || "Complete this task and earn coins!";
       let coins = 10;
-      const t = (title + " " + desc).toLowerCase();
-      if (t.includes("email") || t.includes("submit") || t.includes("survey") || t.includes("trial") || t.includes("register")) coins = 20;
-      if (t.includes("install") || t.includes("app")) coins = 10;
+      if (/email|survey|trial|register/i.test(title + desc)) coins = 20;
 
       html += `
         <div class="bg-white rounded-2xl shadow p-5 hover:shadow-xl transition">
@@ -94,16 +85,18 @@ firebase.auth().onAuthStateChanged(user => {
           </span>
           <h4 class="font-semibold mb-1">${title}</h4>
           <p class="text-sm text-gray-600 mb-3">${desc}</p>
-          <a href="${url}" target="_blank" class="inline-block rounded-full h-10 px-5 bg-blue-600 text-white font-semibold hover:bg-blue-700">
-            Open Offer
+          <a href="${url}" target="_blank"
+             class="inline-block rounded-full h-10 px-5 bg-blue-600 text-white font-semibold hover:bg-blue-700">
+             Open Offer
           </a>
         </div>`;
     });
 
     $("#offerContainer").html(html);
-  }).fail(() => {
-    $("#offerContainer").html("<p>⚠️ Could not load offers. Please refresh or try again later.</p>");
-  });
+  } catch (err) {
+    console.error(err);
+    $("#offerContainer").html("<p>⚠️ Error fetching offers: " + err.message + "</p>");
+  }
 });
 </script>
 </body>
