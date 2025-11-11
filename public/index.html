@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="styles.css"/>
 <style>body{font-family:Inter,system-ui,sans-serif}</style>
 </head>
-<body class="bg-white text-[#2D3748]">
 
-<!-- Header (NO signed-in UI on homepage) -->
+<body class="bg-white text-[#2D3748]">
+<!-- ✅ Header -->
 <header class="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-10 lg:px-20 py-4 bg-white/80 backdrop-blur shadow-sm">
   <div class="flex items-center gap-3">
     <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">pets</span>
@@ -23,75 +23,66 @@
   </div>
 </header>
 
-<!-- Hero -->
+<!-- ✅ Hero -->
 <section class="relative py-20 px-6 sm:px-10 lg:px-20 text-center bg-gradient-to-br from-[#A0D2EB]/20 via-white to-[#FEEAA8]/20">
   <div class="mx-auto max-w-4xl flex flex-col items-center gap-6">
     <h1 class="text-5xl font-black">Earn Free Pet Gifts by Completing Fun Offers!</h1>
     <p class="text-lg text-gray-600 max-w-2xl">
-      Complete fun offers, earn coins, and treat your furry friend with love!
+      Join thousands of pet lovers who are already earning rewards for their furry friends! Complete fun offers, earn coins, and redeem gifts your pet will love.
     </p>
     <a href="#gifts" class="btn btn-primary">Start Earning Now</a>
   </div>
 </section>
 
-<!-- Gifts (5 real + 6th see-all) -->
+<!-- ✅ Gifts Section -->
 <section id="gifts" class="py-16 px-6 sm:px-10 lg:px-20">
   <div class="mx-auto max-w-6xl">
     <h2 class="text-3xl font-bold text-center pb-6">🎁 Free Gifts You Can Earn</h2>
     <p class="text-gray-600 text-center max-w-2xl mx-auto mb-8">
-      High-quality, pet-safe goodies — toys, beds, feeders, and more. Earn coins from offers, then claim your favorite gift!
+      Explore the best free pet gifts! Earn coins from offers and claim toys, beds, and accessories for your pets. Every item is safe, high-quality, and 100% free after completing offers.
     </p>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Interactive Dog Toy', img:'https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800', coins:100, details:'Keeps dogs active; great for training; durable rubber; easy to clean.'})">
-        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800')"></div>
+      <div class="card p-4 cursor-pointer" onclick="openGiftModal('Interactive Dog Toy','https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800',100,'Keeps dogs active and healthy — perfect for fetch and playtime!')">
+        <img src="https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800" class="rounded mb-3 w-full h-48 object-cover" alt="">
         <div class="flex items-center justify-between"><p class="font-semibold">Interactive Dog Toy</p><span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">100 Coins</span></div>
       </div>
-      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Cozy Cat Bed', img:'https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800', coins:150, details:'Ultra-soft cushion; machine washable; anti-slip base; cat-approved naps.'})">
-        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800')"></div>
+
+      <div class="card p-4 cursor-pointer" onclick="openGiftModal('Cozy Cat Bed','https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800',150,'Soft, machine-washable bed to keep your cat warm and cozy.')">
+        <img src="https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800" class="rounded mb-3 w-full h-48 object-cover" alt="">
         <div class="flex items-center justify-between"><p class="font-semibold">Cozy Cat Bed</p><span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">150 Coins</span></div>
       </div>
-      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Automatic Feeder', img:'https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800', coins:250, details:'Scheduled meals; portion control; battery backup; perfect for busy owners.'})">
-        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800')"></div>
+
+      <div class="card p-4 cursor-pointer" onclick="openGiftModal('Automatic Feeder','https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800',250,'Automated pet feeder with timer — perfect for busy pet parents.')">
+        <img src="https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800" class="rounded mb-3 w-full h-48 object-cover" alt="">
         <div class="flex items-center justify-between"><p class="font-semibold">Automatic Feeder</p><span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">250 Coins</span></div>
       </div>
-      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Feather Wand Toy', img:'https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=800', coins:80, details:'Interactive play; boosts exercise; sturdy rod; replaceable feathers.'})">
-        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=800')"></div>
-        <div class="flex items-center justify-between"><p class="font-semibold">Feather Wand Toy</p><span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">80 Coins</span></div>
-      </div>
-      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Pet Grooming Kit', img:'https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800', coins:180, details:'De-shedding brush; nail trimmer; comb set — salon care at home.'})">
-        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800')"></div>
-        <div class="flex items-center justify-between"><p class="font-semibold">Pet Grooming Kit</p><span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">180 Coins</span></div>
-      </div>
-      <a href="gifts.html" class="card p-6 flex items-center justify-center text-center hover:no-underline">
-        <div><div class="w-16 h-16 rounded-2xl bg-yellow-100 mx-auto mb-3 flex items-center justify-center">🐾</div>
-          <p class="font-extrabold text-lg">See All Gifts</p><p class="text-sm text-gray-600 mt-1">Explore dozens of pet goodies →</p>
+
+      <a href="gifts.html" class="card p-6 flex items-center justify-center hover:no-underline">
+        <div class="text-center">
+          <div class="w-16 h-16 rounded-2xl bg-yellow-100 mx-auto mb-3 flex items-center justify-center text-2xl">🐾</div>
+          <p class="font-extrabold text-lg">See All Gifts</p>
+          <p class="text-sm text-gray-600 mt-1">Explore dozens more pet goodies →</p>
         </div>
       </a>
     </div>
   </div>
 </section>
 
-<footer class="bg-gray-100 py-10 px-6 sm:px-10 lg:px-20">
-  <div class="text-center text-sm text-gray-600">© 2025 PetRewardHub. All rights reserved.</div>
-</footer>
+<footer class="bg-gray-100 py-10 px-6 sm:px-10 lg:px-20 text-center text-sm text-gray-600">© 2025 PetRewardHub. All Rights Reserved.</footer>
 
-<!-- Gift Modal -->
+<!-- ✅ Gift Popup -->
 <div id="giftOverlay" class="modal-overlay">
   <div id="giftModal" class="modal">
     <button class="modal-close" onclick="closeGiftModal()"><span class="material-symbols-outlined">close</span></button>
-    <div class="flex flex-col gap-4">
-      <img id="giftImg" src="" class="w-full h-56 object-cover rounded-lg" alt="Gift"/>
-      <div class="flex items-center justify-between">
-        <h3 id="giftTitle" class="text-xl font-extrabold"></h3>
-        <span id="giftCoins" class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">—</span>
-      </div>
-      <p id="giftDesc" class="text-gray-700 text-sm"></p>
-      <button class="btn btn-dark" onclick="claimGift()">Claim Gift</button>
-    </div>
+    <img id="giftImg" src="" class="rounded-lg mb-3 w-full h-52 object-cover" alt="">
+    <h3 id="giftTitle" class="text-xl font-bold mb-1"></h3>
+    <p id="giftDetails" class="text-gray-600 text-sm mb-3"></p>
+    <span id="giftCoins" class="inline-block text-xs font-bold px-3 py-1 rounded-full bg-yellow-200 mb-4"></span>
+    <button id="claimGiftBtn" class="btn btn-dark w-full">Claim This Gift</button>
   </div>
 </div>
 
-<!-- Login Modal -->
+<!-- ✅ Login Popup -->
 <div id="loginOverlay" class="modal-overlay">
   <div id="loginModal" class="modal">
     <button id="loginClose" class="modal-close"><span class="material-symbols-outlined">close</span></button>
@@ -106,11 +97,68 @@
   </div>
 </div>
 
-<!-- Firebase -->
+<!-- ✅ Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="firebase-init.js"></script>
-<script src="app.js"></script>
+
+<!-- ✅ Login + Gift modal JS -->
+<script>
+const overlay = document.getElementById('loginOverlay');
+const modal = document.getElementById('loginModal');
+const openLogin = document.getElementById('openLoginBtn');
+const closeLogin = document.getElementById('loginClose');
+const loginBtn = document.getElementById('loginBtn');
+const loginMsg = document.getElementById('loginMsg');
+
+function showLoginPopup() {
+  overlay.style.display = 'flex';
+  setTimeout(()=>modal.classList.add('open'), 10);
+  document.body.style.overflow = 'hidden';
+}
+function hideLoginPopup() {
+  modal.classList.remove('open');
+  setTimeout(()=>{ overlay.style.display='none'; document.body.style.overflow=''; }, 150);
+}
+if(openLogin) openLogin.onclick = showLoginPopup;
+if(closeLogin) closeLogin.onclick = hideLoginPopup;
+overlay.addEventListener('click', e => { if(e.target===overlay) hideLoginPopup(); });
+
+loginBtn.onclick = async ()=>{
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value.trim();
+  if(!email||!pass){loginMsg.textContent="Please enter email & password.";return;}
+  try{
+    loginBtn.textContent="Logging in...";
+    await firebase.auth().signInWithEmailAndPassword(email,pass);
+    hideLoginPopup();
+    location.href="quiz.html";
+  }catch(e){
+    loginMsg.textContent=e.message;
+  }finally{
+    loginBtn.textContent="Login";
+  }
+};
+
+// ✅ Gift modal functions
+function openGiftModal(title,img,coins,details){
+  document.getElementById('giftTitle').textContent=title;
+  document.getElementById('giftImg').src=img;
+  document.getElementById('giftCoins').textContent=`${coins} Coins`;
+  document.getElementById('giftDetails').textContent=details;
+  document.getElementById('giftOverlay').style.display='flex';
+  setTimeout(()=>document.getElementById('giftModal').classList.add('open'),10);
+}
+function closeGiftModal(){
+  document.getElementById('giftModal').classList.remove('open');
+  setTimeout(()=>document.getElementById('giftOverlay').style.display='none',150);
+}
+document.getElementById('claimGiftBtn').onclick = ()=>{
+  // show login popup on claim button click
+  closeGiftModal();
+  showLoginPopup();
+};
+</script>
 </body>
 </html>
