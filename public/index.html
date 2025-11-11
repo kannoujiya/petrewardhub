@@ -1,214 +1,151 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>PetRewardHub — Earn Free Pet Gifts</title>
-
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-  <style>
-    body { font-family: 'Inter', system-ui, sans-serif; }
-    .material-symbols-outlined {
-      font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
-    }
-  </style>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PetRewardHub — Earn Free Pet Gifts</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+<style>body{font-family:Inter,system-ui,sans-serif}</style>
 </head>
+<body class="bg-white text-[#2D3748]">
 
-<body class="font-display bg-white text-[#2D3748]">
-  <!-- Header -->
-  <header class="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-10 lg:px-20 py-4 bg-white/80 backdrop-blur shadow-sm">
-    <div class="flex items-center gap-3">
-      <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">pets</span>
-      <h2 class="text-xl font-bold">PetRewardHub</h2>
-    </div>
-    <div class="flex items-center gap-2">
-      <button id="openLoginBtn" class="rounded-full h-10 px-4 bg-transparent text-sm font-bold border border-gray-300 hover:bg-gray-100">
-        Login
-      </button>
-      <a href="signup.html" class="rounded-full h-10 px-4 bg-yellow-300 text-black text-sm font-bold hover:opacity-90">Sign Up</a>
-    </div>
-  </header>
+<!-- Header (with live coins/email) -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-10 lg:px-20 py-4 bg-white/80 backdrop-blur shadow-sm">
+  <div class="flex items-center gap-3">
+    <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">pets</span>
+    <h2 class="text-xl font-bold">PetRewardHub</h2>
+  </div>
+  <div class="flex items-center gap-3 text-sm">
+    <span class="inline-flex items-center gap-1 rounded-full bg-yellow-200 px-3 h-8 font-bold">
+      💰 <span id="coinBadge">0</span> Coins
+    </span>
+    <span id="userEmail" class="text-gray-700">Not signed in</span>
+    <button id="openLoginBtn" class="btn btn-primary">Login</button>
+    <a href="signup.html" class="btn btn-dark">Sign Up</a>
+  </div>
+</header>
 
-  <!-- Hero Section -->
-  <section class="relative py-20 px-6 sm:px-10 lg:px-20 text-center bg-gradient-to-br from-[#A0D2EB]/20 via-white to-[#FEEAA8]/20">
-    <div class="mx-auto max-w-4xl flex flex-col items-center gap-6">
-      <h1 class="text-5xl font-black">Earn Free Pet Gifts by Completing Fun Offers!</h1>
-      <p class="text-lg text-gray-600 max-w-2xl">
-        Join thousands of pet lovers getting free toys, feeders, and accessories.  
-        Complete fun offers, earn coins, and treat your furry friend with love!
-      </p>
-      <a class="rounded-full h-12 px-8 bg-yellow-300 font-bold hover:opacity-90 transition-opacity shadow-lg" href="#gifts">Start Earning Now</a>
-    </div>
-  </section>
+<!-- Hero -->
+<section class="relative py-20 px-6 sm:px-10 lg:px-20 text-center bg-gradient-to-br from-[#A0D2EB]/20 via-white to-[#FEEAA8]/20">
+  <div class="mx-auto max-w-4xl flex flex-col items-center gap-6">
+    <h1 class="text-5xl font-black">Earn Free Pet Gifts by Completing Fun Offers!</h1>
+    <p class="text-lg text-gray-600 max-w-2xl">
+      Join thousands of pet lovers getting free toys, feeders, and accessories.
+      Complete fun offers, earn coins, and treat your furry friend with love!
+    </p>
+    <a href="#gifts" class="btn btn-primary">Start Earning Now</a>
+  </div>
+</section>
 
-  <!-- Gifts Section -->
-  <section id="gifts" class="py-16 px-6 sm:px-10 lg:px-20">
-    <div class="mx-auto max-w-5xl">
-      <h2 class="text-3xl font-bold text-center pb-10">🎁 Free Gifts You Can Earn</h2>
-      <p class="text-gray-600 text-center max-w-2xl mx-auto mb-8">
-        Explore exciting gifts you can claim using your earned coins.  
-        Every item is selected to bring happiness and comfort to your pet.  
-        Whether it’s a cozy bed, an interactive toy, or a feeding gadget —  
-        we make sure every gift is safe, high-quality, and loved by pets.  
-        Collect coins, choose your favorite gift, and enjoy the joy of giving!
-      </p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="p-4 rounded-lg bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
-          <div class="aspect-square bg-cover rounded mb-2" style='background-image:url("https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800")'></div>
-          <p class="font-semibold">Interactive Dog Toy</p><p class="text-sm text-gray-500">Worth 100 Coins</p>
-        </div>
-        <div class="p-4 rounded-lg bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
-          <div class="aspect-square bg-cover rounded mb-2" style='background-image:url("https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800")'></div>
-          <p class="font-semibold">Cozy Cat Bed</p><p class="text-sm text-gray-500">Worth 150 Coins</p>
-        </div>
-        <div class="p-4 rounded-lg bg-white shadow-md hover:shadow-xl hover:-translate-y-1 transition-all">
-          <div class="aspect-square bg-cover rounded mb-2" style='background-image:url("https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800")'></div>
-          <p class="font-semibold">Automatic Feeder</p><p class="text-sm text-gray-500">Worth 250 Coins</p>
+<!-- Gifts (6 cards: 5 gifts + 6th “See all gifts”) -->
+<section id="gifts" class="py-16 px-6 sm:px-10 lg:px-20">
+  <div class="mx-auto max-w-6xl">
+    <h2 class="text-3xl font-bold text-center pb-6">🎁 Free Gifts You Can Earn</h2>
+    <p class="text-gray-600 text-center max-w-2xl mx-auto mb-8">
+      High-quality, pet-safe goodies — toys, beds, feeders, and more. Earn coins from offers, then claim your favorite gift!
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- 1 -->
+      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Interactive Dog Toy', img:'https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800', coins:100, details:'Keeps dogs active; great for training; durable rubber; easy to clean.'})">
+        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800')"></div>
+        <div class="flex items-center justify-between">
+          <p class="font-semibold">Interactive Dog Toy</p>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">100 Coins</span>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- How It Works -->
-  <section class="py-20 px-6 sm:px-10 lg:px-20 bg-gray-50">
-    <div class="mx-auto max-w-5xl">
-      <h2 class="text-3xl font-bold text-center pb-12">How It Works</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-        <div class="flex flex-col items-center gap-4">
-          <div class="flex items-center justify-center h-20 w-20 rounded-xl bg-yellow-200 text-[#FFC8A2]">
-            <span class="material-symbols-outlined text-4xl">pets</span>
-          </div>
-          <h3 class="text-xl font-bold">1. Sign Up & Choose Your Pet</h3>
-          <p class="text-gray-600">Create your free account and tell us about your furry friend.</p>
-        </div>
-        <div class="flex flex-col items-center gap-4">
-          <div class="flex items-center justify-center h-20 w-20 rounded-xl bg-yellow-200 text-[#FFC8A2]">
-            <span class="material-symbols-outlined text-4xl">paid</span>
-          </div>
-          <h3 class="text-xl font-bold">2. Complete Offers & Earn Coins</h3>
-          <p class="text-gray-600">Complete fun offers and surveys to collect coins for rewards.</p>
-        </div>
-        <div class="flex flex-col items-center gap-4">
-          <div class="flex items-center justify-center h-20 w-20 rounded-xl bg-yellow-200 text-[#FFC8A2]">
-            <span class="material-symbols-outlined text-4xl">redeem</span>
-          </div>
-          <h3 class="text-xl font-bold">3. Redeem Free Gifts</h3>
-          <p class="text-gray-600">Use your coins to claim amazing pet toys, treats, and more!</p>
+      <!-- 2 -->
+      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Cozy Cat Bed', img:'https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800', coins:150, details:'Ultra-soft cushion; machine washable; anti-slip base; cat-approved naps.'})">
+        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800')"></div>
+        <div class="flex items-center justify-between">
+          <p class="font-semibold">Cozy Cat Bed</p>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">150 Coins</span>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Testimonials -->
-  <section class="py-20 px-6 sm:px-10 lg:px-20 bg-white">
-    <div class="mx-auto max-w-5xl text-center">
-      <h2 class="text-3xl font-bold pb-10">💬 What Pet Parents Say</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-gray-50 rounded-xl p-6 shadow hover:shadow-md">
-          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200" class="h-14 w-14 rounded-full mx-auto mb-3"/>
-          <p class="font-semibold">Sarah J.</p>
-          <p class="text-sm text-gray-500">Owner of Max 🐶</p>
-          <p class="mt-2 text-gray-600 text-sm">“Earned coins for fun tasks & got a free dog bed within a week!”</p>
-        </div>
-        <div class="bg-gray-50 rounded-xl p-6 shadow hover:shadow-md">
-          <img src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2b?q=80&w=200" class="h-14 w-14 rounded-full mx-auto mb-3"/>
-          <p class="font-semibold">David L.</p>
-          <p class="text-sm text-gray-500">Owner of Whiskers 🐱</p>
-          <p class="mt-2 text-gray-600 text-sm">“Legit rewards for real pet lovers. My cat loves her new toy!”</p>
-        </div>
-        <div class="bg-gray-50 rounded-xl p-6 shadow hover:shadow-md">
-          <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200" class="h-14 w-14 rounded-full mx-auto mb-3"/>
-          <p class="font-semibold">Maria P.</p>
-          <p class="text-sm text-gray-500">Owner of Bella 🐾</p>
-          <p class="mt-2 text-gray-600 text-sm">“Finally a trustworthy site that gives real pet goodies!”</p>
+      <!-- 3 -->
+      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Automatic Feeder', img:'https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800', coins:250, details:'Scheduled meals; portion control; battery backup; perfect for busy owners.'})">
+        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800')"></div>
+        <div class="flex items-center justify-between">
+          <p class="font-semibold">Automatic Feeder</p>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">250 Coins</span>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="bg-gray-100 py-16 px-6 sm:px-10 lg:px-20">
-    <div class="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-12">
-      <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">pets</span>
-          <h2 class="text-xl font-bold">PetRewardHub</h2>
+      <!-- 4 -->
+      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Feather Wand Toy', img:'https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=800', coins:80, details:'Interactive play for cats; boosts exercise; sturdy rod; replaceable feathers.'})">
+        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=800')"></div>
+        <div class="flex items-center justify-between">
+          <p class="font-semibold">Feather Wand Toy</p>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">80 Coins</span>
         </div>
-        <p class="text-gray-700">A trusted rewards platform for pet lovers. Earn gifts by completing fun offers.</p>
       </div>
-      <div>
-        <h3 class="font-bold mb-4">Quick Links</h3>
-        <ul class="flex flex-col gap-2 text-gray-700">
-          <li><a class="hover:text-[#FFC8A2]" href="index.html">Home</a></li>
-          <li><a class="hover:text-[#FFC8A2]" href="offers.html">Offers</a></li>
-          <li><a class="hover:text-[#FFC8A2]" href="claim.html">Claim Gift</a></li>
-          <li><a class="hover:text-[#FFC8A2]" href="about.html">About</a></li>
-        </ul>
+      <!-- 5 -->
+      <div class="card p-4 cursor-pointer" onclick="openGiftModal({title:'Pet Grooming Kit', img:'https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800', coins:180, details:'De-shedding brush; nail trimmer; comb set — salon care at home.'})">
+        <div class="aspect-square bg-cover rounded mb-3" style="background-image:url('https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800')"></div>
+        <div class="flex items-center justify-between">
+          <p class="font-semibold">Pet Grooming Kit</p>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">180 Coins</span>
+        </div>
       </div>
-      <div>
-        <h3 class="font-bold mb-4">Follow Us</h3>
-        <p class="text-gray-700">Facebook · Instagram · TikTok</p>
-      </div>
-    </div>
-    <div class="mt-10 text-center text-sm text-gray-600">© 2025 PetRewardHub. All rights reserved.</div>
-  </footer>
-
-  <!-- Login Modal -->
-  <div id="loginOverlay" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/50">
-    <div class="relative w-full max-w-md rounded-lg bg-white p-8 shadow-2xl">
-      <button id="loginClose" class="absolute top-4 right-4 h-8 w-8 rounded-full hover:bg-black/5 flex items-center justify-center">
-        <span class="material-symbols-outlined !text-2xl">close</span>
-      </button>
-      <div class="flex flex-col gap-4">
-        <h2 class="text-[28px] font-bold text-center">Welcome Back 🐾</h2>
-        <label class="flex flex-col"><span class="font-medium pb-1">Email</span><input id="loginEmail" class="h-12 rounded-xl border px-3" type="email" placeholder="you@example.com"/></label>
-        <label class="flex flex-col"><span class="font-medium pb-1">Password</span><input id="loginPass" class="h-12 rounded-xl border px-3" type="password" placeholder="••••••••"/></label>
-        <button id="loginBtn" class="h-12 rounded-full bg-yellow-300 font-bold hover:opacity-90">Login</button>
-        <div id="loginMsg" class="text-sm text-red-600"></div>
-        <p class="text-center text-sm">Don’t have an account? <a href="signup.html" class="font-bold underline">Sign up</a></p>
-      </div>
+      <!-- 6: See All Gifts -->
+      <a href="gifts.html" class="card p-6 flex items-center justify-center text-center hover:no-underline">
+        <div>
+          <div class="w-16 h-16 rounded-2xl bg-yellow-100 mx-auto mb-3 flex items-center justify-center">🐾</div>
+          <p class="font-extrabold text-lg">See All Gifts</p>
+          <p class="text-sm text-gray-600 mt-1">Explore dozens of pet goodies →</p>
+        </div>
+      </a>
     </div>
   </div>
+</section>
 
-  <!-- Firebase + App -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="firebase-init.js"></script>
-  <script src="app.js"></script>
+<!-- Footer -->
+<footer class="bg-gray-100 py-16 px-6 sm:px-10 lg:px-20">
+  <div class="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-12">
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">pets</span>
+        <h2 class="text-xl font-bold">PetRewardHub</h2>
+      </div>
+      <p class="text-gray-700">A trusted rewards platform for pet lovers. Earn coins by completing fun offers.</p>
+    </div>
+    <div>
+      <h3 class="font-bold mb-4">Quick Links</h3>
+      <ul class="flex flex-col gap-2 text-gray-700">
+        <li><a class="hover:text-[#FFC8A2]" href="offers.html">Offers</a></li>
+        <li><a class="hover:text-[#FFC8A2]" href="gifts.html">Gifts</a></li>
+        <li><a class="hover:text-[#FFC8A2]" href="claim.html">Claim Gift</a></li>
+        <li><a class="hover:text-[#FFC8A2]" href="about.html">About</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="mt-10 text-center text-sm text-gray-600">© 2025 PetRewardHub. All rights reserved.</div>
+</footer>
 
-  <!-- ✅ Fixed Login Modal Script -->
-  <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const overlay = document.getElementById("loginOverlay");
-    const openBtn = document.getElementById("openLoginBtn");
-    const closeBtn = document.getElementById("loginClose");
+<!-- Login Modal -->
+<div id="loginOverlay" class="modal-overlay">
+  <div id="loginModal" class="modal">
+    <button id="loginClose" class="modal-close"><span class="material-symbols-outlined">close</span></button>
+    <div class="flex flex-col gap-4">
+      <h2 class="text-[28px] font-bold text-center">Welcome Back 🐾</h2>
+      <label class="flex flex-col"><span class="font-medium pb-1">Email</span><input id="loginEmail" class="h-12 rounded-xl border px-3" type="email" placeholder="you@example.com"/></label>
+      <label class="flex flex-col"><span class="font-medium pb-1">Password</span><input id="loginPass" class="h-12 rounded-xl border px-3" type="password" placeholder="••••••••"/></label>
+      <button id="loginBtn" class="btn btn-primary">Login</button>
+      <div id="loginMsg" class="text-sm text-red-600"></div>
+      <p class="text-center text-sm">Don’t have an account? <a href="signup.html" class="font-bold underline">Sign up</a></p>
+    </div>
+  </div>
+</div>
 
-    if (!overlay || !openBtn || !closeBtn) return;
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase-init.js"></script>
+<script src="app.js"></script>
 
-    openBtn.addEventListener("click", () => {
-      overlay.style.display = "flex";
-      document.body.style.overflow = "hidden";
-    });
-    closeBtn.addEventListener("click", () => {
-      overlay.style.display = "none";
-      document.body.style.overflow = "";
-    });
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) {
-        overlay.style.display = "none";
-        document.body.style.overflow = "";
-      }
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && overlay.style.display === "flex") {
-        overlay.style.display = "none";
-        document.body.style.overflow = "";
-      }
-    });
-  });
-  </script>
+<script>
+  attachHeaderAuth(); // live email + coins everywhere
+</script>
 </body>
 </html>

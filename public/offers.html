@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PetRewardHub — Offers</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Offers — PetRewardHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+<style>body{font-family:Inter,system-ui,sans-serif}</style>
 </head>
+<body class="bg-gradient-to-br from-[#eff6ff] to-[#fef9c3]">
 
-<body class="bg-gradient-to-br from-[#eff6ff] to-[#fef9c3] font-[Inter] min-h-screen">
 <header class="sticky top-0 z-50 bg-gradient-to-r from-[#3b82f6] to-[#facc15] text-white shadow-md">
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
     <div class="font-extrabold text-lg flex items-center gap-2">🐾 PetRewardHub</div>
@@ -17,10 +18,8 @@
       <span class="inline-flex items-center gap-1 rounded-full bg-white/30 px-3 h-8 font-bold">
         💰 <span id="coinBadge">0</span> Coins
       </span>
-      <span id="userEmail" class="text-white/90">Signed in as ...</span>
-      <button id="logoutBtn" class="ml-1 h-9 px-4 rounded-full bg-white/20 hover:bg-white/30 font-semibold">
-        Logout
-      </button>
+      <span id="userEmail" class="text-white/90">Not signed in</span>
+      <button id="logoutBtn" class="ml-1 h-9 px-4 rounded-full bg-white/20 hover:bg-white/30 font-semibold">Logout</button>
     </div>
   </div>
 </header>
@@ -29,10 +28,10 @@
   <div class="flex flex-col sm:flex-row justify-between items-center mb-8">
     <div>
       <h2 class="text-3xl font-bold mb-2">🎯 Exclusive Pet Offers</h2>
-      <p class="text-gray-600">Choose your country and earn coins for your next pet gift!</p>
+      <p class="text-gray-600">Pick your country to discover trending offers and earn coins for free gifts.</p>
     </div>
     <div class="mt-4 sm:mt-0">
-      <label for="country" class="mr-2 font-semibold text-gray-700">🌍 Country:</label>
+      <label class="mr-2 font-semibold text-gray-700">🌍 Country:</label>
       <select id="country" class="border rounded-lg px-3 py-2 bg-white shadow">
         <option value="">All</option>
         <option value="us">🇺🇸 United States</option>
@@ -50,7 +49,7 @@
 </main>
 
 <footer class="text-center text-sm text-gray-500 py-10">
-  © 2025 PetRewardHub · Trusted Rewards for Pet Lovers
+  © 2025 PetRewardHub · Safe & Trusted
 </footer>
 
 <!-- Firebase -->
@@ -60,67 +59,19 @@
 <script src="firebase-init.js"></script>
 <script src="app.js"></script>
 
-<!-- ✅ Old jQuery (for JSONP) -->
+<!-- Old jQuery for JSONP (required by AdBlue) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <script>
-const emailEl = document.getElementById("userEmail");
-const coinEl  = document.getElementById("coinBadge");
-const logoutBtn = document.getElementById("logoutBtn");
-const countrySelect = document.getElementById("country");
+attachHeaderAuth();
 
-// Firebase coin listener
-attachCoinListener(emailEl, coinEl, logoutBtn);
-
-firebase.auth().onAuthStateChanged(function(user) {
-  if (!user) return;
-  loadOffers(user.uid);
-  countrySelect.addEventListener("change", () => loadOffers(user.uid));
+firebase.auth().onAuthStateChanged(function(user){
+  if(!user) return;
+  const select = document.getElementById("country");
+  const load = () => loadAdBlueOffers({ containerSel: "#offerContainer", uid: user.uid, country: select.value, limit: 9 });
+  load();
+  select.addEventListener("change", load);
 });
-
-function loadOffers(uid) {
-  $("#offerContainer").html("<p>⏳ Fetching offers...</p>");
-  const country = $("#country").val() || "";
-
-  // ✅ Direct JSONP call (AdBlue compatible)
-  $.getJSON(
-    "https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php?user_id=481160&api_key=89a09f95e53dde3a5e593491e1134540&s1=" + uid + "&s2=" + country + "&callback=?",
-    function(offers) {
-      if (!offers || !offers.length) {
-        $("#offerContainer").html("<p>⚠️ No offers available for this region.</p>");
-        return;
-      }
-
-      let html = "";
-      offers.slice(0, 9).forEach(function(offer) {
-        const title = offer.name || "Special Offer";
-        const desc = offer.conversion || "Complete to earn rewards!";
-        const img = offer.network_icon || "https://placekitten.com/300/200";
-        const payout = parseFloat(offer.payout || 0);
-        const url = (offer.url || "#") + "&sub1=" + uid;
-        const coins = payout >= 2 ? 20 : 10;
-
-        html += `
-          <div class="bg-white rounded-2xl shadow p-4 hover:shadow-xl transform hover:-translate-y-1 transition flex flex-col">
-            <img src="${img}" alt="${title}" class="rounded-lg mb-3 w-full h-40 object-cover">
-            <h3 class="font-semibold text-lg mb-1">${title}</h3>
-            <p class="text-sm text-gray-600 mb-2">${desc}</p>
-            <span class="inline-block mb-3 text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-r from-blue-500 to-yellow-300">
-              💰 Earn ${coins} Coins
-            </span>
-            <a href="${url}" target="_blank"
-              class="mt-auto inline-block rounded-full h-10 px-5 bg-blue-600 text-white font-semibold hover:bg-blue-700 text-center">
-              Open Offer
-            </a>
-          </div>`;
-      });
-
-      $("#offerContainer").html(html);
-    }
-  ).fail(function() {
-    $("#offerContainer").html("<p>⚠️ Could not load offers. Try again later.</p>");
-  });
-}
 </script>
 </body>
 </html>
