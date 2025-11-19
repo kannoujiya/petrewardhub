@@ -1,69 +1,275 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Claim Gift — PetRewardHub</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Gift - PetRewardHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-[#FCFBF8] font-[Inter]">
-<header class="px-6 py-4 border-b">
-  <div class="max-w-3xl mx-auto flex items-center justify-between">
-    <div class="font-extrabold">🐾 PetRewardHub</div>
-    <div class="flex items-center gap-3 text-sm">
-      <span class="inline-flex items-center gap-1 rounded-full bg-yellow-200 px-3 h-8 font-bold">💰 <span id="coinBadge">0</span> Coins</span>
-      <span id="userEmail">Signed in as ...</span>
-      <button id="logoutBtn" class="h-9 px-4 rounded-full border">Logout</button>
-    </div>
-  </div>
-</header>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">PetRewardHub</a>
+                <div class="nav-links">
+                    <div id="userNav" style="display: none; align-items: center; gap: 1rem;">
+                        <a href="offers.html" class="nav-link">Offers</a>
+                        <a href="gifts.html" class="nav-link">Gifts</a>
+                        <a href="claim.html" class="nav-link">Claim</a>
+                        <div class="coin-badge">
+                            💰 <span id="coinBadge">0</span>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<main class="max-w-3xl mx-auto p-6">
-  <h1 class="text-2xl font-black">Claim your free gift</h1>
-  <p class="text-gray-600">Fill your shipping details. 100 coins will be deducted upon submission.</p>
+    <!-- Claim Section -->
+    <section class="section">
+        <div class="container">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <h1 class="text-center mb-4">Claim Your Gift</h1>
+                
+                <!-- Selected Gift Info -->
+                <div id="selectedGiftInfo" class="card mb-4" style="display: none;">
+                    <div class="card-body">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <img id="giftImage" src="" alt="Selected Gift" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                            <div>
+                                <h3 id="giftName">Gift Name</h3>
+                                <div class="gift-coins" id="giftCoins">0 Coins</div>
+                                <p id="giftDescription" style="color: var(--gray-600); font-size: 0.9rem; margin: 0;"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  <div class="mt-6 bg-white rounded-2xl shadow p-6">
-    <div class="grid md:grid-cols-2 gap-4">
-      <label class="block"><span class="text-sm font-semibold">Full Name</span><input id="cName" class="h-11 w-full rounded-lg border px-3" placeholder="Your name"/></label>
-      <label class="block"><span class="text-sm font-semibold">Email</span><input id="cEmail" class="h-11 w-full rounded-lg border px-3" placeholder="you@example.com" type="email"/></label>
-      <label class="md:col-span-2 block"><span class="text-sm font-semibold">Address</span><textarea id="cAddr" class="w-full rounded-lg border px-3 py-2" rows="3" placeholder="Street, City, State, ZIP"></textarea></label>
-    </div>
-    <button id="cBtn" class="mt-4 rounded-full h-11 px-6 bg-yellow-300 font-bold">Submit Claim</button>
-    <div id="cMsg" class="text-sm mt-2"></div>
-  </div>
-</main>
+                <!-- Claim Form -->
+                <form id="claimForm" class="card" style="padding: 2rem;">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full Name *</label>
+                        <input type="text" id="name" class="form-input" required placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <input type="email" id="email" class="form-input" required placeholder="Enter your email address">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address" class="form-label">Shipping Address *</label>
+                        <textarea id="address" class="form-textarea" required placeholder="Enter your complete shipping address including street, city, state, and zip code" rows="4"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number (Optional)</label>
+                        <input type="tel" id="phone" class="form-input" placeholder="Enter your phone number for delivery updates">
+                    </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="firebase-init.js"></script>
-<script src="app.js"></script>
-<script>
-const WEBHOOK = "https://script.google.com/macros/s/AKfycbzmGjBk_WcIDS9CADLRODmn6tFmyTYICki-uBfvM7sgTBTiksSdOwVnLjrSXxOI_CQUSg/exec";
-const emailEl = document.getElementById('userEmail');
-const coinEl  = document.getElementById('coinBadge');
-const logoutBtn = document.getElementById('logoutBtn');
-attachCoinListener(emailEl, coinEl, logoutBtn);
+                    <!-- Terms Agreement -->
+                    <div class="form-group">
+                        <div style="display: flex; align-items: flex-start; gap: 0.5rem;">
+                            <input type="checkbox" id="termsAgree" required style="margin-top: 0.25rem;">
+                            <label for="termsAgree" class="form-label" style="margin-bottom: 0;">
+                                I agree to the <a href="#" style="color: var(--primary-blue);">Terms of Service</a> and confirm that the information provided is accurate. I understand that <span id="coinsToDeduct">0</span> coins will be deducted from my account upon submission.
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Submit Claim & Deduct Coins
+                    </button>
 
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user) return; // listener redirects
-  document.getElementById('cEmail').value = user.email || '';
-  document.getElementById('cBtn').addEventListener('click', async ()=>{
-    const name = document.getElementById('cName').value.trim();
-    const email= document.getElementById('cEmail').value.trim();
-    const addr = document.getElementById('cAddr').value.trim();
-    const msg  = document.getElementById('cMsg');
-    if(!name||!email||!addr){ msg.textContent='Fill all fields.'; msg.className='text-sm text-red-600'; return; }
+                    <div id="formMessage" class="mt-3" style="display: none;"></div>
+                </form>
 
-    // Deduct 100 coins (client-side request)
-    await db.collection('users').doc(user.uid).set({ coins: firebase.firestore.FieldValue.increment(-100) }, { merge:true });
+                <!-- Important Information -->
+                <div class="card mt-4" style="background: #f0f9ff; border-color: #7dd3fc;">
+                    <div class="card-body">
+                        <h4>📦 Shipping Information</h4>
+                        <p>Please allow 2-3 weeks for processing and delivery. You will receive a confirmation email once your gift has been shipped. Make sure your shipping address is correct and complete.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    // Send to Google Sheet
-    await fetch(WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ userUid:user.uid, userEmail:email, name, address:addr, claimedAt:new Date().toISOString() })
-    });
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        let currentUser = null;
+        let selectedGift = null;
 
-    location.href='thankyou.html';
-  });
-});
-</script>
-</body></html>
+        // Initialize claim page
+        async function initClaimPage() {
+            try {
+                // Wait for authentication
+                currentUser = await app.requireAuth('index.html');
+                
+                // Check if user completed previous steps
+                if (!app.userData || !app.userData.selectedPet) {
+                    window.location.href = 'select-pet.html';
+                    return;
+                }
+                
+                if (!app.userData.quizDone) {
+                    window.location.href = 'quiz.html';
+                    return;
+                }
+                
+                // Setup header auth
+                attachHeaderAuth();
+                
+                // Load selected gift
+                loadSelectedGift();
+                
+                // Prefill user data
+                prefillUserData();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Load selected gift from session storage
+        function loadSelectedGift() {
+            const giftData = sessionStorage.getItem('selectedGift');
+            if (giftData) {
+                selectedGift = JSON.parse(giftData);
+                displaySelectedGift();
+            } else {
+                // No gift selected, redirect to gifts page
+                window.location.href = 'gifts.html';
+            }
+        }
+
+        // Display selected gift information
+        function displaySelectedGift() {
+            if (!selectedGift) return;
+
+            const giftInfo = document.getElementById('selectedGiftInfo');
+            const giftImage = document.getElementById('giftImage');
+            const giftName = document.getElementById('giftName');
+            const giftCoins = document.getElementById('giftCoins');
+            const giftDescription = document.getElementById('giftDescription');
+            const coinsToDeduct = document.getElementById('coinsToDeduct');
+
+            giftImage.src = selectedGift.image;
+            giftImage.alt = selectedGift.name;
+            giftName.textContent = selectedGift.name;
+            giftCoins.textContent = `${selectedGift.coins} Coins`;
+            giftDescription.textContent = selectedGift.description;
+            coinsToDeduct.textContent = selectedGift.coins;
+
+            giftInfo.style.display = 'block';
+
+            // Check if user has enough coins
+            if (app.userData && app.userData.coins < selectedGift.coins) {
+                document.getElementById('claimForm').innerHTML = `
+                    <div class="message-error">
+                        <h3>❌ Insufficient Coins</h3>
+                        <p>You need ${selectedGift.coins} coins to claim this gift, but you only have ${app.userData.coins} coins.</p>
+                        <p>Complete more offers on the <a href="offers.html">Offers page</a> to earn more coins!</p>
+                        <a href="gifts.html" class="btn btn-primary mt-2">Back to Gifts</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Prefill user data in form
+        function prefillUserData() {
+            if (app.userData) {
+                document.getElementById('name').value = app.userData.name || '';
+                document.getElementById('email').value = app.userData.email || '';
+            }
+        }
+
+        // Handle claim form submission
+        document.getElementById('claimForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!selectedGift) {
+                alert('No gift selected. Please go back to the gifts page and select a gift.');
+                return;
+            }
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                phone: document.getElementById('phone').value || 'Not provided'
+            };
+
+            // Validate form
+            if (!formData.name || !formData.email || !formData.address) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            if (!document.getElementById('termsAgree').checked) {
+                alert('Please agree to the Terms of Service to continue.');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const messageDiv = document.getElementById('formMessage');
+
+            // Show loading state
+            submitBtn.textContent = 'Processing Claim...';
+            submitBtn.disabled = true;
+            messageDiv.style.display = 'none';
+
+            try {
+                const result = await app.submitClaim(selectedGift, formData);
+                
+                if (result.success) {
+                    messageDiv.innerHTML = `
+                        <div class="message-success">
+                            <h3>✅ Claim Submitted Successfully!</h3>
+                            <p>Your gift claim has been processed. ${selectedGift.coins} coins have been deducted from your account.</p>
+                            <p>Redirecting to confirmation page...</p>
+                        </div>
+                    `;
+                    messageDiv.style.display = 'block';
+
+                    // Clear selected gift from session storage
+                    sessionStorage.removeItem('selectedGift');
+
+                    // Redirect to thank you page
+                    setTimeout(() => {
+                        window.location.href = 'thankyou.html';
+                    }, 2000);
+
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `
+                    <div class="message-error">
+                        <h3>❌ Claim Failed</h3>
+                        <p>Error: ${error.message}</p>
+                        <p>Please try again or contact support if the problem persists.</p>
+                    </div>
+                `;
+                messageDiv.style.display = 'block';
+                
+                submitBtn.textContent = 'Submit Claim & Deduct Coins';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initClaimPage);
+    </script>
+</body>
+</html>

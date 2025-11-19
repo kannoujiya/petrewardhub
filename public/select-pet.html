@@ -1,34 +1,200 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Select Your Pet — PetRewardHub</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Pet - PetRewardHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-[#f8f8f5] font-[Inter]">
-<header class="flex items-center justify-between px-6 py-4"><h2 class="text-lg font-bold">🐾 PetRewardHub</h2><a href="offers.html" class="text-sm underline">Skip</a></header>
-<section class="max-w-4xl mx-auto p-6">
-  <h1 class="text-3xl font-extrabold">Choose your pet</h1><p class="text-gray-500">We’ll personalize the quiz & offers for your buddy.</p>
-  <div id="petGrid" class="mt-6 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4"></div>
-</section>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">PetRewardHub</a>
+                <div class="nav-links">
+                    <div id="userNav" style="display: none; align-items: center; gap: 1rem;">
+                        <a href="offers.html" class="nav-link">Offers</a>
+                        <a href="gifts.html" class="nav-link">Gifts</a>
+                        <a href="claim.html" class="nav-link">Claim</a>
+                        <div class="coin-badge">
+                            💰 <span id="coinBadge">0</span>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="firebase-init.js"></script>
-<script>
-const PETS=[{key:'Dog',emoji:'🐶'},{key:'Cat',emoji:'🐱'},{key:'Bird',emoji:'🐦'},{key:'Rabbit',emoji:'🐰'},{key:'Fish',emoji:'🐠'},{key:'Horse',emoji:'🐴'},{key:'Ferret',emoji:'🦦'},{key:'Reptile',emoji:'🦎'},{key:'Small Mammal',emoji:'🐹'}];
-const grid=document.getElementById('petGrid');
-grid.innerHTML=PETS.map(p=>`<button class="p-4 rounded-xl bg-white shadow hover:shadow-lg text-left flex items-center gap-3" data-pet="${p.key}"><div class="text-3xl">${p.emoji}</div><div class="font-semibold">${p.key}</div></button>`).join('');
-firebase.auth().onAuthStateChanged(async user=>{
-  if(!user){ location.replace('index.html?loginOpen=true'); return; }
-  grid.querySelectorAll('[data-pet]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const pet=btn.getAttribute('data-pet');
-      await db.collection('users').doc(user.uid).set({ selectedPet:pet, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge:true });
-      location.href='quiz.html';
-    });
-  });
-});
-</script>
-</body></html>
+    <!-- Select Pet Section -->
+    <section class="section">
+        <div class="container">
+            <h1 class="section-title">Choose Your Pet</h1>
+            <p class="text-center mb-4">Select your pet type to personalize your experience</p>
+            
+            <div class="grid grid-3">
+                <!-- Dog -->
+                <div class="pet-option" data-pet="Dog">
+                    <div class="pet-emoji">🐕</div>
+                    <div class="pet-name">Dog</div>
+                </div>
+                
+                <!-- Cat -->
+                <div class="pet-option" data-pet="Cat">
+                    <div class="pet-emoji">🐈</div>
+                    <div class="pet-name">Cat</div>
+                </div>
+                
+                <!-- Bird -->
+                <div class="pet-option" data-pet="Bird">
+                    <div class="pet-emoji">🐦</div>
+                    <div class="pet-name">Bird</div>
+                </div>
+                
+                <!-- Rabbit -->
+                <div class="pet-option" data-pet="Rabbit">
+                    <div class="pet-emoji">🐇</div>
+                    <div class="pet-name">Rabbit</div>
+                </div>
+                
+                <!-- Fish -->
+                <div class="pet-option" data-pet="Fish">
+                    <div class="pet-emoji">🐠</div>
+                    <div class="pet-name">Fish</div>
+                </div>
+                
+                <!-- Horse -->
+                <div class="pet-option" data-pet="Horse">
+                    <div class="pet-emoji">🐎</div>
+                    <div class="pet-name">Horse</div>
+                </div>
+                
+                <!-- Ferret -->
+                <div class="pet-option" data-pet="Ferret">
+                    <div class="pet-emoji">🐾</div>
+                    <div class="pet-name">Ferret</div>
+                </div>
+                
+                <!-- Reptile -->
+                <div class="pet-option" data-pet="Reptile">
+                    <div class="pet-emoji">🦎</div>
+                    <div class="pet-name">Reptile</div>
+                </div>
+                
+                <!-- Small Mammal -->
+                <div class="pet-option" data-pet="Small Mammal">
+                    <div class="pet-emoji">🐹</div>
+                    <div class="pet-name">Small Mammal</div>
+                </div>
+            </div>
+            
+            <div id="selectionMessage" class="text-center mt-4" style="display: none;"></div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        // Initialize select pet page
+        async function initSelectPetPage() {
+            try {
+                // Wait for authentication
+                await app.requireAuth('index.html');
+                
+                // Check if user already selected pet
+                if (app.userData && app.userData.selectedPet) {
+                    window.location.href = 'quiz.html';
+                    return;
+                }
+                
+                // Setup header auth
+                attachHeaderAuth();
+                
+                // Setup pet selection handlers
+                setupPetSelection();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Setup pet selection
+        function setupPetSelection() {
+            const petOptions = document.querySelectorAll('.pet-option');
+            const messageDiv = document.getElementById('selectionMessage');
+            
+            petOptions.forEach(option => {
+                option.addEventListener('click', async () => {
+                    const petType = option.getAttribute('data-pet');
+                    
+                    // Show loading state
+                    petOptions.forEach(opt => {
+                        opt.style.pointerEvents = 'none';
+                        opt.style.opacity = '0.6';
+                    });
+                    option.style.background = 'var(--gradient)';
+                    option.style.color = 'white';
+                    option.style.opacity = '1';
+                    
+                    messageDiv.innerHTML = `
+                        <div class="card message-success">
+                            <div class="card-body">
+                                <p>🎯 Selected ${petType}! Saving your selection...</p>
+                            </div>
+                        </div>
+                    `;
+                    messageDiv.style.display = 'block';
+                    
+                    try {
+                        // Save pet selection
+                        const success = await app.saveSelectedPet(petType);
+                        
+                        if (success) {
+                            messageDiv.innerHTML = `
+                                <div class="card message-success">
+                                    <div class="card-body">
+                                        <p>✅ ${petType} selected! Redirecting to quiz...</p>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            // Redirect to quiz page
+                            setTimeout(() => {
+                                window.location.href = 'quiz.html';
+                            }, 1500);
+                        } else {
+                            throw new Error('Failed to save pet selection');
+                        }
+                    } catch (error) {
+                        messageDiv.innerHTML = `
+                            <div class="card message-error">
+                                <div class="card-body">
+                                    <p>❌ Error: ${error.message}</p>
+                                </div>
+                            </div>
+                        `;
+                        // Reset UI state
+                        petOptions.forEach(opt => {
+                            opt.style.pointerEvents = 'auto';
+                            opt.style.opacity = '1';
+                            opt.style.background = '';
+                            opt.style.color = '';
+                        });
+                    }
+                });
+            });
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initSelectPetPage);
+    </script>
+</body>
+</html>

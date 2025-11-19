@@ -1,164 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>PetRewardHub — Earn Free Pet Gifts</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css"/>
-<style>body{font-family:Inter,system-ui,sans-serif}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetRewardHub - Earn Free Pet Gifts</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
-<body class="bg-white text-[#2D3748]">
-<!-- ✅ Header -->
-<header class="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-10 lg:px-20 py-4 bg-white/80 backdrop-blur shadow-sm">
-  <div class="flex items-center gap-3">
-    <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">pets</span>
-    <h2 class="text-xl font-bold">PetRewardHub</h2>
-  </div>
-  <div class="flex items-center gap-2">
-    <button id="openLoginBtn" class="btn btn-primary">Login</button>
-    <a href="signup.html" class="btn btn-dark">Sign Up</a>
-  </div>
-</header>
-
-<!-- ✅ Hero -->
-<section class="relative py-20 px-6 sm:px-10 lg:px-20 text-center bg-gradient-to-br from-[#A0D2EB]/20 via-white to-[#FEEAA8]/20">
-  <div class="mx-auto max-w-4xl flex flex-col items-center gap-6">
-    <h1 class="text-5xl font-black">Earn Free Pet Gifts by Completing Fun Offers!</h1>
-    <p class="text-lg text-gray-600 max-w-2xl">
-      Join thousands of pet lovers who are already earning rewards for their furry friends! Complete fun offers, earn coins, and redeem gifts your pet will love.
-    </p>
-    <a href="#gifts" class="btn btn-primary">Start Earning Now</a>
-  </div>
-</section>
-
-<!-- ✅ Gifts Section -->
-<section id="gifts" class="py-16 px-6 sm:px-10 lg:px-20">
-  <div class="mx-auto max-w-6xl">
-    <h2 class="text-3xl font-bold text-center pb-6">🎁 Free Gifts You Can Earn</h2>
-    <p class="text-gray-600 text-center max-w-2xl mx-auto mb-8">
-      Explore the best free pet gifts! Earn coins from offers and claim toys, beds, and accessories for your pets. Every item is safe, high-quality, and 100% free after completing offers.
-    </p>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="card p-4 cursor-pointer" onclick="openGiftModal('Interactive Dog Toy','https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800',100,'Keeps dogs active and healthy — perfect for fetch and playtime!')">
-        <img src="https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800" class="rounded mb-3 w-full h-48 object-cover" alt="">
-        <div class="flex items-center justify-between"><p class="font-semibold">Interactive Dog Toy</p><span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">100 Coins</span></div>
-      </div>
-
-      <div class="card p-4 cursor-pointer" onclick="openGiftModal('Cozy Cat Bed','https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800',150,'Soft, machine-washable bed to keep your cat warm and cozy.')">
-        <img src="https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800" class="rounded mb-3 w-full h-48 object-cover" alt="">
-        <div class="flex items-center justify-between"><p class="font-semibold">Cozy Cat Bed</p><span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">150 Coins</span></div>
-      </div>
-
-      <div class="card p-4 cursor-pointer" onclick="openGiftModal('Automatic Feeder','https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800',250,'Automated pet feeder with timer — perfect for busy pet parents.')">
-        <img src="https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800" class="rounded mb-3 w-full h-48 object-cover" alt="">
-        <div class="flex items-center justify-between"><p class="font-semibold">Automatic Feeder</p><span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">250 Coins</span></div>
-      </div>
-
-      <a href="gifts.html" class="card p-6 flex items-center justify-center hover:no-underline">
-        <div class="text-center">
-          <div class="w-16 h-16 rounded-2xl bg-yellow-100 mx-auto mb-3 flex items-center justify-center text-2xl">🐾</div>
-          <p class="font-extrabold text-lg">See All Gifts</p>
-          <p class="text-sm text-gray-600 mt-1">Explore dozens more pet goodies →</p>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">PetRewardHub</a>
+                <div class="nav-links">
+                    <div id="authButtons" style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" onclick="openLoginModal()">Login</button>
+                        <a href="signup.html" class="btn btn-secondary">Sign Up</a>
+                    </div>
+                    <div id="userNav" style="display: none; align-items: center; gap: 1rem;">
+                        <a href="offers.html" class="nav-link">Offers</a>
+                        <a href="gifts.html" class="nav-link">Gifts</a>
+                        <a href="claim.html" class="nav-link">Claim</a>
+                        <div class="coin-badge">
+                            💰 <span id="coinBadge">0</span>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Earn Free Gifts for Your Pet</h1>
+                <p>Complete simple offers, earn coins, and redeem amazing pet gifts! Get 25 coins FREE when you sign up. From toys to treats, we've got everything your furry friend deserves!</p>
+                <button class="btn btn-primary" onclick="startUserJourney()">
+                    Start Earning Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gifts Preview Section -->
+    <section id="gifts-section" class="section">
+        <div class="container">
+            <h2 class="section-title">Popular Pet Gifts</h2>
+            <div class="grid grid-3" id="giftsGrid">
+                <!-- Gift cards will be dynamically loaded -->
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section" style="background: var(--white);">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="grid grid-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">1️⃣</div>
+                        <h3>Sign Up & Get 25 Coins FREE</h3>
+                        <p>Create your free account and get 25 coins instantly as a welcome bonus!</p>
+                    </div>
+                </div>
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">2️⃣</div>
+                        <h3>Earn More Coins</h3>
+                        <p>Complete simple offers and surveys to earn 10-20 coins per offer</p>
+                    </div>
+                </div>
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">3️⃣</div>
+                        <h3>Redeem Free Gifts</h3>
+                        <p>Use your coins to get free pet gifts delivered to your door</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gift Detail Modal -->
+    <div id="giftModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeGiftModal()">&times;</button>
+            <div id="giftModalContent">
+                <!-- Modal content will be dynamically loaded -->
+            </div>
+        </div>
     </div>
-  </div>
-</section>
 
-<footer class="bg-gray-100 py-10 px-6 sm:px-10 lg:px-20 text-center text-sm text-gray-600">© 2025 PetRewardHub. All Rights Reserved.</footer>
-
-<!-- ✅ Gift Popup -->
-<div id="giftOverlay" class="modal-overlay">
-  <div id="giftModal" class="modal">
-    <button class="modal-close" onclick="closeGiftModal()"><span class="material-symbols-outlined">close</span></button>
-    <img id="giftImg" src="" class="rounded-lg mb-3 w-full h-52 object-cover" alt="">
-    <h3 id="giftTitle" class="text-xl font-bold mb-1"></h3>
-    <p id="giftDetails" class="text-gray-600 text-sm mb-3"></p>
-    <span id="giftCoins" class="inline-block text-xs font-bold px-3 py-1 rounded-full bg-yellow-200 mb-4"></span>
-    <button id="claimGiftBtn" class="btn btn-dark w-full">Claim This Gift</button>
-  </div>
-</div>
-
-<!-- ✅ Login Popup -->
-<div id="loginOverlay" class="modal-overlay">
-  <div id="loginModal" class="modal">
-    <button id="loginClose" class="modal-close"><span class="material-symbols-outlined">close</span></button>
-    <div class="flex flex-col gap-4">
-      <h2 class="text-[28px] font-bold text-center">Welcome Back 🐾</h2>
-      <label class="flex flex-col"><span class="font-medium pb-1">Email</span><input id="loginEmail" class="h-12 rounded-xl border px-3" type="email" placeholder="you@example.com"/></label>
-      <label class="flex flex-col"><span class="font-medium pb-1">Password</span><input id="loginPass" class="h-12 rounded-xl border px-3" type="password" placeholder="••••••••"/></label>
-      <button id="loginBtn" class="btn btn-primary">Login</button>
-      <div id="loginMsg" class="text-sm text-red-600"></div>
-      <p class="text-center text-sm">Don’t have an account? <a href="signup.html" class="font-bold underline">Sign up</a></p>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+            <h2 style="margin-bottom: 2rem; text-align: center;">Login to Your Account</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" id="loginEmail" class="form-input" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" id="loginPassword" class="form-input" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                    Login
+                </button>
+            </form>
+            <p style="text-align: center;">
+                Don't have an account? <a href="signup.html" style="color: var(--primary-blue);">Sign up here</a>
+            </p>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- ✅ Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="firebase-init.js"></script>
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        // Gifts data (same as gifts.html)
+        const gifts = [
+            {
+                id: 'gift-1',
+                name: 'Premium Pet Toy',
+                description: 'Durable interactive toy that provides hours of entertainment and mental stimulation for your pet. Made with safe, non-toxic materials.',
+                image: 'https://images.unsplash.com/photo-1591946614720-90a587da4a36?w=500',
+                coins: 100,
+                category: 'Toys'
+            },
+            {
+                id: 'gift-2',
+                name: 'Gourmet Treats',
+                description: 'Healthy, delicious snacks made with natural ingredients that your pet will absolutely love. No artificial preservatives or colors.',
+                image: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=500',
+                coins: 150,
+                category: 'Food'
+            },
+            {
+                id: 'gift-3',
+                name: 'Comfy Pet Bed',
+                description: 'Plush orthopedic bed designed for ultimate comfort and support, perfect for napping. Machine washable and durable.',
+                image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=500',
+                coins: 200,
+                category: 'Bedding'
+            },
+            {
+                id: 'gift-4',
+                name: 'Grooming Kit',
+                description: 'Complete grooming set including brush, nail clippers, and shampoo for proper pet care. Keep your pet looking their best.',
+                image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=500',
+                coins: 120,
+                category: 'Care'
+            },
+            {
+                id: 'gift-5',
+                name: 'Training Set',
+                description: 'Essential tools for pet training including clicker, treats pouch, and training guide. Perfect for teaching new tricks.',
+                image: 'https://images.unsplash.com/photo-1558322394-8fc89f4c9b0f?w=500',
+                coins: 180,
+                category: 'Training'
+            }
+        ];
 
-<!-- ✅ Login + Gift modal JS -->
-<script>
-const overlay = document.getElementById('loginOverlay');
-const modal = document.getElementById('loginModal');
-const openLogin = document.getElementById('openLoginBtn');
-const closeLogin = document.getElementById('loginClose');
-const loginBtn = document.getElementById('loginBtn');
-const loginMsg = document.getElementById('loginMsg');
+        // Initialize index page
+        function initIndexPage() {
+            renderGifts();
+            setupEventListeners();
+        }
 
-function showLoginPopup() {
-  overlay.style.display = 'flex';
-  setTimeout(()=>modal.classList.add('open'), 10);
-  document.body.style.overflow = 'hidden';
-}
-function hideLoginPopup() {
-  modal.classList.remove('open');
-  setTimeout(()=>{ overlay.style.display='none'; document.body.style.overflow=''; }, 150);
-}
-if(openLogin) openLogin.onclick = showLoginPopup;
-if(closeLogin) closeLogin.onclick = hideLoginPopup;
-overlay.addEventListener('click', e => { if(e.target===overlay) hideLoginPopup(); });
+        // Render gifts on index page
+        function renderGifts() {
+            const giftsGrid = document.getElementById('giftsGrid');
+            let html = '';
 
-loginBtn.onclick = async ()=>{
-  const email=document.getElementById('loginEmail').value.trim();
-  const pass=document.getElementById('loginPass').value.trim();
-  if(!email||!pass){loginMsg.textContent="Please enter email & password.";return;}
-  try{
-    loginBtn.textContent="Logging in...";
-    await firebase.auth().signInWithEmailAndPassword(email,pass);
-    hideLoginPopup();
-    location.href="quiz.html";
-  }catch(e){
-    loginMsg.textContent=e.message;
-  }finally{
-    loginBtn.textContent="Login";
-  }
-};
+            // First 5 gifts
+            gifts.forEach(gift => {
+                html += `
+                    <div class="card gift-card" onclick="openGiftModal('${gift.id}')">
+                        <img src="${gift.image}" alt="${gift.name}" class="card-img">
+                        <div class="card-body">
+                            <h3>${gift.name}</h3>
+                            <p class="coin-badge" style="display: inline-flex; margin-bottom: 1rem;">${gift.coins} Coins</p>
+                            <p>${gift.description.substring(0, 80)}...</p>
+                        </div>
+                    </div>
+                `;
+            });
 
-// ✅ Gift modal functions
-function openGiftModal(title,img,coins,details){
-  document.getElementById('giftTitle').textContent=title;
-  document.getElementById('giftImg').src=img;
-  document.getElementById('giftCoins').textContent=`${coins} Coins`;
-  document.getElementById('giftDetails').textContent=details;
-  document.getElementById('giftOverlay').style.display='flex';
-  setTimeout(()=>document.getElementById('giftModal').classList.add('open'),10);
-}
-function closeGiftModal(){
-  document.getElementById('giftModal').classList.remove('open');
-  setTimeout(()=>document.getElementById('giftOverlay').style.display='none',150);
-}
-document.getElementById('claimGiftBtn').onclick = ()=>{
-  // show login popup on claim button click
-  closeGiftModal();
-  showLoginPopup();
-};
-</script>
+            // "See All Gifts" card
+            html += `
+                <a href="gifts.html" class="card" style="text-decoration: none; color: inherit;">
+                    <div class="card-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                        <h3 style="margin-bottom: 1rem;">See All Gifts</h3>
+                        <p style="text-align: center; color: var(--gray-600);">
+                            Discover our complete collection of amazing pet gifts and rewards!
+                        </p>
+                        <button class="btn btn-primary mt-2">View All</button>
+                    </div>
+                </a>
+            `;
+
+            giftsGrid.innerHTML = html;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login form handler
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                
+                submitBtn.textContent = 'Logging in...';
+                submitBtn.disabled = true;
+                
+                const result = await app.login(email, password);
+                
+                if (result.success) {
+                    closeLoginModal();
+                    redirectAfterLogin();
+                } else {
+                    alert('Login failed: ' + result.error);
+                    submitBtn.textContent = 'Login';
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        // Open gift modal
+        function openGiftModal(giftId) {
+            const gift = gifts.find(g => g.id === giftId);
+            if (!gift) return;
+
+            const modalContent = document.getElementById('giftModalContent');
+            const isLoggedIn = app.currentUser !== null;
+            const canClaim = isLoggedIn && app.userData && app.userData.coins >= gift.coins;
+
+            modalContent.innerHTML = `
+                <img src="${gift.image}" alt="${gift.name}" class="gift-modal-image">
+                <h2>${gift.name}</h2>
+                <div class="gift-coins mb-2">${gift.coins} Coins Required</div>
+                <p class="gift-description mb-3">${gift.description}</p>
+                
+                ${isLoggedIn ? `
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn ${canClaim ? 'btn-primary' : 'btn-secondary'}" 
+                                style="flex: 1;" 
+                                ${!canClaim ? 'disabled' : ''}
+                                onclick="claimGift('${gift.id}')">
+                            ${canClaim ? 'Claim This Gift' : `Need ${gift.coins - (app.userData?.coins || 0)} More Coins`}
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeGiftModal()">Close</button>
+                    </div>
+                    ${!canClaim ? `
+                        <div class="message mt-3">
+                            <p>💡 Complete more offers on the <a href="offers.html">Offers page</a> to earn coins!</p>
+                        </div>
+                    ` : ''}
+                ` : `
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" style="flex: 1;" onclick="openLoginModal(); closeGiftModal();">
+                            Login to Claim
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeGiftModal()">Close</button>
+                    </div>
+                    <div class="message mt-3">
+                        <p>💡 <a href="javascript:void(0)" onclick="openLoginModal(); closeGiftModal();">Login</a> or <a href="signup.html">sign up</a> to claim this gift and get 25 FREE coins!</p>
+                    </div>
+                `}
+            `;
+
+            document.getElementById('giftModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close gift modal
+        function closeGiftModal() {
+            document.getElementById('giftModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Claim gift from index page
+        function claimGift(giftId) {
+            if (!app.currentUser) {
+                openLoginModal();
+                return;
+            }
+
+            const gift = gifts.find(g => g.id === giftId);
+            if (!gift) return;
+
+            if (app.userData.coins >= gift.coins) {
+                // Store selected gift in session storage and redirect to claim page
+                sessionStorage.setItem('selectedGift', JSON.stringify(gift));
+                window.location.href = 'claim.html';
+            } else {
+                alert(`You need ${gift.coins} coins to claim this gift. You currently have ${app.userData.coins} coins. Complete more offers to earn coins!`);
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initIndexPage);
+    </script>
 </body>
 </html>

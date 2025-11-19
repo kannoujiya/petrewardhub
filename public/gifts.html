@@ -1,179 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Gifts — PetRewardHub</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css"/>
-<style>body{font-family:Inter,system-ui,sans-serif}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Gifts - PetRewardHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">PetRewardHub</a>
+                <div class="nav-links">
+                    <div id="authButtons" style="display: flex; gap: 1rem;">
+                        <button class="btn btn-primary" onclick="openLoginModal()">Login</button>
+                        <a href="signup.html" class="btn btn-secondary">Sign Up</a>
+                    </div>
+                    <div id="userNav" style="display: none; align-items: center; gap: 1rem;">
+                        <a href="offers.html" class="nav-link">Offers</a>
+                        <a href="gifts.html" class="nav-link">Gifts</a>
+                        <a href="claim.html" class="nav-link">Claim</a>
+                        <div class="coin-badge">
+                            💰 <span id="coinBadge">0</span>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<body class="bg-[#fafbff] text-[#2D3748]">
+    <!-- Gifts Section -->
+    <section class="section">
+        <div class="container">
+            <h1 class="section-title">Available Pet Gifts</h1>
+            <p class="text-center mb-4">Redeem your coins for amazing pet gifts!</p>
 
-<!-- Header -->
-<header class="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-10 lg:px-20 py-4 bg-white/80 backdrop-blur shadow-sm">
-  <div class="flex items-center gap-3">
-    <span class="material-symbols-outlined text-3xl text-[#FFC8A2]">redeem</span>
-    <h2 class="text-xl font-bold">Gift Gallery</h2>
-  </div>
-  <div class="flex items-center gap-2">
-    <button id="openLoginBtn" class="btn btn-primary">Login</button>
-    <a href="signup.html" class="btn btn-dark">Sign Up</a>
-  </div>
-</header>
+            <!-- Coin Balance Info -->
+            <div id="coinInfo" class="card mb-4" style="display: none;">
+                <div class="card-body text-center">
+                    <h3>Your Coin Balance: <span id="currentCoins">0</span> 🪙</h3>
+                    <p>Earn more coins by completing offers on the <a href="offers.html">Offers page</a></p>
+                </div>
+            </div>
 
-<!-- Main Gift Grid -->
-<main class="px-6 sm:px-10 lg:px-20 py-10 max-w-7xl mx-auto">
-  <p class="text-gray-600 mb-6">Click any gift to learn more. Claim once you’ve earned enough coins from offers!</p>
-  <div id="giftGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
-</main>
+            <!-- Gifts Grid -->
+            <div class="gift-grid" id="giftsContainer">
+                <!-- Gift cards will be dynamically loaded -->
+            </div>
 
-<!-- Gift Modal -->
-<div id="giftOverlay" class="modal-overlay">
-  <div id="giftModal" class="modal">
-    <button onclick="closeGiftModal()" class="modal-close"><span class="material-symbols-outlined">close</span></button>
-    <div class="flex flex-col gap-4">
-      <img id="giftImg" src="" class="w-full h-56 object-cover rounded-lg" alt="Gift"/>
-      <div class="flex items-center justify-between">
-        <h3 id="giftTitle" class="text-xl font-extrabold"></h3>
-        <span id="giftCoins" class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">—</span>
-      </div>
-      <p id="giftDesc" class="text-gray-700 text-sm"></p>
-      <button id="claimGiftBtn" class="btn w-full bg-gray-300 text-gray-500 cursor-not-allowed" disabled>
-        Not enough coins
-      </button>
+            <!-- Login Prompt -->
+            <div id="loginPrompt" class="text-center mt-4" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Login to Claim Gifts</h3>
+                        <p>You need to be logged in to claim gifts. Sign up or login to start earning and redeeming coins!</p>
+                        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="openLoginModal()">Login</button>
+                            <a href="signup.html" class="btn btn-secondary">Sign Up</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gift Detail Modal -->
+    <div id="giftModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeGiftModal()">&times;</button>
+            <div id="giftModalContent">
+                <!-- Modal content will be dynamically loaded -->
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- Login Modal -->
-<div id="loginOverlay" class="modal-overlay">
-  <div id="loginModal" class="modal">
-    <button id="loginClose" class="modal-close"><span class="material-symbols-outlined">close</span></button>
-    <div class="flex flex-col gap-4">
-      <h2 class="text-[24px] font-bold text-center">Login to Claim Gifts 🐾</h2>
-      <label class="flex flex-col"><span class="font-medium pb-1">Email</span><input id="loginEmail" class="h-12 rounded-xl border px-3" type="email"/></label>
-      <label class="flex flex-col"><span class="font-medium pb-1">Password</span><input id="loginPass" class="h-12 rounded-xl border px-3" type="password"/></label>
-      <button id="loginBtn" class="btn btn-primary">Login</button>
-      <div id="loginMsg" class="text-sm text-red-600"></div>
-      <p class="text-center text-sm">No account? <a href="signup.html" class="font-bold underline">Sign up</a></p>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+            <h2 style="margin-bottom: 2rem; text-align: center;">Login to Your Account</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" id="loginEmail" class="form-input" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" id="loginPassword" class="form-input" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                    Login
+                </button>
+            </form>
+            <p style="text-align: center;">
+                Don't have an account? <a href="signup.html" style="color: var(--primary-blue);">Sign up here</a>
+            </p>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="firebase-init.js"></script>
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        // Gifts data
+        const gifts = [
+            {
+                id: 'gift-1',
+                name: 'Premium Pet Toy',
+                description: 'Durable interactive toy that provides hours of entertainment and mental stimulation for your pet. Made with safe, non-toxic materials.',
+                image: 'https://images.unsplash.com/photo-1591946614720-90a587da4a36?w=500',
+                coins: 100,
+                category: 'Toys'
+            },
+            {
+                id: 'gift-2',
+                name: 'Gourmet Treats',
+                description: 'Healthy, delicious snacks made with natural ingredients that your pet will absolutely love. No artificial preservatives or colors.',
+                image: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=500',
+                coins: 150,
+                category: 'Food'
+            },
+            {
+                id: 'gift-3',
+                name: 'Comfy Pet Bed',
+                description: 'Plush orthopedic bed designed for ultimate comfort and support, perfect for napping. Machine washable and durable.',
+                image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=500',
+                coins: 200,
+                category: 'Bedding'
+            },
+            {
+                id: 'gift-4',
+                name: 'Grooming Kit',
+                description: 'Complete grooming set including brush, nail clippers, and shampoo for proper pet care. Keep your pet looking their best.',
+                image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=500',
+                coins: 120,
+                category: 'Care'
+            },
+            {
+                id: 'gift-5',
+                name: 'Training Set',
+                description: 'Essential tools for pet training including clicker, treats pouch, and training guide. Perfect for teaching new tricks.',
+                image: 'https://images.unsplash.com/photo-1558322394-8fc89f4c9b0f?w=500',
+                coins: 180,
+                category: 'Training'
+            },
+            {
+                id: 'gift-6',
+                name: 'Pet Carrier',
+                description: 'Comfortable and secure pet carrier for safe travel with your furry friend. Ventilated and easy to clean.',
+                image: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=500',
+                coins: 250,
+                category: 'Travel'
+            },
+            {
+                id: 'gift-7',
+                name: 'Interactive Feeder',
+                description: 'Puzzle feeder that makes mealtime fun and helps prevent rapid eating. Stimulates natural foraging instincts.',
+                image: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=500',
+                coins: 130,
+                category: 'Food'
+            },
+            {
+                id: 'gift-8',
+                name: 'Pet First Aid Kit',
+                description: 'Comprehensive first aid kit specifically designed for pet emergencies. Includes essential supplies and instructions.',
+                image: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=500',
+                coins: 170,
+                category: 'Health'
+            },
+            {
+                id: 'gift-9',
+                name: 'Luxury Pet Blanket',
+                description: 'Soft, warm blanket perfect for cuddling and keeping your pet comfortable. Perfect for couch or car rides.',
+                image: 'https://images.unsplash.com/photo-1544567909-2c4c56faf448?w=500',
+                coins: 90,
+                category: 'Bedding'
+            }
+        ];
 
-<script>
-// ========== Gift List ==========
-const GIFTS = [
-  { title:"Interactive Dog Toy", coins:100, img:"https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=800", details:"Keeps dogs active and playful — perfect for fetch and training." },
-  { title:"Cozy Cat Bed", coins:150, img:"https://images.unsplash.com/photo-1601758173928-194d1263ffcd?q=80&w=800", details:"Soft, washable bed that keeps your cat cozy all day long." },
-  { title:"Automatic Feeder", coins:250, img:"https://images.unsplash.com/photo-1516222338250-863216ce01ea?q=80&w=800", details:"Smart feeder with timer — serves meals even when you’re away." },
-  { title:"Feather Wand Toy", coins:80, img:"https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=800", details:"Encourages cats to stay active and mentally stimulated." },
-  { title:"Pet Grooming Kit", coins:180, img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800", details:"Full grooming set for fur, nails, and hygiene — vet approved." },
-];
+        let currentUser = null;
 
-const grid = document.getElementById("giftGrid");
-grid.innerHTML = GIFTS.map((g,i)=>`
-  <div class="card p-4 cursor-pointer" onclick="openGiftModal(${i})">
-    <img src="${g.img}" class="rounded-lg mb-3 w-full h-44 object-cover" alt="${g.title}">
-    <div class="flex items-center justify-between">
-      <p class="font-semibold">${g.title}</p>
-      <span class="text-xs font-bold px-3 py-1 rounded-full bg-yellow-200">${g.coins} Coins</span>
-    </div>
-  </div>
-`).join("");
+        // Initialize gifts page
+        async function initGiftsPage() {
+            try {
+                // Setup auth state listener
+                auth.onAuthStateChanged(async (user) => {
+                    currentUser = user;
+                    if (user) {
+                        await app.loadUserData(user.uid);
+                        
+                        // Check if user completed previous steps
+                        if (!app.userData.selectedPet) {
+                            window.location.href = 'select-pet.html';
+                            return;
+                        }
+                        
+                        if (!app.userData.quizDone) {
+                            window.location.href = 'quiz.html';
+                            return;
+                        }
+                        
+                        setupAuthenticatedUI();
+                    } else {
+                        setupUnauthenticatedUI();
+                    }
+                    renderGifts();
+                });
 
-// ========== Login Modal ==========
-const overlay = document.getElementById('loginOverlay');
-const modal = document.getElementById('loginModal');
-const openLogin = document.getElementById('openLoginBtn');
-const closeLogin = document.getElementById('loginClose');
-const loginBtn = document.getElementById('loginBtn');
-const loginMsg = document.getElementById('loginMsg');
+                // Setup header auth
+                attachHeaderAuth();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+            }
+        }
 
-function showLoginPopup(){ overlay.style.display='flex'; setTimeout(()=>modal.classList.add('open'),10); document.body.style.overflow='hidden'; }
-function hideLoginPopup(){ modal.classList.remove('open'); setTimeout(()=>{ overlay.style.display='none'; document.body.style.overflow=''; },150); }
+        // Setup UI for authenticated users
+        function setupAuthenticatedUI() {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userNav').style.display = 'flex';
+            document.getElementById('coinInfo').style.display = 'block';
+            document.getElementById('loginPrompt').style.display = 'none';
+            
+            // Update coin display
+            if (app.userData) {
+                document.getElementById('currentCoins').textContent = app.userData.coins || 0;
+            }
+        }
 
-openLogin.onclick = showLoginPopup;
-closeLogin.onclick = hideLoginPopup;
-overlay.addEventListener('click', e=>{ if(e.target===overlay) hideLoginPopup(); });
+        // Setup UI for unauthenticated users
+        function setupUnauthenticatedUI() {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userNav').style.display = 'none';
+            document.getElementById('coinInfo').style.display = 'none';
+            document.getElementById('loginPrompt').style.display = 'block';
+        }
 
-loginBtn.onclick = async ()=>{
-  const email=document.getElementById('loginEmail').value.trim();
-  const pass=document.getElementById('loginPass').value.trim();
-  if(!email||!pass){loginMsg.textContent="Please enter email & password.";return;}
-  try{
-    loginBtn.textContent="Logging in...";
-    await firebase.auth().signInWithEmailAndPassword(email,pass);
-    hideLoginPopup();
-    location.href="quiz.html";
-  }catch(e){
-    loginMsg.textContent=e.message;
-  }finally{
-    loginBtn.textContent="Login";
-  }
-};
+        // Render all gifts
+        function renderGifts() {
+            const giftsContainer = document.getElementById('giftsContainer');
+            let html = '';
 
-// ========== Gift Modal ==========
-let selectedGift=null; 
-let userCoins=0;
+            gifts.forEach(gift => {
+                const canClaim = currentUser && app.userData && app.userData.coins >= gift.coins;
+                
+                html += `
+                    <div class="gift-card" onclick="openGiftModal('${gift.id}')">
+                        <img src="${gift.image}" alt="${gift.name}" class="gift-image">
+                        <div class="gift-info">
+                            <h3 class="gift-name">${gift.name}</h3>
+                            <div class="gift-coins">${gift.coins} Coins</div>
+                            <p class="gift-description">${gift.description.substring(0, 100)}...</p>
+                            <button class="btn ${canClaim ? 'btn-primary' : 'btn-secondary'}" 
+                                    style="width: 100%;" 
+                                    ${!canClaim ? 'disabled' : ''}
+                                    onclick="event.stopPropagation(); claimGift('${gift.id}')">
+                                ${canClaim ? 'Claim Now' : (currentUser ? `Need ${gift.coins - (app.userData?.coins || 0)} More Coins` : 'Login to Claim')}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
 
-function openGiftModal(i){
-  selectedGift=GIFTS[i];
-  document.getElementById("giftTitle").textContent=selectedGift.title;
-  document.getElementById("giftImg").src=selectedGift.img;
-  document.getElementById("giftCoins").textContent=selectedGift.coins+" Coins";
-  document.getElementById("giftDesc").textContent=selectedGift.details;
-  document.getElementById("giftOverlay").style.display="flex";
-  setTimeout(()=>document.getElementById("giftModal").classList.add("open"),10);
-  updateClaimButton();
-}
-function closeGiftModal(){
-  document.getElementById("giftModal").classList.remove("open");
-  setTimeout(()=>document.getElementById("giftOverlay").style.display="none",150);
-}
+            giftsContainer.innerHTML = html;
+        }
 
-const claimBtn=document.getElementById("claimGiftBtn");
-claimBtn.addEventListener("click",()=>{
-  if(claimBtn.disabled) return; // not enough coins
-  firebase.auth().onAuthStateChanged(user=>{
-    if(!user){ closeGiftModal(); showLoginPopup(); }
-    else{ location.href="claim.html"; }
-  });
-});
+        // Open gift modal
+        function openGiftModal(giftId) {
+            const gift = gifts.find(g => g.id === giftId);
+            if (!gift) return;
 
-// ========== Real-time coins logic ==========
-firebase.auth().onAuthStateChanged(user=>{
-  if(user){
-    db.collection("users").doc(user.uid).onSnapshot(doc=>{
-      userCoins=(doc.exists && doc.data().coins)||0;
-      updateClaimButton();
-    });
-  }else{
-    userCoins=0;
-    updateClaimButton();
-  }
-});
+            const modalContent = document.getElementById('giftModalContent');
+            const canClaim = currentUser && app.userData && app.userData.coins >= gift.coins;
 
-function updateClaimButton(){
-  if(!selectedGift) return;
-  if(userCoins >= selectedGift.coins){
-    claimBtn.disabled=false;
-    claimBtn.className="btn btn-dark w-full";
-    claimBtn.textContent="Claim This Gift";
-  }else{
-    claimBtn.disabled=true;
-    claimBtn.className="btn w-full bg-gray-300 text-gray-500 cursor-not-allowed";
-    claimBtn.textContent=`Need ${selectedGift.coins - userCoins} more coins`;
-  }
-}
-</script>
+            modalContent.innerHTML = `
+                <img src="${gift.image}" alt="${gift.name}" class="gift-modal-image">
+                <h2>${gift.name}</h2>
+                <div class="gift-coins mb-2">${gift.coins} Coins Required</div>
+                <p class="gift-description mb-3">${gift.description}</p>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn ${canClaim ? 'btn-primary' : 'btn-secondary'}" 
+                            style="flex: 1;" 
+                            ${!canClaim ? 'disabled' : ''}
+                            onclick="claimGift('${gift.id}')">
+                        ${canClaim ? 'Claim This Gift' : (currentUser ? `Need ${gift.coins - (app.userData?.coins || 0)} More Coins` : 'Login to Claim')}
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeGiftModal()">Close</button>
+                </div>
+                ${!currentUser ? `
+                    <div class="message mt-3">
+                        <p>💡 <a href="javascript:void(0)" onclick="openLoginModal(); closeGiftModal();">Login</a> or <a href="signup.html">sign up</a> to claim this gift!</p>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('giftModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close gift modal
+        function closeGiftModal() {
+            document.getElementById('giftModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Claim gift
+        function claimGift(giftId) {
+            if (!currentUser) {
+                openLoginModal();
+                return;
+            }
+
+            const gift = gifts.find(g => g.id === giftId);
+            if (!gift) return;
+
+            if (app.userData.coins >= gift.coins) {
+                // Store selected gift in session storage and redirect to claim page
+                sessionStorage.setItem('selectedGift', JSON.stringify(gift));
+                window.location.href = 'claim.html';
+            } else {
+                alert(`You need ${gift.coins} coins to claim this gift. You currently have ${app.userData.coins} coins. Complete more offers to earn coins!`);
+            }
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            submitBtn.textContent = 'Logging in...';
+            submitBtn.disabled = true;
+            
+            const result = await app.login(email, password);
+            
+            if (result.success) {
+                closeLoginModal();
+                // Page will refresh and show authenticated UI
+                window.location.reload();
+            } else {
+                alert('Login failed: ' + result.error);
+                submitBtn.textContent = 'Login';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initGiftsPage);
+    </script>
 </body>
 </html>

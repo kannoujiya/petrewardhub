@@ -1,105 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Pet Quiz — PetRewardHub</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Quiz - PetRewardHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">PetRewardHub</a>
+                <div class="nav-links">
+                    <div id="userNav" style="display: none; align-items: center; gap: 1rem;">
+                        <a href="offers.html" class="nav-link">Offers</a>
+                        <a href="gifts.html" class="nav-link">Gifts</a>
+                        <a href="claim.html" class="nav-link">Claim</a>
+                        <div class="coin-badge">
+                            💰 <span id="coinBadge">0</span>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<body class="bg-gradient-to-br from-[#dbeafe] to-[#fef9c3] font-[Inter] min-h-screen">
-<!-- ✅ Added professional header with coins + auth -->
-<header class="px-6 py-4 border-b bg-white/70 backdrop-blur">
-  <div class="max-w-3xl mx-auto flex items-center justify-between">
-    <div class="font-extrabold text-lg flex items-center gap-2">
-      🐾 <span>PetRewardHub</span>
-    </div>
-    <div class="flex items-center gap-3 text-sm">
-      <span class="inline-flex items-center gap-1 rounded-full bg-yellow-200 px-3 h-8 font-bold">
-        💰 <span id="coinBadge">0</span> Coins
-      </span>
-      <span id="userEmail" class="text-gray-700">Not signed in</span>
-      <button id="logoutBtn" class="h-9 px-4 rounded-full border font-semibold">Logout</button>
-    </div>
-  </div>
-</header>
+    <!-- Quiz Section -->
+    <section class="section">
+        <div class="container">
+            <div class="quiz-container">
+                <h1 class="text-center mb-4">Pet Preferences Quiz</h1>
+                <p class="text-center mb-4">Help us understand your pet preferences to personalize your experience!</p>
+                
+                <!-- Progress Bar -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Question <span id="currentQuestion">1</span> of 5</span>
+                            <span id="petTypeDisplay"></span>
+                        </div>
+                        <div style="background: var(--gray-200); border-radius: 10px; height: 8px;">
+                            <div id="progressBar" style="background: var(--gradient); height: 100%; border-radius: 10px; width: 20%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quiz Question -->
+                <div id="quizContent">
+                    <div class="quiz-question">
+                        <h2 id="questionText">Loading question...</h2>
+                    </div>
+                    
+                    <div class="quiz-actions">
+                        <button id="yesBtn" class="btn btn-primary" data-answer="Yes">Yes</button>
+                        <button id="noBtn" class="btn btn-secondary" data-answer="No">No</button>
+                        <button id="maybeBtn" class="btn btn-secondary" data-answer="Maybe">Maybe</button>
+                    </div>
+                </div>
+                
+                <!-- Completion Message -->
+                <div id="completionMessage" class="text-center" style="display: none;">
+                    <div class="card message-success">
+                        <div class="card-body">
+                            <h3>🎉 Quiz Complete!</h3>
+                            <p>Thank you for completing the quiz! Redirecting to offers page where you can start earning coins...</p>
+                            <div class="shimmer" style="height: 4px; width: 100%; border-radius: 2px; margin-top: 1rem;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<main class="min-h-[70vh] flex items-center justify-center p-6">
-  <div id="card" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 text-center">
-    <h2 class="text-xl font-bold">Loading your quiz...</h2>
-    <div class="w-full h-2 bg-gray-200 rounded mt-3">
-      <div id="bar" class="h-2 bg-gradient-to-r from-blue-500 to-yellow-400 w-0 rounded"></div>
-    </div>
-    <p class="text-gray-500 mt-2 text-sm">Please wait while we fetch your personalized questions.</p>
-  </div>
-</main>
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        // Quiz state
+        let currentUser = null;
+        let userPetType = '';
+        let currentQuestionIndex = 0;
+        let answers = [];
+        
+        // Pet-specific questions
+        const petQuestions = {
+            'Dog': [
+                "Does your dog enjoy playing fetch?",
+                "Do you prefer dry or wet food for your dog?",
+                "Is your dog comfortable around other dogs?",
+                "Do you take your dog for regular walks?",
+                "Does your dog have any dietary restrictions?"
+            ],
+            'Cat': [
+                "Does your cat enjoy playing with toys?",
+                "Do you prefer indoor or outdoor access for your cat?",
+                "Is your cat comfortable with being brushed?",
+                "Does your cat use a scratching post?",
+                "Does your cat have any specific dietary needs?"
+            ],
+            'Bird': [
+                "Does your bird enjoy singing or talking?",
+                "Do you provide a variety of perches?",
+                "Is your bird comfortable with handling?",
+                "Do you offer fresh fruits and vegetables?",
+                "Does your bird get regular out-of-cage time?"
+            ],
+            'Rabbit': [
+                "Does your rabbit have enough space to hop around?",
+                "Do you provide unlimited hay?",
+                "Is your rabbit litter trained?",
+                "Do you offer fresh vegetables daily?",
+                "Does your rabbit enjoy being petted?"
+            ],
+            'Fish': [
+                "Do you perform regular water testing?",
+                "Is your aquarium properly filtered?",
+                "Do you provide a variety in diet?",
+                "Is your tank appropriately sized?",
+                "Do you monitor water temperature closely?"
+            ],
+            'Horse': [
+                "Do you provide regular exercise?",
+                "Is your horse comfortable with grooming?",
+                "Do you offer quality hay and feed?",
+                "Is your horse up to date on vaccinations?",
+                "Do you provide regular hoof care?"
+            ],
+            'Ferret': [
+                "Does your ferret get daily playtime?",
+                "Do you provide a balanced ferret diet?",
+                "Is your ferret litter trained?",
+                "Do you ferret-proof your home?",
+                "Does your ferret enjoy exploring?"
+            ],
+            'Reptile': [
+                "Do you maintain proper temperature gradients?",
+                "Is your enclosure appropriately sized?",
+                "Do you provide UVB lighting if needed?",
+                "Is your humidity level correct?",
+                "Do you offer variety in diet?"
+            ],
+            'Small Mammal': [
+                "Does your pet have enough space to exercise?",
+                "Do you provide appropriate bedding?",
+                "Is your pet's diet species-appropriate?",
+                "Do you offer enrichment activities?",
+                "Does your pet enjoy handling?"
+            ]
+        };
 
-<footer class="text-center text-xs text-gray-500 pb-6">© 2025 PetRewardHub</footer>
+        // Default questions if pet type not found
+        const defaultQuestions = [
+            "Do you enjoy spending time with your pet?",
+            "Is your pet active and playful?",
+            "Do you provide regular veterinary care?",
+            "Does your pet have any special needs?",
+            "Do you enjoy buying toys and treats for your pet?"
+        ];
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="firebase-init.js"></script>
-<script src="app.js"></script>
+        // Initialize quiz page
+        async function initQuizPage() {
+            try {
+                // Wait for authentication
+                currentUser = await app.requireAuth('index.html');
+                
+                // Check if user already completed quiz
+                if (app.userData && app.userData.quizDone) {
+                    window.location.href = 'offers.html';
+                    return;
+                }
+                
+                // Check if user selected pet first
+                if (!app.userData || !app.userData.selectedPet) {
+                    window.location.href = 'select-pet.html';
+                    return;
+                }
+                
+                // Setup header auth
+                attachHeaderAuth();
+                
+                // Start the quiz
+                startQuiz();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                window.location.href = 'index.html';
+            }
+        }
 
-<script>
-attachHeaderAuth(); // start live coins & auth here
+        // Start the quiz
+        function startQuiz() {
+            // Display pet type
+            document.getElementById('petTypeDisplay').textContent = app.userData.selectedPet;
+            
+            // Get questions for the selected pet
+            const questions = petQuestions[app.userData.selectedPet] || defaultQuestions;
+            
+            // Setup answer buttons
+            setupAnswerButtons(questions);
+            
+            // Show first question
+            showQuestion(questions, 0);
+        }
 
-const card = document.getElementById('card'); 
-const bar = document.getElementById('bar');
-const Q = {
-  Dog:["Does your dog enjoy outdoor walks?","Is your dog friendly with other pets?","Does your dog like fetching toys?","How often do you bathe your dog?","Would you like to receive free dog treats?"],
-  Cat:["Does your cat prefer dry or wet food?","Does your cat sleep on your bed?","Does your cat use a scratching post?","Does your cat enjoy grooming?","Would you like to earn free cat accessories?"],
-  Bird:["Does your bird mimic sounds?","Does your bird enjoy baths?","Do you let your bird fly in open space?","Does your bird eat fruits?","Would you like to receive free bird toys?"],
-  Rabbit:["Does your rabbit like carrots?","Does your rabbit have a play area?","Does your rabbit stay indoors?","Do you brush your rabbit regularly?","Would you like free rabbit supplies?"],
-  Fish:["Do you feed your fish twice daily?","Freshwater or saltwater?","Do you clean the aquarium weekly?","Do you have decorative plants?","Want free aquarium filters?"],
-  Horse:["Does your horse have a grooming kit?","Regular rides?","Feed oats daily?","Own stable?","Want free horse accessories?"],
-  Ferret:["Is your ferret active daytime?","Regular bath?","Likes toys?","Use leash?","Want free ferret toys?"],
-  Reptile:["Bask under heat lamp?","Feed insects?","Clean terrarium weekly?","Prefers sunlight?","Want free reptile care products?"],
-  "Small Mammal":["Hamster or guinea pig?","Change bedding weekly?","Pellets daily?","Has wheel toy?","Want free small pet gifts?"]
-};
+        // Setup answer button handlers
+        function setupAnswerButtons(questions) {
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const maybeBtn = document.getElementById('maybeBtn');
+            
+            const answerHandler = (answer) => {
+                // Save answer
+                answers.push({
+                    question: questions[currentQuestionIndex],
+                    answer: answer
+                });
+                
+                // Move to next question or complete
+                currentQuestionIndex++;
+                
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion(questions, currentQuestionIndex);
+                } else {
+                    completeQuiz();
+                }
+            };
+            
+            yesBtn.addEventListener('click', () => answerHandler('Yes'));
+            noBtn.addEventListener('click', () => answerHandler('No'));
+            maybeBtn.addEventListener('click', () => answerHandler('Maybe'));
+        }
 
-firebase.auth().onAuthStateChanged(async user=>{
-  if(!user){ location.replace('index.html?loginOpen=true'); return; }
-  const doc = await db.collection('users').doc(user.uid).get();
-  const pet = doc.exists ? doc.data().selectedPet : null;
-  if(!pet || !Q[pet]){
-    card.innerHTML = `<h2 class="text-xl font-bold">No pet selected</h2>
-    <p class="text-gray-500">Please select your pet.</p>
-    <a href="select-pet.html" class="mt-4 inline-block rounded-full px-5 h-11 leading-[44px] bg-blue-500 text-white font-semibold">Select Pet</a>`;
-    return;
-  }
-  const qs = Q[pet]; let i=0;
-  const render = ()=>{
-    bar.style.width = `${(i/qs.length)*100}%`;
-    card.innerHTML = `
-      <h2 class="text-xl font-extrabold">${pet} Quiz</h2>
-      <div class="w-full h-2 bg-gray-200 rounded my-3">
-        <div class="h-2 bg-gradient-to-r from-blue-500 to-yellow-400" style="width:${(i/qs.length)*100}%"></div>
-      </div>
-      <h3 class="text-lg font-semibold my-4">${qs[i]}</h3>
-      <div class="flex justify-center gap-3">
-        <button class="rounded-full h-11 px-6 bg-blue-500 text-white font-bold" onclick="next()">Yes</button>
-        <button class="rounded-full h-11 px-6 bg-gray-100 font-bold" onclick="next()">No</button>
-        <button class="rounded-full h-11 px-6 bg-yellow-300 font-bold" onclick="next()">Maybe</button>
-      </div>
-      <p class="text-xs text-gray-500 mt-3">Question ${i+1} of ${qs.length}</p>`;
-  };
-  window.next = async ()=>{
-    i++;
-    if(i<qs.length){ render(); }
-    else{
-      await db.collection('users').doc(user.uid).set({quizDone:true,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-      card.innerHTML = `<h2 class="text-xl font-extrabold">🎉 Quiz Complete!</h2>
-      <p class="text-gray-600">You’re now ready to view pet offers.</p>
-      <a href="offers.html" class="mt-4 inline-block rounded-full px-6 h-11 leading-[44px] bg-yellow-300 font-bold">View Offers</a>`;
-    }
-  };
-  render();
-});
-</script>
+        // Show current question
+        function showQuestion(questions, index) {
+            const questionText = document.getElementById('questionText');
+            const currentQuestionElem = document.getElementById('currentQuestion');
+            const progressBar = document.getElementById('progressBar');
+            
+            // Update question text
+            questionText.textContent = questions[index];
+            
+            // Update progress
+            currentQuestionElem.textContent = index + 1;
+            const progress = ((index + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Complete the quiz
+        async function completeQuiz() {
+            const quizContent = document.getElementById('quizContent');
+            const completionMessage = document.getElementById('completionMessage');
+            
+            // Hide quiz, show completion message
+            quizContent.style.display = 'none';
+            completionMessage.style.display = 'block';
+            
+            try {
+                // Mark quiz as complete in Firestore
+                const success = await app.completeQuiz();
+                
+                if (success) {
+                    // Redirect to offers page after delay
+                    setTimeout(() => {
+                        window.location.href = 'offers.html';
+                    }, 3000);
+                } else {
+                    throw new Error('Failed to save quiz completion');
+                }
+            } catch (error) {
+                completionMessage.innerHTML = `
+                    <div class="card message-error">
+                        <div class="card-body">
+                            <h3>❌ Error</h3>
+                            <p>${error.message}. <a href="offers.html" class="btn btn-primary mt-2">Continue to offers</a></p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initQuizPage);
+    </script>
 </body>
 </html>

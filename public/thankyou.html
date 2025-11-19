@@ -1,20 +1,153 @@
 <!DOCTYPE html>
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Gift Claim Confirmation - PetRewardHub</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You - PetRewardHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-br from-[#E0F7FA] to-[#FFF9C4]">
-  <div class="min-h-screen flex items-center justify-center p-6">
-    <div class="w-full max-w-lg bg-white/85 rounded-xl shadow-lg backdrop-blur-sm p-8 md:p-10 text-center">
-      <div class="mx-auto mb-3 w-16 h-16 rounded-full bg-yellow-300 text-yellow-800 flex items-center justify-center">🐾</div>
-      <h1 class="text-3xl font-bold">Hooray! Your Gift is on its Way!</h1>
-      <p class="mt-2 text-gray-600">You’ve successfully claimed your gift. We’ll email shipping details soon.</p>
-      <div class="mt-5 flex flex-col gap-3">
-        <a href="offers.html" class="h-12 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center">Explore More Gifts</a>
-        <a href="index.html" class="h-12 rounded-full bg-blue-500/10 text-blue-600 font-bold flex items-center justify-center">Go Home</a>
-      </div>
-    </div>
-  </div>
-</body></html>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">PetRewardHub</a>
+                <div class="nav-links">
+                    <div id="authButtons" style="display: flex; gap: 1rem;">
+                        <a href="signup.html" class="btn btn-secondary">Sign Up</a>
+                    </div>
+                    <div id="userNav" style="display: none; align-items: center; gap: 1rem;">
+                        <a href="offers.html" class="nav-link">Offers</a>
+                        <a href="gifts.html" class="nav-link">Gifts</a>
+                        <a href="claim.html" class="nav-link">Claim</a>
+                        <div class="coin-badge">
+                            💰 <span id="coinBadge">0</span>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Thank You Section -->
+    <section class="section">
+        <div class="container">
+            <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+                <!-- Success Icon -->
+                <div style="font-size: 4rem; margin-bottom: 2rem;">🎉</div>
+                
+                <h1 class="mb-3">Thank You for Your Claim!</h1>
+                
+                <div class="card message-success mb-4">
+                    <div class="card-body">
+                        <h3>✅ Claim Successfully Submitted</h3>
+                        <p>Your gift claim has been received and is being processed. We've sent a confirmation to your email.</p>
+                    </div>
+                </div>
+
+                <!-- Next Steps -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3 class="mb-3">What Happens Next?</h3>
+                        <div style="text-align: left;">
+                            <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="background: var(--gradient); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0;">1</div>
+                                <div>
+                                    <strong>Order Processing</strong>
+                                    <p style="margin: 0.25rem 0 0 0; color: var(--gray-600);">We'll process your order within 24-48 hours.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="background: var(--gradient); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0;">2</div>
+                                <div>
+                                    <strong>Shipping Confirmation</strong>
+                                    <p style="margin: 0.25rem 0 0 0; color: var(--gray-600);">You'll receive a shipping confirmation email with tracking information.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <div style="background: var(--gradient); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0;">3</div>
+                                <div>
+                                    <strong>Delivery</strong>
+                                    <p style="margin: 0.25rem 0 0 0; color: var(--gray-600);">Your gift will arrive within 2-3 weeks.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="offers.html" class="btn btn-primary">
+                        Earn More Coins
+                    </a>
+                    <a href="gifts.html" class="btn btn-secondary">
+                        View More Gifts
+                    </a>
+                    <a href="index.html" class="btn btn-secondary">
+                        Back to Home
+                    </a>
+                </div>
+
+                <!-- Support Information -->
+                <div class="card mt-4" style="background: #f0f9ff; border-color: #7dd3fc;">
+                    <div class="card-body">
+                        <h4>Need Help?</h4>
+                        <p>If you have any questions about your claim, please contact our support team at <strong>support@petrewardhub.com</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        // Initialize thank you page
+        async function initThankYouPage() {
+            try {
+                // Wait for authentication
+                await app.requireAuth('index.html');
+                
+                // Check if user completed previous steps
+                if (!app.userData || !app.userData.selectedPet) {
+                    window.location.href = 'select-pet.html';
+                    return;
+                }
+                
+                if (!app.userData.quizDone) {
+                    window.location.href = 'quiz.html';
+                    return;
+                }
+
+                // Setup auth state listener
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        document.getElementById('authButtons').style.display = 'none';
+                        document.getElementById('userNav').style.display = 'flex';
+                    } else {
+                        document.getElementById('authButtons').style.display = 'flex';
+                        document.getElementById('userNav').style.display = 'none';
+                    }
+                });
+
+                // Setup header auth
+                attachHeaderAuth();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initThankYouPage);
+    </script>
+</body>
+</html>

@@ -1,73 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Offers — PetRewardHub</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css"/>
-<style>body{font-family:Inter,system-ui,sans-serif}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn Coins - PetRewardHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-br from-[#eff6ff] to-[#fef9c3]">
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">PetRewardHub</a>
+                <div class="nav-links">
+                    <div id="userNav" style="display: none; align-items: center; gap: 1rem;">
+                        <a href="offers.html" class="nav-link">Offers</a>
+                        <a href="gifts.html" class="nav-link">Gifts</a>
+                        <a href="claim.html" class="nav-link">Claim</a>
+                        <div class="coin-badge">
+                            💰 <span id="coinBadge">0</span>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<header class="sticky top-0 z-50 bg-gradient-to-r from-[#3b82f6] to-[#facc15] text-white shadow-md">
-  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="font-extrabold text-lg flex items-center gap-2">🐾 PetRewardHub</div>
-    <div class="flex items-center gap-3 text-sm">
-      <span class="inline-flex items-center gap-1 rounded-full bg-white/30 px-3 h-8 font-bold">💰 <span id="coinBadge">0</span> Coins</span>
-      <span id="userEmail" class="text-white/90">Not signed in</span>
-      <button id="logoutBtn" class="ml-1 h-9 px-4 rounded-full bg-white/20 hover:bg-white/30 font-semibold">Logout</button>
-    </div>
-  </div>
-</header>
+    <!-- Offers Section -->
+    <section class="section">
+        <div class="container">
+            <h1 class="section-title">Earn Coins with Offers</h1>
+            <p class="text-center mb-4">Complete these offers to earn coins and get free pet gifts!</p>
 
-<main class="max-w-6xl mx-auto px-6 py-10">
-  <div class="flex flex-col sm:flex-row justify-between items-center mb-8">
-    <div>
-      <h2 class="text-3xl font-bold mb-2">🎯 Exclusive Pet Offers</h2>
-      <p class="text-gray-600">Pick your country to discover trending offers and earn coins for free gifts.</p>
-    </div>
-    <div class="mt-4 sm:mt-0">
-      <label class="mr-2 font-semibold text-gray-700">🌍 Country:</label>
-      <select id="country" class="border rounded-lg px-3 py-2 bg-white shadow">
-        <option value="">All</option>
-        <option value="us">🇺🇸 United States</option>
-        <option value="gb">🇬🇧 United Kingdom</option>
-        <option value="ca">🇨🇦 Canada</option>
-        <option value="au">🇦🇺 Australia</option>
-        <option value="in">🇮🇳 India</option>
-      </select>
-    </div>
-  </div>
+            <!-- Coin Balance -->
+            <div class="card mb-4 text-center">
+                <div class="card-body">
+                    <h3>Your Coin Balance: <span id="currentCoins">0</span> 🪙</h3>
+                    <p>Complete offers below to earn more coins!</p>
+                </div>
+            </div>
 
-  <div id="offerContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <p>⏳ Loading offers...</p>
-  </div>
-</main>
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="countryFilter" class="form-label">Country</label>
+                    <select id="countryFilter" class="form-select">
+                        <option value="all">All Countries</option>
+                        <option value="US">United States</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="CA">Canada</option>
+                        <option value="AU">Australia</option>
+                        <option value="IN">India</option>
+                    </select>
+                </div>
+                <button id="applyFilters" class="btn btn-primary" style="align-self: flex-end;">
+                    Apply Filters
+                </button>
+            </div>
 
-<footer class="text-center text-sm text-gray-500 py-10">© 2025 PetRewardHub · Safe & Trusted</footer>
+            <!-- Offers Container -->
+            <div id="loadingOffers" class="text-center">
+                <div class="card shimmer" style="height: 200px; margin-bottom: 1rem;"></div>
+                <div class="card shimmer" style="height: 200px; margin-bottom: 1rem;"></div>
+                <div class="card shimmer" style="height: 200px;"></div>
+                <p>Loading offers from AdBlue Media...</p>
+            </div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="firebase-init.js"></script>
-<script src="app.js"></script>
+            <div id="offerContainer" class="grid grid-2" style="display: none;"></div>
 
-<!-- Old jQuery for JSONP -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+            <div id="noOffers" class="text-center" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>No Offers Available</h3>
+                        <p>There are currently no offers available for your region. Please check back later or try different filters.</p>
+                    </div>
+                </div>
+            </div>
 
-<script>
-attachHeaderAuth(); // show "signed in + coins" from this page onward
+            <div id="errorMessage" class="text-center" style="display: none;">
+                <div class="card message-error">
+                    <div class="card-body">
+                        <h3>Error Loading Offers</h3>
+                        <p>We're having trouble loading offers right now. Please try again later.</p>
+                        <button id="retryButton" class="btn btn-primary mt-2">Retry</button>
+                    </div>
+                </div>
+            </div>
 
-firebase.auth().onAuthStateChanged(function(user){
-  if (!user) return;
-  const select = document.getElementById("country");
-  const load   = ()=> loadAdBlueOffers({ containerSel:"#offerContainer", uid:user.uid, country:select.value, limit:9 });
-  load();
-  select.addEventListener("change", load);
-});
-</script>
+            <!-- Important Note -->
+            <div class="card mt-4" style="background: #fef3c7; border-color: #fcd34d;">
+                <div class="card-body">
+                    <h4>💡 Important Note</h4>
+                    <p><strong>Easy Offers:</strong> 10 coins | <strong>Other Offers:</strong> 20 coins</p>
+                    <p>Coins are automatically added to your account when you complete offers. This usually happens within 24 hours after completion. Make sure to complete the entire offer process for your coins to be credited.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="app.js"></script>
+    
+    <!-- WARNING - THIS IS AN OLD JQUERY VERSION FOR ADBLUE COMPATIBILITY -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentCountry = 'US';
+
+        // Initialize offers page
+        async function initOffersPage() {
+            try {
+                // Wait for authentication
+                currentUser = await app.requireAuth('index.html');
+                
+                // Check if user completed previous steps
+                if (!app.userData || !app.userData.selectedPet) {
+                    window.location.href = 'select-pet.html';
+                    return;
+                }
+                
+                if (!app.userData.quizDone) {
+                    window.location.href = 'quiz.html';
+                    return;
+                }
+                
+                // Setup header auth
+                attachHeaderAuth();
+                
+                // Update coin display
+                updateCoinDisplay();
+                
+                // Load offers
+                loadOffers();
+                
+                // Setup event listeners
+                setupEventListeners();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Update coin display
+        function updateCoinDisplay() {
+            if (app.userData) {
+                document.getElementById('currentCoins').textContent = app.userData.coins || 0;
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Filter application
+            document.getElementById('applyFilters').addEventListener('click', loadOffers);
+            
+            // Country filter change
+            document.getElementById('countryFilter').addEventListener('change', (e) => {
+                currentCountry = e.target.value === 'all' ? 'US' : e.target.value;
+            });
+            
+            // Retry button
+            document.getElementById('retryButton').addEventListener('click', loadOffers);
+        }
+
+        // Load offers from AdBlue feed
+        function loadOffers() {
+            const offerContainer = document.getElementById('offerContainer');
+            const loadingElement = document.getElementById('loadingOffers');
+            const noOffersElement = document.getElementById('noOffers');
+            const errorElement = document.getElementById('errorMessage');
+            
+            // Show loading state
+            offerContainer.style.display = 'none';
+            offerContainer.innerHTML = '';
+            loadingElement.style.display = 'block';
+            noOffersElement.style.display = 'none';
+            errorElement.style.display = 'none';
+            
+            // Get current country
+            const countrySelect = document.getElementById('countryFilter');
+            const country = countrySelect.value === 'all' ? '' : countrySelect.value;
+            
+            // AdBlue Media API configuration - using exact provided credentials
+            const userId = '481160';
+            const apiKey = '89a09f95e53dde3a5e593491e1134540';
+            const s1 = currentUser ? currentUser.uid : '';
+            const s2 = country;
+            
+            // Primary method: JSONP via jQuery with exact AdBlue feed URL
+            const feedUrl = `https://d1y3y09sav47f5.cloudfront.net/public/offers/feed.php?user_id=${userId}&api_key=${apiKey}&s1=${s1}&s2=${s2}&callback=?`;
+            
+            console.log('Fetching offers from AdBlue Media:', feedUrl);
+            
+            $.ajax({
+                url: feedUrl,
+                dataType: 'jsonp',
+                timeout: 15000,
+                success: function(offers) {
+                    console.log('AdBlue offers received:', offers);
+                    loadingElement.style.display = 'none';
+                    handleOffersResponse(offers);
+                },
+                error: function(xhr, status, error) {
+                    console.error('AdBlue JSONP fetch failed:', error);
+                    // Fallback to Netlify Function
+                    fallbackToProxy(country, s1);
+                }
+            });
+        }
+
+        // Fallback to Netlify Function proxy
+        function fallbackToProxy(country, s1) {
+            const proxyUrl = `/.netlify/functions/offers-proxy?s1=${s1}&s2=${country}`;
+            
+            console.log('Trying Netlify proxy fallback:', proxyUrl);
+            
+            fetch(proxyUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Proxy response not OK');
+                    return response.json();
+                })
+                .then(offers => {
+                    document.getElementById('loadingOffers').style.display = 'none';
+                    handleOffersResponse(offers);
+                })
+                .catch(error => {
+                    console.error('Proxy fallback also failed:', error);
+                    showErrorState();
+                });
+        }
+
+        // Handle offers response
+        function handleOffersResponse(offers) {
+            const offerContainer = document.getElementById('offerContainer');
+            const noOffersElement = document.getElementById('noOffers');
+            
+            // Check if offers are valid
+            if (!offers || !Array.isArray(offers) || offers.length === 0) {
+                offerContainer.style.display = 'none';
+                noOffersElement.style.display = 'block';
+                return;
+            }
+            
+            // Limit to 5-9 offers as specified
+            const maxOffers = Math.min(offers.length, 9);
+            const limitedOffers = offers.slice(0, maxOffers);
+            
+            console.log('Rendering offers:', limitedOffers);
+            
+            // Render offers
+            let html = '';
+            limitedOffers.forEach((offer, index) => {
+                html += renderOfferCard(offer, index);
+            });
+            
+            offerContainer.innerHTML = html;
+            offerContainer.style.display = 'grid';
+            
+            // Track offer clicks
+            setupOfferClickTracking();
+        }
+
+        // Render individual offer card
+        function renderOfferCard(offer, index) {
+            // Calculate coins based on payout - Easy offers: 10 coins, Other offers: 20 coins
+            const payout = parseFloat(offer.payout) || 0;
+            const coins = payout < 1.5 ? 10 : 20; // Easy offers: 10 coins, Other offers: 20 coins
+            const offerType = payout < 1.5 ? 'Easy Offer' : 'Premium Offer';
+            const estimatedText = payout < 1.5 ? 'Earn 10 coins' : 'Earn 20 coins';
+            
+            // Ensure URL includes sub1 parameter for attribution (postback tracking)
+            let offerUrl = offer.url || '#';
+            if (currentUser && offerUrl && offerUrl !== '#') {
+                // Add sub1 parameter for postback attribution
+                const separator = offerUrl.includes('?') ? '&' : '?';
+                offerUrl += `${separator}sub1=${currentUser.uid}`;
+            }
+            
+            // Use network_icon if available, otherwise fallback image
+            const bannerUrl = offer.network_icon || 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=200&fit=crop';
+            
+            // Use anchor text for title if available, otherwise use name
+            const offerTitle = offer.anchor || offer.name || 'Special Offer';
+            const conversionText = offer.conversion || 'Complete this offer to earn coins';
+            
+            return `
+                <div class="offer-card" data-offer-id="${offer.offer_id || index}">
+                    <div class="offer-header">
+                        <img src="${bannerUrl}" alt="${offerTitle}" class="offer-icon" onerror="this.src='https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=200&fit=crop'">
+                        <div>
+                            <h3 class="offer-title">${offerTitle}</h3>
+                            <p class="offer-conversion">${conversionText}</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <div class="offer-coins">
+                            Earn <strong>${coins} Coins</strong>
+                        </div>
+                        <span style="background: ${payout < 1.5 ? '#d1fae5' : '#fef3c7'}; color: ${payout < 1.5 ? '#065f46' : '#92400e'}; padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600;">
+                            ${offerType}
+                        </span>
+                    </div>
+                    <p style="color: var(--gray-600); font-size: 0.9rem; margin-bottom: 1rem;">
+                        ${estimatedText}
+                    </p>
+                    <a href="${offerUrl}" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       class="btn btn-primary" 
+                       style="width: 100%;"
+                       data-offer-url="${offerUrl}"
+                       onclick="trackOfferClick(this)">
+                        Start Offer
+                    </a>
+                </div>
+            `;
+        }
+
+        // Track offer click (called from onclick attribute)
+        function trackOfferClick(element) {
+            const offerUrl = element.getAttribute('data-offer-url');
+            
+            // Log offer click for analytics
+            if (currentUser) {
+                const offerLog = {
+                    uid: currentUser.uid,
+                    offerUrl: offerUrl,
+                    clickedAt: new Date().toISOString(),
+                    userAgent: navigator.userAgent
+                };
+                
+                // Save to Firestore for analytics (optional)
+                try {
+                    firebase.firestore().collection('offersLog').add(offerLog);
+                } catch (error) {
+                    console.log('Offer log saved:', offerLog);
+                }
+            }
+            
+            // Important: Coins are NOT added here - they are only added when postback is received
+            // The postback will be sent to: https://petrewardhub.netlify.app/.netlify/functions/postback?sub1={sub1}&payout={payout}&offer_id={offer_id}
+            console.log('Offer clicked - postback will track conversion');
+        }
+
+        // Show error state
+        function showErrorState() {
+            document.getElementById('loadingOffers').style.display = 'none';
+            document.getElementById('offerContainer').style.display = 'none';
+            document.getElementById('noOffers').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initOffersPage);
+    </script>
 </body>
 </html>

@@ -1,45 +1,136 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sign Up - PetRewardHub</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
-<style>body{font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,#E0F7FA,#FFF9C4)}</style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - PetRewardHub</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-lg rounded-xl bg-white/85 p-8 shadow-lg backdrop-blur-sm">
-    <div class="text-center mb-6">
-      <h1 class="text-3xl font-bold">Join the PetRewardHub Family!</h1>
-      <p class="text-gray-600">Sign up to start earning rewards.</p>
-    </div>
-    <div class="flex flex-col gap-4">
-      <label class="flex flex-col"><span class="text-sm font-medium">Full Name</span><input id="suName" class="h-11 rounded-lg border px-3" placeholder="Your name"/></label>
-      <label class="flex flex-col"><span class="text-sm font-medium">Email</span><input id="suEmail" class="h-11 rounded-lg border px-3" placeholder="you@example.com"/></label>
-      <label class="flex flex-col"><span class="text-sm font-medium">Password</span><input id="suPass" type="password" class="h-11 rounded-lg border px-3" placeholder="••••••••"/></label>
-      <div class="flex items-center gap-3"><input id="terms" type="checkbox" class="h-5 w-5 rounded border-gray-300"/><label for="terms" class="text-sm text-gray-600">I agree to the <a class="font-semibold text-blue-500 underline" href="#">Terms</a></label></div>
-      <button id="suBtn" class="mt-1 w-full rounded-lg bg-blue-400 py-3 text-white font-bold">Sign Up</button>
-      <div id="suMsg" class="text-sm text-red-600"></div>
-      <p class="text-center text-sm mt-2">Already a member? <a class="font-bold text-blue-500 underline" href="index.html?loginOpen=true">Log in</a></p>
-    </div>
-  </div>
-</div>
+    <!-- Simple header for signup page -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">PetRewardHub</a>
+                <a href="index.html" class="btn btn-secondary">Back to Home</a>
+            </div>
+        </div>
+    </nav>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script src="firebase-init.js"></script>
-<script>
-const $ = s=>document.querySelector(s);
-$('#suBtn').addEventListener('click', async ()=>{
-  const name=$('#suName').value.trim(), email=$('#suEmail').value.trim(), pass=$('#suPass').value.trim(), msg=$('#suMsg');
-  if(!name||!email||!pass||!$('#terms').checked){ msg.textContent='Fill all fields & accept terms'; return; }
-  try{
-    const cred = await auth.createUserWithEmailAndPassword(email, pass);
-    await db.collection('users').doc(cred.user.uid).set({ name, email, coins:0, createdAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge:true });
-    location.href = 'index.html?loginOpen=true';
-  }catch(e){ msg.textContent = e.message || 'Signup failed'; }
-});
-</script>
-</body></html>
+    <!-- Signup Section -->
+    <section class="section">
+        <div class="container">
+            <div style="max-width: 400px; margin: 0 auto;">
+                <h1 class="text-center mb-4">Create Your Account</h1>
+                <p class="text-center mb-4">Join PetRewardHub and get <strong>25 FREE coins</strong> instantly to start claiming pet gifts!</p>
+                
+                <form id="signupForm" class="card" style="padding: 2rem;">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" id="name" class="form-input" required placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" class="form-input" required placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" class="form-input" required minlength="6" placeholder="Create a password (min. 6 characters)">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Create Account & Get 25 Coins
+                    </button>
+                    
+                    <p class="text-center mt-3">
+                        Already have an account? <a href="index.html" onclick="openLoginModal(); return false;">Login here</a>
+                    </p>
+                </form>
+                
+                <div id="signupMessage" style="display: none;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-init.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        // Handle signup form submission
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const messageDiv = document.getElementById('signupMessage');
+            
+            // Show loading state
+            submitBtn.textContent = 'Creating Account...';
+            submitBtn.disabled = true;
+            messageDiv.style.display = 'none';
+            
+            try {
+                const result = await app.signup(name, email, password);
+                
+                if (result.success) {
+                    // Success - show success message with bonus info
+                    messageDiv.innerHTML = `
+                        <div class="card message-success" style="margin-top: 1rem;">
+                            <div class="card-body">
+                                <p>🎉 Account created successfully! You received 25 FREE coins as a signup bonus!</p>
+                                <p>Redirecting to pet selection...</p>
+                            </div>
+                        </div>
+                    `;
+                    messageDiv.style.display = 'block';
+                    
+                    // Redirect to select pet page
+                    setTimeout(() => {
+                        window.location.href = 'select-pet.html';
+                    }, 2000);
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `
+                    <div class="card message-error" style="margin-top: 1rem;">
+                        <div class="card-body">
+                            <p>❌ Error: ${error.message}</p>
+                        </div>
+                    </div>
+                `;
+                messageDiv.style.display = 'block';
+                
+                submitBtn.textContent = 'Create Account & Get 25 Coins';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Utility function to open login modal (for the link)
+        function openLoginModal() {
+            // This will be handled by the main app.js when redirected to index
+            window.location.href = 'index.html?showLogin=true';
+        }
+
+        // Check if we should open login modal after redirect
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('showLogin') === 'true') {
+                // We're on index page, open login modal
+                if (typeof openLoginModal === 'function') {
+                    setTimeout(openLoginModal, 500);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
